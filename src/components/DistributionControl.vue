@@ -22,7 +22,10 @@ const valentinPct = computed(() => 100 - marinePct.value);
   <div class="glass-card rounded-2xl overflow-hidden">
     <!-- Header -->
     <div class="px-6 py-4 border-b border-white/5 bg-gradient-to-r from-blue-500/10 to-transparent">
-      <h3 class="text-lg font-bold flex items-center gap-3 text-white">
+       <h3 
+        class="text-lg font-bold flex items-center gap-3 text-white tooltip-wrapper tooltip-bottom"
+        data-tooltip="Définit comment les charges partagées sont réparties entre les deux personnes"
+      >
         <div class="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
@@ -60,7 +63,7 @@ const valentinPct = computed(() => 100 - marinePct.value);
           max="100"
           step="5"
           v-model.number="marinePct"
-          class="range range-sm w-full"
+          class="range range-sm range-primary w-full"
           style="--range-shdw: none;"
         />
       </div>

@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { ref, provide } from "vue";
 import { useBudgetStore } from "./stores/budget";
 import MonthSelector from "./components/MonthSelector.vue";
 import AddEntryModal from "./components/AddEntryModal.vue";
@@ -9,10 +9,32 @@ import ChargesSection from "./components/ChargesSection.vue";
 import DistributionControl from "./components/DistributionControl.vue";
 import ChartSection from "./components/ChartSection.vue";
 import ExportImport from "./components/ExportImport.vue";
+import ToastNotification from "./components/ToastNotification.vue";
 import exptrackLogo from "./assets/exptrack.svg";
 
 const store = useBudgetStore();
 const showAddModal = ref(false);
+const toastRef = ref(null);
+
+// Fonction utilitaire pour afficher des toasts
+function showToast(type, message, duration = 4000) {
+  if (toastRef.value) {
+    toastRef.value.addToast(type, message, duration);
+  } else {
+    // Fallback via événement custom
+    window.dispatchEvent(new CustomEvent("show-toast", {
+      detail: { type, message, duration }
+    }));
+  }
+}
+
+// Provide la fonction showToast pour les composants enfants
+provide("showToast", showToast);
+
+function handleEntryAdded() {
+  showAddModal.value = false;
+  showToast("success", "Entrée ajoutée avec succès");
+}
 </script>
 
 <template>
@@ -21,17 +43,21 @@ const showAddModal = ref(false);
     <header class="fixed top-0 left-0 right-0 z-50 header-glass">
       <div class="container mx-auto px-6 py-4 flex items-center justify-between max-w-6xl">
         <div class="flex items-center gap-4">
-          <div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+          <div 
+            class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center tooltip-wrapper tooltip-bottom" 
+            data-tooltip="ExpTrack - Suivi budgétaire"
+          >
             <img :src="exptrackLogo" alt="ExpTrack" class="w-6 h-6" />
           </div>
           <div>
             <h1 class="text-xl font-bold tracking-tight text-white">ExpTrack</h1>
-            <p class="text-xs text-white/40">Suivi budgétaire</p>
+            <p class="text-xs text-white/50">Suivi budgétaire</p>
           </div>
         </div>
         <button
           class="group flex items-center gap-3 bg-white text-black hover:bg-white/90 rounded-full px-5 py-2.5 font-medium shadow-xl hover:shadow-2xl transition-all duration-300"
           @click="showAddModal = true"
+          title="Ajouter un revenu ou une charge"
         >
           <span class="w-2 h-2 bg-primary rounded-full animate-pulse"></span>
           <span class="hidden sm:inline">Ajouter</span>
@@ -89,12 +115,12 @@ const showAddModal = ref(false);
 
       <!-- Footer moderne -->
       <footer class="text-center py-8 border-t border-white/5">
-        <div class="flex items-center justify-center gap-3 text-white/30">
+        <div class="flex items-center justify-center gap-3 text-white/40">
           <div class="w-1.5 h-1.5 rounded-full bg-primary/50"></div>
           <span class="text-sm font-medium tracking-wide">ExpTrack</span>
           <div class="w-1.5 h-1.5 rounded-full bg-primary/50"></div>
         </div>
-        <p class="text-xs text-white/20 mt-2">Gestion budgétaire simplifiée</p>
+        <p class="text-xs text-white/30 mt-2">Gestion budgétaire simplifiée</p>
       </footer>
     </main>
 
@@ -102,6 +128,10 @@ const showAddModal = ref(false);
     <AddEntryModal
       :isOpen="showAddModal"
       @close="showAddModal = false"
+      @added="handleEntryAdded"
     />
+
+    <!-- Système de notifications Toast -->
+    <ToastNotification ref="toastRef" />
   </div>
 </template>

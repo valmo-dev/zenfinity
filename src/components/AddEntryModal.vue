@@ -8,7 +8,7 @@ const props = defineProps({
   isOpen: Boolean,
 });
 
-const emit = defineEmits(["close"]);
+const emit = defineEmits(["close", "added"]);
 
 const type = ref("Revenu");
 const owner = ref("Marine");
@@ -49,6 +49,7 @@ function handleSubmit() {
     category: category.value.trim(),
     amount: Number(amount.value),
   });
+  emit("added");
   emit("close");
 }
 </script>

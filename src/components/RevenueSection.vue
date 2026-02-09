@@ -33,7 +33,7 @@ function formatCurrency(value) {
             <tr class="text-white/50 text-sm">
               <th class="text-left py-3 font-medium">Personne</th>
               <th class="text-right py-3 font-medium">Montant</th>
-              <th class="text-right py-3 font-medium">Part</th>
+              <th class="text-right py-3 font-medium tooltip-wrapper" data-tooltip="Pourcentage du revenu total du ménage">Part</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-white/5">
