@@ -1,34 +1,47 @@
 @import "tailwindcss";
 @plugin "daisyui";
 
+/* Thème ExpTrack - Noir profond + Rouge moderne inspiré OceanWave */
 @plugin "daisyui/theme" {
   name: "exptrack";
   default: true;
   prefersdark: true;
   color-scheme: "dark";
-  --color-base-100: oklch(22% 0.015 260);
-  --color-base-200: oklch(19% 0.015 260);
-  --color-base-300: oklch(16% 0.012 260);
-  --color-base-content: oklch(90% 0.005 260);
-  --color-primary: oklch(70% 0.18 150);
-  --color-primary-content: oklch(10% 0 0);
-  --color-secondary: oklch(68% 0.16 200);
-  --color-secondary-content: oklch(10% 0 0);
-  --color-accent: oklch(72% 0.14 180);
-  --color-accent-content: oklch(10% 0 0);
-  --color-neutral: oklch(28% 0.02 260);
-  --color-neutral-content: oklch(85% 0.005 260);
-  --color-info: oklch(72% 0.19 230);
+  
+  /* Palette noir profond */
+  --color-base-100: oklch(13% 0.01 0);      /* Noir très profond */
+  --color-base-200: oklch(10% 0.01 0);      /* Noir encore plus profond */
+  --color-base-300: oklch(7% 0.005 0);      /* Quasi-noir */
+  --color-base-content: oklch(95% 0.005 0); /* Blanc cassé */
+  
+  /* Rouge accent #DA0037 converti en OKLCH */
+  --color-primary: oklch(55% 0.22 25);
+  --color-primary-content: oklch(100% 0 0);
+  
+  /* Rouge secondaire plus clair */
+  --color-secondary: oklch(65% 0.20 25);
+  --color-secondary-content: oklch(100% 0 0);
+  
+  /* Accent rouge rosé */
+  --color-accent: oklch(60% 0.18 10);
+  --color-accent-content: oklch(100% 0 0);
+  
+  /* Neutres et états */
+  --color-neutral: oklch(20% 0.01 0);
+  --color-neutral-content: oklch(90% 0.005 0);
+  --color-info: oklch(70% 0.15 250);
   --color-info-content: oklch(10% 0 0);
   --color-success: oklch(72% 0.19 150);
   --color-success-content: oklch(10% 0 0);
-  --color-warning: oklch(82% 0.18 85);
+  --color-warning: oklch(82% 0.16 85);
   --color-warning-content: oklch(10% 0 0);
-  --color-error: oklch(65% 0.2 25);
-  --color-error-content: oklch(95% 0 0);
-  --radius-selector: 0.5rem;
-  --radius-field: 0.5rem;
-  --radius-box: 0.75rem;
+  --color-error: oklch(60% 0.22 25);
+  --color-error-content: oklch(100% 0 0);
+  
+  /* Rayons arrondis modernes */
+  --radius-selector: 9999px;
+  --radius-field: 0.75rem;
+  --radius-box: 1rem;
   --size-selector: 0.25rem;
   --size-field: 0.25rem;
   --border: 1px;
@@ -36,15 +49,29 @@
   --noise: 0;
 }
 
-/* Transitions globales */
-* {
-  @apply transition-colors duration-150;
+/* Variables CSS personnalisées pour effets */
+:root {
+  --glass-bg: rgba(255, 255, 255, 0.03);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glow-primary: rgba(218, 0, 55, 0.4);
+  --glow-primary-soft: rgba(218, 0, 55, 0.15);
 }
 
-/* Scrollbar personnalisée */
+/* Reset transitions pour de meilleures performances */
+* {
+  @apply transition-colors duration-200;
+}
+
+/* Fond avec subtil dégradé */
+body {
+  background: linear-gradient(180deg, oklch(7% 0.005 0) 0%, oklch(5% 0.005 0) 100%);
+  min-height: 100vh;
+}
+
+/* Scrollbar personnalisée style moderne */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
@@ -52,25 +79,196 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: oklch(35% 0.01 260);
-  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: oklch(45% 0.01 260);
+  background: rgba(255, 255, 255, 0.2);
 }
 
-/* Amélioration des cartes */
+/* Effet Glass moderne pour les cartes */
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  box-shadow: 
+    0 4px 30px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.glass-card:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 
+    0 8px 40px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* Cards améliorées avec effet hover */
 .card {
-  @apply border border-base-content/5;
+  @apply border border-white/5 transition-all duration-300;
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
-/* Amélioration des tables */
+.card:hover {
+  @apply border-white/10;
+  transform: translateY(-2px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* Boutons modernes style pill */
+.btn {
+  @apply font-medium tracking-wide;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-primary {
+  box-shadow: 0 4px 20px var(--glow-primary-soft);
+}
+
+.btn-primary:hover {
+  box-shadow: 0 8px 30px var(--glow-primary);
+  transform: translateY(-1px);
+}
+
+/* Boutons ghost avec glow subtil au hover */
+.btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Tables modernes */
+.table {
+  @apply border-separate border-spacing-0;
+}
+
 .table :where(thead tr, tfoot tr) {
-  border-color: oklch(30% 0.01 260);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.table tbody tr {
+  @apply transition-colors duration-200;
+}
+
+.table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.03);
 }
 
 /* Font mono pour les chiffres */
 .tabular-nums {
   font-variant-numeric: tabular-nums;
+}
+
+/* Dividers subtils */
+.divider {
+  @apply opacity-30;
+}
+
+/* Badge avec glow */
+.badge-primary {
+  box-shadow: 0 0 12px var(--glow-primary-soft);
+}
+
+/* Range slider moderne */
+.range {
+  @apply h-2;
+}
+
+.range-primary::-webkit-slider-thumb {
+  box-shadow: 0 0 10px var(--glow-primary);
+}
+
+/* Input fields modernes */
+.input, .select, .textarea {
+  @apply bg-white/5 border-white/10;
+  transition: all 0.2s ease;
+}
+
+.input:focus, .select:focus, .textarea:focus {
+  @apply bg-white/8 border-primary/50;
+  box-shadow: 0 0 0 3px var(--glow-primary-soft);
+}
+
+/* Modal backdrop amélioré */
+.modal-backdrop {
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
+}
+
+/* Animations fluides */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px var(--glow-primary-soft);
+  }
+  50% {
+    box-shadow: 0 0 30px var(--glow-primary);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+/* Header glass effect */
+.header-glass {
+  background: rgba(7, 7, 7, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Section titles avec ligne décorative */
+.section-title {
+  @apply relative inline-flex items-center gap-4 text-lg font-semibold;
+}
+
+.section-title::after {
+  content: '';
+  @apply h-px flex-1 bg-gradient-to-r from-white/20 to-transparent;
+  min-width: 60px;
+}
+
+/* Stat cards avec gradient border */
+.stat-card {
+  position: relative;
+  background: var(--glass-bg);
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 1rem;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(218, 0, 55, 0.3), transparent 50%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+/* Tooltips modernes */
+[data-tip]::before {
+  @apply bg-neutral text-neutral-content text-xs px-3 py-2 rounded-lg;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Focus visible moderne */
+:focus-visible {
+  @apply outline-none ring-2 ring-primary/50 ring-offset-2 ring-offset-base-300;
 }

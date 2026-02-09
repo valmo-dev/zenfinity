@@ -59,34 +59,55 @@ function handleImport(event) {
 </script>
 
 <template>
-  <div class="card bg-base-100 shadow-lg">
-    <div class="card-body p-5">
-      <h3 class="card-title text-base flex items-center gap-2">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-        </svg>
+  <div class="glass-card rounded-2xl overflow-hidden">
+    <!-- Header -->
+    <div class="px-6 py-4 border-b border-white/5 bg-gradient-to-r from-purple-500/10 to-transparent">
+      <h3 class="text-lg font-bold flex items-center gap-3 text-white">
+        <div class="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+          </svg>
+        </div>
         Import / Export
       </h3>
+    </div>
 
-      <div class="flex flex-wrap gap-2 mt-3">
-        <button class="btn btn-sm btn-outline btn-primary" @click="exportJSON">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+    <div class="p-6">
+      <!-- Boutons -->
+      <div class="flex flex-wrap gap-3">
+        <!-- Export JSON -->
+        <button 
+          class="group flex items-center gap-3 px-5 py-3 rounded-full bg-white/5 hover:bg-primary/20 border border-white/10 hover:border-primary/30 transition-all duration-300"
+          @click="exportJSON"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
           </svg>
-          Export JSON
+          <span class="text-sm font-medium text-white/80 group-hover:text-white">Export JSON</span>
         </button>
-        <button class="btn btn-sm btn-outline btn-secondary" @click="exportCSV">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+
+        <!-- Export CSV -->
+        <button 
+          class="group flex items-center gap-3 px-5 py-3 rounded-full bg-white/5 hover:bg-secondary/20 border border-white/10 hover:border-secondary/30 transition-all duration-300"
+          @click="exportCSV"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
           </svg>
-          Export CSV
+          <span class="text-sm font-medium text-white/80 group-hover:text-white">Export CSV</span>
         </button>
-        <button class="btn btn-sm btn-outline btn-accent" @click="triggerImport">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+
+        <!-- Import JSON -->
+        <button 
+          class="group flex items-center gap-3 px-5 py-3 rounded-full bg-white/5 hover:bg-purple-500/20 border border-white/10 hover:border-purple-500/30 transition-all duration-300"
+          @click="triggerImport"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
           </svg>
-          Import JSON
+          <span class="text-sm font-medium text-white/80 group-hover:text-white">Import JSON</span>
         </button>
+
         <input
           ref="fileInput"
           type="file"
@@ -96,15 +117,38 @@ function handleImport(event) {
         />
       </div>
 
+      <!-- Message d'import -->
       <div
         v-if="importMessage"
-        class="alert mt-3"
+        class="mt-4 px-4 py-3 rounded-xl flex items-center gap-3 transition-all duration-300"
         :class="{
-          'alert-success': importMessage.type === 'success',
-          'alert-error': importMessage.type === 'error',
+          'bg-green-500/20 border border-green-500/30': importMessage.type === 'success',
+          'bg-red-500/20 border border-red-500/30': importMessage.type === 'error',
         }"
       >
-        <span class="text-sm">{{ importMessage.text }}</span>
+        <div 
+          class="w-6 h-6 rounded-full flex items-center justify-center"
+          :class="{
+            'bg-green-500/30': importMessage.type === 'success',
+            'bg-red-500/30': importMessage.type === 'error',
+          }"
+        >
+          <svg v-if="importMessage.type === 'success'" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+          </svg>
+          <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </div>
+        <span 
+          class="text-sm font-medium"
+          :class="{
+            'text-green-400': importMessage.type === 'success',
+            'text-red-400': importMessage.type === 'error',
+          }"
+        >
+          {{ importMessage.text }}
+        </span>
       </div>
     </div>
   </div>

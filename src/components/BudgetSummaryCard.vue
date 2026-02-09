@@ -62,76 +62,82 @@ const steps = computed(() => [
 ]);
 
 const ownerIndex = computed(() => store.owners.indexOf(props.owner));
+const isPrimary = computed(() => ownerIndex.value === 0);
 </script>
 
 <template>
-  <div class="card bg-base-100 shadow-lg h-full">
-    <div class="card-body p-5">
-      <h3 class="card-title text-base flex items-center gap-2">
+  <div class="glass-card rounded-2xl overflow-hidden h-full">
+    <!-- Header avec gradient -->
+    <div 
+      class="px-6 py-4 border-b border-white/5"
+      :class="isPrimary ? 'bg-gradient-to-r from-primary/20 to-transparent' : 'bg-gradient-to-r from-secondary/20 to-transparent'"
+    >
+      <h3 class="text-lg font-bold flex items-center gap-3">
         <div
           class="w-3 h-3 rounded-full"
-          :class="{
-            'bg-primary': ownerIndex === 0,
-            'bg-secondary': ownerIndex === 1,
-          }"
+          :class="isPrimary ? 'bg-primary shadow-lg shadow-primary/50' : 'bg-secondary shadow-lg shadow-secondary/50'"
         ></div>
-        {{ owner }}
+        <span class="text-white">{{ owner }}</span>
       </h3>
+    </div>
 
-      <div class="space-y-2 mt-3">
+    <div class="p-6 space-y-4">
+      <!-- Étapes du calcul -->
+      <div class="space-y-2">
         <template v-for="(step, index) in steps" :key="index">
           <!-- Ligne de calcul -->
           <div
-            class="flex justify-between items-center py-1.5 px-3 rounded text-sm"
+            class="flex justify-between items-center py-2.5 px-4 rounded-xl text-sm transition-all duration-200"
             :class="{
-              'bg-base-200/50': step.type === 'subtotal',
-              'bg-primary/10 font-bold text-primary': step.type === 'total',
-              '': step.type === 'neutral' || step.type === 'subtract',
+              'bg-white/5': step.type === 'subtotal',
+              'bg-gradient-to-r from-primary/20 to-primary/5 border border-primary/20': step.type === 'total',
             }"
           >
             <span
-              class="flex items-center gap-1.5"
+              class="flex items-center gap-2"
               :class="{
-                'text-error/70': step.type === 'subtract',
-                'font-semibold': step.type === 'subtotal',
+                'text-red-400/80': step.type === 'subtract',
+                'font-medium text-white/90': step.type === 'subtotal',
+                'font-bold text-white': step.type === 'total',
+                'text-white/70': step.type === 'neutral',
               }"
             >
-              <span v-if="step.type === 'subtract'" class="text-error">-</span>
-              <span v-else-if="step.type === 'subtotal'">=</span>
+              <span v-if="step.type === 'subtract'" class="text-red-400 text-xs">−</span>
+              <span v-else-if="step.type === 'subtotal'" class="text-white/50">=</span>
+              <span v-else-if="step.type === 'total'" class="text-primary">★</span>
               {{ step.label }}
             </span>
             <span
-              class="tabular-nums font-mono text-sm"
+              class="tabular-nums font-mono"
               :class="{
-                'text-error/70': step.type === 'subtract',
-                'font-semibold': step.type === 'subtotal',
-                'text-lg': step.type === 'total',
+                'text-red-400/80': step.type === 'subtract',
+                'font-medium text-white/90': step.type === 'subtotal',
+                'font-bold text-lg text-primary': step.type === 'total',
+                'text-white/70': step.type === 'neutral',
               }"
             >
               {{ step.type === 'subtract'
                 ? formatCurrency(Math.abs(step.value))
                 : formatCurrency(step.value)
-              }} EUR
+              }} €
             </span>
           </div>
 
           <!-- Séparateur avant les sous-totaux -->
           <div
             v-if="step.type === 'subtract' && steps[index + 1]?.type === 'subtotal'"
-            class="divider my-0 h-0"
+            class="border-t border-white/5 my-1"
           ></div>
         </template>
       </div>
 
       <!-- Slider épargne -->
-      <div class="mt-4 px-3">
-        <div class="flex justify-between items-center mb-1">
-          <label class="text-sm font-medium">Taux d'épargne</label>
-          <span class="badge badge-sm font-mono"
-            :class="{
-              'badge-primary': ownerIndex === 0,
-              'badge-secondary': ownerIndex === 1,
-            }"
+      <div class="mt-6 pt-4 border-t border-white/5">
+        <div class="flex justify-between items-center mb-3">
+          <label class="text-sm font-medium text-white/70">Taux d'épargne</label>
+          <span 
+            class="px-3 py-1 rounded-full text-sm font-bold"
+            :class="isPrimary ? 'bg-primary/20 text-primary' : 'bg-secondary/20 text-secondary'"
           >
             {{ savingRate }}%
           </span>
@@ -142,13 +148,10 @@ const ownerIndex = computed(() => store.owners.indexOf(props.owner));
           max="100"
           step="1"
           v-model.number="savingRate"
-          class="range range-sm"
-          :class="{
-            'range-primary': ownerIndex === 0,
-            'range-secondary': ownerIndex === 1,
-          }"
+          class="range range-sm w-full"
+          :class="isPrimary ? 'range-primary' : 'range-secondary'"
         />
-        <div class="flex justify-between text-xs text-base-content/40 mt-0.5">
+        <div class="flex justify-between text-xs text-white/30 mt-2 px-1">
           <span>0%</span>
           <span>50%</span>
           <span>100%</span>
