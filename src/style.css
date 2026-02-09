@@ -2,36 +2,75 @@
 @plugin "daisyui";
 
 @plugin "daisyui/theme" {
-  name: "forest";
-  default: false;
-  prefersdark: false;
+  name: "exptrack";
+  default: true;
+  prefersdark: true;
   color-scheme: "dark";
-  --color-base-100: oklch(20.84% 0.008 17.911);
-  --color-base-200: oklch(18.522% 0.007 17.911);
-  --color-base-300: oklch(16.203% 0.007 17.911);
-  --color-base-content: oklch(83.768% 0.001 17.911);
-  --color-primary: oklch(68.628% 0.185 148.958);
-  --color-primary-content: oklch(0% 0 0);
-  --color-secondary: oklch(69.776% 0.135 168.327);
-  --color-secondary-content: oklch(13.955% 0.027 168.327);
-  --color-accent: oklch(70.628% 0.119 185.713);
-  --color-accent-content: oklch(14.125% 0.023 185.713);
-  --color-neutral: oklch(30.698% 0.039 171.364);
-  --color-neutral-content: oklch(86.139% 0.007 171.364);
-  --color-info: oklch(72.06% 0.191 231.6);
-  --color-info-content: oklch(0% 0 0);
-  --color-success: oklch(64.8% 0.15 160);
-  --color-success-content: oklch(0% 0 0);
-  --color-warning: oklch(84.71% 0.199 83.87);
-  --color-warning-content: oklch(0% 0 0);
-  --color-error: oklch(71.76% 0.221 22.18);
-  --color-error-content: oklch(0% 0 0);
-  --radius-selector: 0rem;
-  --radius-field: 0rem;
-  --radius-box: 0.25rem;
+  --color-base-100: oklch(22% 0.015 260);
+  --color-base-200: oklch(19% 0.015 260);
+  --color-base-300: oklch(16% 0.012 260);
+  --color-base-content: oklch(90% 0.005 260);
+  --color-primary: oklch(70% 0.18 150);
+  --color-primary-content: oklch(10% 0 0);
+  --color-secondary: oklch(68% 0.16 200);
+  --color-secondary-content: oklch(10% 0 0);
+  --color-accent: oklch(72% 0.14 180);
+  --color-accent-content: oklch(10% 0 0);
+  --color-neutral: oklch(28% 0.02 260);
+  --color-neutral-content: oklch(85% 0.005 260);
+  --color-info: oklch(72% 0.19 230);
+  --color-info-content: oklch(10% 0 0);
+  --color-success: oklch(72% 0.19 150);
+  --color-success-content: oklch(10% 0 0);
+  --color-warning: oklch(82% 0.18 85);
+  --color-warning-content: oklch(10% 0 0);
+  --color-error: oklch(65% 0.2 25);
+  --color-error-content: oklch(95% 0 0);
+  --radius-selector: 0.5rem;
+  --radius-field: 0.5rem;
+  --radius-box: 0.75rem;
   --size-selector: 0.25rem;
   --size-field: 0.25rem;
   --border: 1px;
-  --depth: 0;
+  --depth: 1;
   --noise: 0;
+}
+
+/* Transitions globales */
+* {
+  @apply transition-colors duration-150;
+}
+
+/* Scrollbar personnalisée */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: oklch(35% 0.01 260);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: oklch(45% 0.01 260);
+}
+
+/* Amélioration des cartes */
+.card {
+  @apply border border-base-content/5;
+}
+
+/* Amélioration des tables */
+.table :where(thead tr, tfoot tr) {
+  border-color: oklch(30% 0.01 260);
+}
+
+/* Font mono pour les chiffres */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
 }

@@ -6,25 +6,24 @@ const store = useBudgetStore();
 
 const props = defineProps({
   isOpen: Boolean,
-  item: Object,
 });
 
 const emit = defineEmits(["close"]);
 
-const editType = ref("");
-const editOwner = ref("");
-const editCategory = ref("");
-const editAmount = ref(0);
+const type = ref("Revenu");
+const owner = ref("Marine");
+const category = ref("");
+const amount = ref("");
 const errors = ref({});
 
 watch(
-  () => props.item,
-  (newItem) => {
-    if (newItem) {
-      editType.value = newItem.type;
-      editOwner.value = newItem.owner;
-      editCategory.value = newItem.category;
-      editAmount.value = newItem.amount;
+  () => props.isOpen,
+  (val) => {
+    if (val) {
+      type.value = "Revenu";
+      owner.value = "Marine";
+      category.value = "";
+      amount.value = "";
       errors.value = {};
     }
   }
@@ -32,10 +31,10 @@ watch(
 
 function validate() {
   const errs = {};
-  if (!editCategory.value.trim()) {
+  if (!category.value.trim()) {
     errs.category = "La catégorie est requise";
   }
-  if (!editAmount.value || Number(editAmount.value) <= 0) {
+  if (!amount.value || Number(amount.value) <= 0) {
     errs.amount = "Le montant doit être supérieur à 0";
   }
   errors.value = errs;
@@ -44,11 +43,11 @@ function validate() {
 
 function handleSubmit() {
   if (!validate()) return;
-  store.editItem(props.item.id, {
-    type: editType.value,
-    owner: editOwner.value,
-    category: editCategory.value.trim(),
-    amount: Number(editAmount.value),
+  store.addItem({
+    type: type.value,
+    owner: owner.value,
+    category: category.value.trim(),
+    amount: Number(amount.value),
   });
   emit("close");
 }
@@ -66,7 +65,7 @@ function handleSubmit() {
         </svg>
       </button>
 
-      <h3 class="font-bold text-lg mb-6">Modifier l'entrée</h3>
+      <h3 class="font-bold text-lg mb-6">Ajouter une entrée</h3>
 
       <form @submit.prevent="handleSubmit" class="space-y-4">
         <div class="grid grid-cols-2 gap-4">
@@ -74,7 +73,7 @@ function handleSubmit() {
             <label class="label">
               <span class="label-text text-sm font-medium">Type</span>
             </label>
-            <select v-model="editType" class="select select-bordered select-sm w-full">
+            <select v-model="type" class="select select-bordered select-sm w-full">
               <option value="Revenu">Revenu</option>
               <option value="Charge">Charge</option>
             </select>
@@ -83,7 +82,7 @@ function handleSubmit() {
             <label class="label">
               <span class="label-text text-sm font-medium">Assigné à</span>
             </label>
-            <select v-model="editOwner" class="select select-bordered select-sm w-full">
+            <select v-model="owner" class="select select-bordered select-sm w-full">
               <option v-for="o in store.owners" :key="o" :value="o">{{ o }}</option>
               <option value="Commun">Commun</option>
             </select>
@@ -95,8 +94,9 @@ function handleSubmit() {
             <span class="label-text text-sm font-medium">Catégorie</span>
           </label>
           <input
-            v-model="editCategory"
+            v-model="category"
             type="text"
+            placeholder="Ex: Salaire, Loyer, Courses..."
             class="input input-bordered input-sm w-full"
             :class="{ 'input-error': errors.category }"
           />
@@ -110,10 +110,11 @@ function handleSubmit() {
             <span class="label-text text-sm font-medium">Montant (EUR)</span>
           </label>
           <input
-            v-model.number="editAmount"
+            v-model.number="amount"
             type="number"
             step="0.01"
             min="0.01"
+            placeholder="0.00"
             class="input input-bordered input-sm w-full"
             :class="{ 'input-error': errors.amount }"
           />
@@ -127,7 +128,7 @@ function handleSubmit() {
             Annuler
           </button>
           <button type="submit" class="btn btn-primary btn-sm">
-            Sauvegarder
+            Ajouter
           </button>
         </div>
       </form>

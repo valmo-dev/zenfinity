@@ -1,155 +1,92 @@
 <script setup>
-import { computed } from "vue";
-import BudgetTable from "./components/BudgetTable.vue";
-import BudgetForm from "./components/BudgetForm.vue";
+import { ref } from "vue";
 import { useBudgetStore } from "./stores/budget";
+import MonthSelector from "./components/MonthSelector.vue";
+import AddEntryModal from "./components/AddEntryModal.vue";
+import RevenueSection from "./components/RevenueSection.vue";
+import BudgetSummaryCard from "./components/BudgetSummaryCard.vue";
+import ChargesSection from "./components/ChargesSection.vue";
+import DistributionControl from "./components/DistributionControl.vue";
+import ChartSection from "./components/ChartSection.vue";
+import ExportImport from "./components/ExportImport.vue";
+import exptrackLogo from "./assets/exptrack.svg";
 
-const budgetStore = useBudgetStore();
-
-function deleteItem(index) {
-  budgetStore.deleteItem(index);
-}
-
-function editItem(index, updatedItem) {
-  budgetStore.editItem(index, updatedItem);
-}
-
-const savingRateMarine = computed({
-  get: () => budgetStore.savingRateMarine,
-  set: (value) => budgetStore.setSavingRateMarine(value),
-});
-
-const savingRateValentin = computed({
-  get: () => budgetStore.savingRateValentin,
-  set: (value) => budgetStore.setSavingRateValentin(value),
-});
+const store = useBudgetStore();
+const showAddModal = ref(false);
 </script>
 
 <template>
-  <div class="min-h-screen bg-base-200">
-    <div class="container mx-auto p-6">
-      <div class="w-80 flex flex-row items-center justify-center">
-        <img
-          src="/src/assets/exptrack.svg"
-          alt="ExpTrack"
-          class="w-32 h-32 mx-auto mb-8"
-        />
-        <div class="prose prose-lg mx-auto mb-8">
-          <h1 class="text-3xl font-bold text-center">ExpTrack</h1>
+  <div class="min-h-screen bg-base-300">
+    <!-- Header -->
+    <header class="sticky top-0 z-40 bg-base-100/80 backdrop-blur-lg border-b border-base-content/5">
+      <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <img :src="exptrackLogo" alt="ExpTrack" class="w-8 h-8" />
+          <h1 class="text-xl font-bold tracking-tight">ExpTrack</h1>
         </div>
+        <button
+          class="btn btn-primary btn-sm gap-1"
+          @click="showAddModal = true"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+          <span class="hidden sm:inline">Ajouter</span>
+        </button>
       </div>
-      <div class="mt-2 grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <!-- Carte Marine -->
-        <div class="card bg-base-100 shadow-xl p-6">
-          <h2 class="text-xl font-bold mb-4">Résumé - Marine</h2>
-          <div class="space-y-2">
-            <p>
-              <strong>Revenu attribué :</strong>
-              {{ budgetStore.contributions.Marine }} €
-            </p>
-            <p>
-              <strong>Charges personnelles :</strong>
-              {{ budgetStore.totalPersonalChargesMarine }} €
-            </p>
-            <p>
-              <strong>Charges communes (part) :</strong>
-              {{
-                (
-                  budgetStore.totalCommunalCharges *
-                  (budgetStore.communalChargesDistribution.Marine / 100)
-                ).toFixed(2)
-              }}
-              €
-            </p>
-            <p>
-              <strong>Charges effectives :</strong>
-              {{ budgetStore.effectiveChargesMarine }} €
-            </p>
-            <p><strong>Revenu net :</strong> {{ budgetStore.netMarine }} €</p>
-            <!-- Input custom pour gérer le taux d'épargne de Marine -->
-            <div class="mt-4">
-              <label class="block mb-1 font-semibold">
-                Taux d'épargne désiré : {{ savingRateMarine }}%
-              </label>
-              <input
-                type="range"
-                min="0"
-                max="100"
-                step="1"
-                v-model="savingRateMarine"
-                class="range range-primary"
-              />
-            </div>
-            <p>
-              <strong>Potentiel d'épargne :</strong>
-              {{ budgetStore.savingPotentialMarine }} €
-            </p>
-            <p>
-              <strong>Reste après épargne :</strong>
-              {{ budgetStore.remainingAfterSavingMarine }} €
-            </p>
-          </div>
-        </div>
-        <!-- Carte Valentin -->
-        <div class="card bg-base-100 shadow-xl p-6">
-          <h2 class="text-xl font-bold mb-4">Résumé - Valentin</h2>
-          <div class="space-y-2">
-            <p>
-              <strong>Revenu attribué :</strong>
-              {{ budgetStore.contributions.Valentin }} €
-            </p>
-            <p>
-              <strong>Charges personnelles :</strong>
-              {{ budgetStore.totalPersonalChargesValentin }} €
-            </p>
-            <p>
-              <strong>Charges communes (part) :</strong>
-              {{
-                (
-                  budgetStore.totalCommunalCharges *
-                  (budgetStore.communalChargesDistribution.Valentin / 100)
-                ).toFixed(2)
-              }}
-              €
-            </p>
-            <p>
-              <strong>Charges effectives :</strong>
-              {{ budgetStore.effectiveChargesValentin }} €
-            </p>
-            <p><strong>Revenu net :</strong> {{ budgetStore.netValentin }} €</p>
-            <!-- Input custom pour gérer le taux d'épargne de Valentin -->
-            <div class="mt-4">
-              <label class="block mb-1 font-semibold">
-                Taux d'épargne désiré : {{ savingRateValentin }}%
-              </label>
-              <input
-                type="range"
-                min="0"
-                max="100"
-                step="1"
-                v-model="savingRateValentin"
-                class="range range-primary"
-              />
-            </div>
-            <p>
-              <strong>Potentiel d'épargne :</strong>
-              {{ budgetStore.savingPotentialValentin }} €
-            </p>
-            <p>
-              <strong>Reste après épargne :</strong>
-              {{ budgetStore.remainingAfterSavingValentin }} €
-            </p>
-          </div>
-        </div>
-      </div>
+    </header>
 
-      <BudgetForm />
+    <!-- Contenu principal -->
+    <main class="container mx-auto px-4 py-6 space-y-6 max-w-6xl">
+      <!-- Sélecteur de mois -->
+      <MonthSelector />
 
-      <BudgetTable
-        :budgetItems="budgetStore.items"
-        @delete="deleteItem"
-        @edit="editItem"
-      />
-    </div>
+      <!-- Résumés par personne -->
+      <section>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <BudgetSummaryCard
+            v-for="owner in store.owners"
+            :key="owner"
+            :owner="owner"
+          />
+        </div>
+      </section>
+
+      <!-- Revenus -->
+      <section>
+        <RevenueSection />
+      </section>
+
+      <!-- Répartition des charges communes -->
+      <section>
+        <DistributionControl />
+      </section>
+
+      <!-- Charges -->
+      <section>
+        <ChargesSection />
+      </section>
+
+      <!-- Graphiques -->
+      <section>
+        <ChartSection />
+      </section>
+
+      <!-- Export/Import -->
+      <section>
+        <ExportImport />
+      </section>
+
+      <!-- Footer -->
+      <footer class="text-center text-xs text-base-content/30 py-4">
+        ExpTrack &mdash; Suivi budgétaire
+      </footer>
+    </main>
+
+    <!-- Modal d'ajout -->
+    <AddEntryModal
+      :isOpen="showAddModal"
+      @close="showAddModal = false"
+    />
   </div>
 </template>
