@@ -96,18 +96,18 @@ function uniqueCategories(items) {
 <template>
   <div class="space-y-6">
     <!-- Mode joint : une seule liste de charges du foyer -->
-    <div v-if="isJointMode" class="glass-card rounded-2xl overflow-hidden">
+    <div v-if="isJointMode" class="glass-card rounded-none overflow-hidden">
       <!-- Header -->
-      <div class="px-6 py-4 border-b border-base-content/5 bg-gradient-to-r from-blue-500/10 to-transparent">
+      <div class="px-6 py-4 border-b-3 border-brutal bg-blue-500/20">
         <div class="flex items-center justify-between">
           <h3 class="text-lg font-bold flex items-center gap-3 text-base-content">
-            <div class="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center">
+            <div class="w-8 h-8 rounded-none bg-blue-500/20 flex items-center justify-center">
               <Users :size="16" class="text-blue-400" />
             </div>
             Charges du foyer
           </h3>
           <span 
-            class="px-4 py-1.5 rounded-full text-sm font-bold bg-blue-500/20 text-blue-400"
+            class="px-4 py-1.5 rounded-none text-sm font-bold bg-blue-500/20 text-blue-400"
             title="Total des charges du foyer"
           >
             {{ formatCurrency(store.totalCharges) }} €
@@ -120,34 +120,34 @@ function uniqueCategories(items) {
           <div
             v-for="item in store.allChargeItems"
             :key="item.id"
-            class="flex items-center justify-between py-3 px-4 rounded-xl bg-base-content/3 hover:bg-base-content/5 transition-all duration-200 group"
+            class="flex items-center justify-between py-3 px-4 rounded-none bg-base-content/3 hover:bg-base-content/5 transition-all duration-200 group"
           >
             <span class="font-medium text-base-content/90">{{ item.category }}</span>
             <div class="flex items-center gap-3">
               <span class="tabular-nums font-mono text-red-400/90">
                 −{{ formatCurrency(item.amount) }} €
               </span>
-              <div class="opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity flex gap-1">
-                <button
-                  class="w-8 h-8 rounded-full bg-base-content/5 hover:bg-base-content/10 flex items-center justify-center transition-colors"
-                  @click="openEdit(item)"
-                  title="Modifier cette entrée"
-                >
-                  <Pencil :size="14" class="text-base-content/60" />
-                </button>
-                <button
-                  class="w-8 h-8 rounded-full bg-base-content/5 hover:bg-red-500/20 flex items-center justify-center transition-colors"
-                  @click="requestDelete(item)"
-                  title="Supprimer cette entrée"
-                >
-                  <Trash2 :size="14" class="text-red-400" />
-                </button>
-              </div>
+                <div class="opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity flex gap-1">
+                  <button
+                    class="brutal-icon-btn"
+                    @click="openEdit(item)"
+                    title="Modifier cette entrée"
+                  >
+                    <Pencil :size="14" class="text-base-content/60" />
+                  </button>
+                  <button
+                    class="brutal-icon-btn brutal-icon-btn-danger"
+                    @click="requestDelete(item)"
+                    title="Supprimer cette entrée"
+                  >
+                    <Trash2 :size="14" class="text-red-400" />
+                  </button>
+                </div>
             </div>
           </div>
 
           <!-- Budget bars par catégorie (mode joint) -->
-          <div v-if="uniqueCategories(store.allChargeItems).length > 0" class="mt-4 pt-3 border-t border-base-content/5 space-y-3">
+          <div v-if="uniqueCategories(store.allChargeItems).length > 0" class="mt-4 pt-3 border-t border-brutal space-y-3">
             <div v-for="cat in uniqueCategories(store.allChargeItems)" :key="cat" class="px-4">
               <p class="text-xs text-base-content/50 mb-1">{{ cat }}</p>
               <BudgetProgressBar
@@ -160,7 +160,7 @@ function uniqueCategories(items) {
 
         <!-- État vide -->
         <div v-else class="text-center py-8">
-          <div class="w-12 h-12 rounded-full bg-base-content/5 flex items-center justify-center mx-auto mb-3">
+          <div class="w-12 h-12 rounded-none bg-base-content/5 flex items-center justify-center mx-auto mb-3">
             <Users :size="24" class="text-base-content/40" stroke-width="1.5" />
           </div>
           <p class="text-base-content/50 text-sm">Aucune charge</p>
@@ -170,18 +170,18 @@ function uniqueCategories(items) {
     </div>
 
     <!-- Mode separate : charges communes (masqué en mode 1 personne et joint) -->
-    <div v-if="!isSinglePerson && !isJointMode" class="glass-card rounded-2xl overflow-hidden">
+    <div v-if="!isSinglePerson && !isJointMode" class="glass-card rounded-none overflow-hidden">
       <!-- Header -->
-      <div class="px-6 py-4 border-b border-base-content/5 bg-gradient-to-r from-amber-500/10 to-transparent">
+      <div class="px-6 py-4 border-b-3 border-brutal bg-amber-500/20">
         <div class="flex items-center justify-between">
           <h3 class="text-lg font-bold flex items-center gap-3 text-base-content">
-            <div class="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center">
+            <div class="w-8 h-8 rounded-none bg-amber-500/20 flex items-center justify-center">
               <Users :size="16" class="text-amber-400" />
             </div>
             Charges communes
           </h3>
           <span 
-            class="px-4 py-1.5 rounded-full text-sm font-bold bg-amber-500/20 text-amber-400"
+            class="px-4 py-1.5 rounded-none text-sm font-bold bg-amber-500/20 text-amber-400"
             title="Total des charges communes"
           >
             {{ formatCurrency(store.totalCommunalCharges) }} €
@@ -196,7 +196,7 @@ function uniqueCategories(items) {
             <div
               v-for="item in store.communalChargeItems"
               :key="item.id"
-              class="flex items-center justify-between py-3 px-4 rounded-xl bg-base-content/3 hover:bg-base-content/5 transition-all duration-200 group"
+              class="flex items-center justify-between py-3 px-4 rounded-none bg-base-content/3 hover:bg-base-content/5 transition-all duration-200 group"
             >
               <span class="font-medium text-base-content/90">{{ item.category }}</span>
               <div class="flex items-center gap-3">
@@ -205,14 +205,14 @@ function uniqueCategories(items) {
                 </span>
                 <div class="opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity flex gap-1">
                   <button
-                    class="w-8 h-8 rounded-full bg-base-content/5 hover:bg-base-content/10 flex items-center justify-center transition-colors"
+                    class="w-8 h-8 rounded-none bg-base-content/5 hover:bg-base-content/10 flex items-center justify-center transition-colors"
                     @click="openEdit(item)"
                     title="Modifier cette entrée"
                   >
                     <Pencil :size="14" class="text-base-content/60" />
                   </button>
                   <button
-                    class="w-8 h-8 rounded-full bg-base-content/5 hover:bg-red-500/20 flex items-center justify-center transition-colors"
+                    class="w-8 h-8 rounded-none bg-base-content/5 hover:bg-red-500/20 flex items-center justify-center transition-colors"
                     @click="requestDelete(item)"
                     title="Supprimer cette entrée"
                   >
@@ -224,7 +224,7 @@ function uniqueCategories(items) {
           </div>
 
           <!-- Budget bars par catégorie (charges communes) -->
-          <div v-if="uniqueCategories(store.communalChargeItems).length > 0" class="mt-4 pt-3 border-t border-base-content/5 space-y-3">
+          <div v-if="uniqueCategories(store.communalChargeItems).length > 0" class="mt-4 pt-3 border-t border-brutal space-y-3">
             <div v-for="cat in uniqueCategories(store.communalChargeItems)" :key="cat" class="px-4">
               <p class="text-xs text-base-content/50 mb-1">{{ cat }}</p>
               <BudgetProgressBar
@@ -235,7 +235,7 @@ function uniqueCategories(items) {
           </div>
 
           <!-- Répartition (seulement pour 2 personnes) -->
-          <div v-if="!isSinglePerson" class="mt-6 pt-4 border-t border-base-content/5">
+          <div v-if="!isSinglePerson" class="mt-6 pt-4 border-t border-brutal">
             <div class="flex items-center gap-3 mb-4">
               <div class="h-px flex-1 bg-gradient-to-r from-base-content/10 to-transparent"></div>
               <span class="text-xs font-medium text-base-content/50 uppercase tracking-wider">Répartition</span>
@@ -245,12 +245,12 @@ function uniqueCategories(items) {
               <div
                 v-for="(owner, index) in store.owners"
                 :key="owner"
-                class="flex justify-between items-center py-3 px-4 rounded-xl bg-base-content/3"
+                class="flex justify-between items-center py-3 px-4 rounded-none bg-base-content/3"
                 :title="`Part de ${owner} basée sur ${store.communalChargesDistribution[owner]}% du total`"
               >
                 <div class="flex items-center gap-2">
                   <div 
-                    class="w-2 h-2 rounded-full"
+class="w-2 h-2 rounded-full"
                     :class="index === 0 ? 'bg-primary' : 'bg-secondary'"
                   ></div>
                   <span class="text-base-content/80">{{ owner }}</span>
@@ -266,7 +266,7 @@ function uniqueCategories(items) {
 
         <!-- État vide -->
         <div v-else class="text-center py-8">
-          <div class="w-12 h-12 rounded-full bg-base-content/5 flex items-center justify-center mx-auto mb-3">
+          <div class="w-12 h-12 rounded-none bg-base-content/5 flex items-center justify-center mx-auto mb-3">
             <Users :size="24" class="text-base-content/40" stroke-width="1.5" />
           </div>
           <p class="text-base-content/50 text-sm">Aucune charge commune</p>
@@ -284,23 +284,23 @@ function uniqueCategories(items) {
       <div
         v-for="(owner, index) in store.owners"
         :key="owner"
-        class="glass-card rounded-2xl overflow-hidden"
+        class="glass-card rounded-none overflow-hidden"
       >
         <!-- Header -->
         <div 
-          class="px-6 py-4 border-b border-base-content/5"
-          :class="index === 0 ? 'bg-gradient-to-r from-primary/15 to-transparent' : 'bg-gradient-to-r from-secondary/15 to-transparent'"
+          class="px-6 py-4 border-b-3 border-brutal"
+          :class="index === 0 ? 'bg-primary/20' : 'bg-secondary/20'"
         >
           <div class="flex items-center justify-between">
             <h3 class="text-lg font-bold flex items-center gap-3 text-base-content">
               <div 
-                class="w-3 h-3 rounded-full"
+class="w-3 h-3 rounded-full"
                 :class="index === 0 ? 'bg-primary shadow-lg shadow-primary/50' : 'bg-secondary shadow-lg shadow-secondary/50'"
               ></div>
               Charges {{ owner }}
             </h3>
             <span 
-              class="px-3 py-1 rounded-full text-sm font-bold"
+              class="px-3 py-1 rounded-none text-sm font-bold"
               :class="index === 0 ? 'bg-primary/20 text-primary' : 'bg-secondary/20 text-secondary'"
               :title="`Total des charges personnelles de ${owner}`"
             >
@@ -314,7 +314,7 @@ function uniqueCategories(items) {
             <div
               v-for="item in allChargeItems(owner)"
               :key="item.id"
-              class="flex items-center justify-between py-3 px-4 rounded-xl bg-base-content/3 hover:bg-base-content/5 transition-all duration-200 group"
+              class="flex items-center justify-between py-3 px-4 rounded-none bg-base-content/3 hover:bg-base-content/5 transition-all duration-200 group"
             >
               <span class="text-base-content/90">{{ item.category }}</span>
               <div class="flex items-center gap-3">
@@ -323,14 +323,14 @@ function uniqueCategories(items) {
                 </span>
                 <div class="opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity flex gap-1">
                   <button
-                    class="w-8 h-8 rounded-full bg-base-content/5 hover:bg-base-content/10 flex items-center justify-center transition-colors"
+                    class="brutal-icon-btn"
                     @click="openEdit(item)"
                     title="Modifier cette entrée"
                   >
                     <Pencil :size="14" class="text-base-content/60" />
                   </button>
                   <button
-                    class="w-8 h-8 rounded-full bg-base-content/5 hover:bg-red-500/20 flex items-center justify-center transition-colors"
+                    class="brutal-icon-btn brutal-icon-btn-danger"
                     @click="requestDelete(item)"
                     title="Supprimer cette entrée"
                   >
@@ -341,7 +341,7 @@ function uniqueCategories(items) {
             </div>
 
             <!-- Budget bars par catégorie (charges personnelles) -->
-            <div v-if="uniqueCategories(allChargeItems(owner)).length > 0" class="mt-4 pt-3 border-t border-base-content/5 space-y-3">
+            <div v-if="uniqueCategories(allChargeItems(owner)).length > 0" class="mt-4 pt-3 border-t border-brutal space-y-3">
               <div v-for="cat in uniqueCategories(allChargeItems(owner))" :key="cat" class="px-4">
                 <p class="text-xs text-base-content/50 mb-1">{{ cat }}</p>
                 <BudgetProgressBar
@@ -354,7 +354,7 @@ function uniqueCategories(items) {
 
           <!-- État vide -->
           <div v-else class="text-center py-8">
-            <div class="w-12 h-12 rounded-full bg-base-content/5 flex items-center justify-center mx-auto mb-3">
+            <div class="w-12 h-12 rounded-none bg-base-content/5 flex items-center justify-center mx-auto mb-3">
               <Plus :size="24" class="text-base-content/40" stroke-width="1.5" />
             </div>
             <p class="text-base-content/50 text-sm">Aucune charge personnelle</p>

@@ -59,7 +59,7 @@ defineExpose({ addToast, removeToast });
       >
         <!-- Icon -->
         <div 
-          class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
+          class="w-8 h-8 rounded-none flex items-center justify-center flex-shrink-0"
           :class="{
             'bg-green-500/20': toast.type === 'success',
             'bg-red-500/20': toast.type === 'error',
@@ -75,7 +75,7 @@ defineExpose({ addToast, removeToast });
         <p class="text-sm text-base-content/90 font-medium">{{ toast.message }}</p>
         
         <!-- Close button -->
-        <button class="ml-auto w-6 h-6 rounded-full hover:bg-base-content/10 flex items-center justify-center transition-colors">
+        <button class="ml-auto w-6 h-6 rounded-none hover:bg-base-content/10 flex items-center justify-center transition-colors">
           <X :size="14" class="text-base-content/50" />
         </button>
       </div>

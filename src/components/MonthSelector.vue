@@ -61,32 +61,30 @@ function applyRecurring() {
     <div class="flex items-center gap-6">
       <!-- Bouton précédent -->
       <button
-        class="group w-12 h-12 rounded-full bg-base-content/5 hover:bg-base-content/10 border border-base-content/10 hover:border-base-content/20 flex items-center justify-center transition-all duration-300"
+        class="brutal-btn w-12 h-12 !p-0 flex items-center justify-center"
         @click="navigateMonth(-1)"
         aria-label="Mois précédent"
       >
-        <ChevronLeft :size="20" class="text-base-content/70 group-hover:text-base-content transition-colors" />
+        <ChevronLeft :size="24" :stroke-width="2.5" />
       </button>
 
       <!-- Affichage du mois -->
       <div class="text-center min-w-56">
-        <h2 class="text-3xl font-bold tracking-tight text-base-content">
+        <h2 class="text-3xl font-bold tracking-tight text-base-content uppercase">
           {{ displayMonth }}
         </h2>
-        <div class="flex items-center justify-center gap-2 mt-1">
-          <div class="w-8 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent"></div>
-          <div class="w-1.5 h-1.5 rounded-full bg-primary"></div>
-          <div class="w-8 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent"></div>
+        <div class="flex items-center justify-center mt-2">
+          <div class="w-20 bg-base-content h-1 rounded-sm"></div>
         </div>
       </div>
 
       <!-- Bouton suivant -->
       <button
-        class="group w-12 h-12 rounded-full bg-base-content/5 hover:bg-base-content/10 border border-base-content/10 hover:border-base-content/20 flex items-center justify-center transition-all duration-300"
+        class="brutal-btn w-12 h-12 !p-0 flex items-center justify-center"
         @click="navigateMonth(1)"
         aria-label="Mois suivant"
       >
-        <ChevronRight :size="20" class="text-base-content/70 group-hover:text-base-content transition-colors" />
+        <ChevronRight :size="24" :stroke-width="2.5" />
       </button>
     </div>
 
@@ -95,14 +93,14 @@ function applyRecurring() {
       <!-- Appliquer les récurrences -->
       <button
         v-if="canApplyRecurring"
-        class="group flex items-center gap-3 px-5 py-2.5 rounded-full bg-violet-500/10 hover:bg-violet-500/20 border border-violet-500/20 hover:border-violet-500/30 transition-all duration-300"
+        class="brutal-btn bg-violet-500/20 hover:bg-violet-500/30"
         @click="applyRecurring"
       >
         <Repeat :size="16" class="text-violet-400" />
-        <span class="text-sm font-medium text-base-content/80 group-hover:text-base-content">
+        <span class="text-sm font-medium">
           Appliquer les récurrences
         </span>
-        <span class="px-2 py-0.5 rounded-full text-xs font-bold bg-violet-500/20 text-violet-400">
+        <span class="px-2 py-0.5 rounded-none text-xs font-bold bg-violet-500/20 text-violet-400">
           {{ store.activeRecurringItems.length }}
         </span>
       </button>
@@ -110,11 +108,11 @@ function applyRecurring() {
       <!-- Bouton de duplication (fallback) -->
       <button
         v-if="canDuplicate"
-        class="group flex items-center gap-3 px-5 py-2.5 rounded-full bg-base-content/5 hover:bg-primary/20 border border-base-content/10 hover:border-primary/30 transition-all duration-300"
+        class="brutal-btn bg-primary/20 hover:bg-primary/30"
         @click="duplicatePrevious"
       >
         <Copy :size="16" class="text-primary" />
-        <span class="text-sm font-medium text-base-content/80 group-hover:text-base-content">
+        <span class="text-sm font-medium">
           Dupliquer depuis {{ previousMonthDisplay }}
         </span>
       </button>

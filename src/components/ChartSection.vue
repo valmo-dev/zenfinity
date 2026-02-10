@@ -189,11 +189,11 @@ const barOptions = computed(() => ({
 <template>
   <div class="space-y-6">
     <!-- Répartition des charges (Doughnut) -->
-    <div v-if="hasCharges" class="glass-card rounded-2xl overflow-hidden">
+    <div v-if="hasCharges" class="glass-card rounded-none overflow-hidden">
       <!-- Header -->
-      <div class="px-6 py-4 border-b border-base-content/5 bg-gradient-to-r from-primary/10 to-transparent">
+      <div class="px-6 py-4 border-b-3 border-brutal bg-primary/20">
         <h3 class="text-lg font-bold flex items-center gap-3 text-base-content">
-          <div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
+          <div class="w-8 h-8 rounded-none bg-primary/20 flex items-center justify-center">
             <PieChart :size="16" class="text-primary" />
           </div>
           Répartition des charges
@@ -207,11 +207,11 @@ const barOptions = computed(() => ({
     </div>
 
     <!-- Évolution mensuelle (Bar) -->
-    <div v-if="hasMultipleMonths" class="glass-card rounded-2xl overflow-hidden">
+    <div v-if="hasMultipleMonths" class="glass-card rounded-none overflow-hidden">
       <!-- Header -->
-      <div class="px-6 py-4 border-b border-base-content/5 bg-gradient-to-r from-blue-500/10 to-transparent">
+      <div class="px-6 py-4 border-b-3 border-brutal bg-blue-500/20">
         <h3 class="text-lg font-bold flex items-center gap-3 text-base-content">
-          <div class="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center">
+          <div class="w-8 h-8 rounded-none bg-blue-500/20 flex items-center justify-center">
             <BarChart3 :size="16" class="text-blue-400" />
           </div>
           Évolution mensuelle
@@ -227,10 +227,10 @@ const barOptions = computed(() => ({
     <!-- État vide -->
     <div
       v-if="!hasCharges && !hasMultipleMonths"
-      class="glass-card rounded-2xl overflow-hidden"
+      class="glass-card rounded-none overflow-hidden"
     >
       <div class="p-8 text-center">
-        <div class="w-16 h-16 rounded-full bg-base-content/5 flex items-center justify-center mx-auto mb-4">
+        <div class="w-16 h-16 rounded-none bg-base-content/5 flex items-center justify-center mx-auto mb-4">
           <BarChart3 :size="32" class="text-base-content/30" stroke-width="1.5" />
         </div>
         <p class="text-base-content/40">Les graphiques apparaitront une fois des données ajoutées</p>

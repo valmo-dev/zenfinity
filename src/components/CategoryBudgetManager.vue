@@ -89,18 +89,18 @@ function formatCurrency(value) {
 </script>
 
 <template>
-  <div class="glass-card rounded-2xl overflow-hidden">
+  <div class="glass-card rounded-none overflow-hidden">
     <!-- Header -->
-    <div class="px-6 py-4 border-b border-base-content/5 bg-gradient-to-r from-cyan-500/10 to-transparent">
+    <div class="px-6 py-4 border-b-3 border-brutal bg-cyan-500/20">
       <div class="flex items-center justify-between">
         <h3 class="text-lg font-bold flex items-center gap-3 text-base-content">
-          <div class="w-8 h-8 rounded-full bg-cyan-500/20 flex items-center justify-center">
+          <div class="w-8 h-8 rounded-none bg-cyan-500/20 flex items-center justify-center">
             <Wallet :size="16" class="text-cyan-400" />
           </div>
           Budget par catégorie
         </h3>
         <button
-          class="flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 text-sm font-medium transition-all"
+          class="brutal-btn brutal-btn-sm bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400"
           @click="showAddForm = !showAddForm"
         >
           <Plus :size="14" />
@@ -112,13 +112,13 @@ function formatCurrency(value) {
     <div class="p-6 space-y-4">
       <!-- Formulaire d'ajout -->
       <Transition name="slide">
-        <div v-if="showAddForm" class="p-4 rounded-xl bg-base-content/3 border border-base-content/5 space-y-3">
+        <div v-if="showAddForm" class="p-4 rounded-none bg-base-content/3 border border-brutal space-y-3">
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div class="space-y-1">
               <label class="text-xs font-medium text-base-content/50">Catégorie</label>
               <select
                 v-model="newCategory"
-                class="w-full px-3 py-2 rounded-lg bg-base-content/5 border border-base-content/10 text-sm text-base-content focus:border-cyan-500/50 focus:outline-none"
+                class="w-full px-3 py-2 rounded-none bg-base-content/5 border border-brutal text-sm text-base-content focus:border-cyan-500/50 focus:outline-none"
               >
                 <option value="" disabled class="bg-base-100">Choisir...</option>
                 <option
@@ -139,19 +139,19 @@ function formatCurrency(value) {
                 step="1"
                 min="1"
                 placeholder="0"
-                class="w-full px-3 py-2 rounded-lg bg-base-content/5 border border-base-content/10 text-sm text-base-content placeholder-base-content/30 focus:border-cyan-500/50 focus:outline-none"
+                class="w-full px-3 py-2 rounded-none bg-base-content/5 border border-brutal text-sm text-base-content placeholder-base-content/30 focus:border-cyan-500/50 focus:outline-none"
               />
             </div>
           </div>
           <div class="flex justify-end gap-2">
             <button
-              class="px-4 py-2 rounded-lg bg-base-content/5 hover:bg-base-content/10 text-sm text-base-content/70 transition-colors"
+              class="brutal-btn brutal-btn-sm brutal-btn-ghost"
               @click="showAddForm = false"
             >
               Annuler
             </button>
             <button
-              class="px-4 py-2 rounded-lg bg-cyan-500 hover:bg-cyan-600 text-white text-sm font-medium transition-colors"
+              class="brutal-btn brutal-btn-sm bg-cyan-500 hover:bg-cyan-600 text-white"
               @click="addBudget"
             >
               Définir le budget
@@ -165,7 +165,7 @@ function formatCurrency(value) {
         <div
           v-for="category in store.categoriesWithBudget"
           :key="category"
-          class="p-4 rounded-xl bg-base-content/3 space-y-3"
+          class="p-4 rounded-none bg-base-content/3 space-y-3"
         >
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-3">
@@ -178,7 +178,7 @@ function formatCurrency(value) {
                   @change="updateGlobalBudget(category, $event.target.value)"
                   step="1"
                   min="1"
-                  class="w-20 px-2 py-1 rounded-lg bg-base-content/5 border border-base-content/10 text-xs text-base-content text-right tabular-nums focus:outline-none focus:border-cyan-500/50"
+                  class="w-20 px-2 py-1 rounded-none bg-base-content/5 border border-brutal text-xs text-base-content text-right tabular-nums focus:outline-none focus:border-cyan-500/50"
                 />
                 <span class="text-xs text-base-content/40">€/mois</span>
               </div>
@@ -186,7 +186,7 @@ function formatCurrency(value) {
             <div class="flex items-center gap-1">
               <button
                 v-if="isSeparateMode"
-                class="w-8 h-8 rounded-full bg-base-content/5 hover:bg-base-content/10 flex items-center justify-center transition-colors"
+                class="brutal-icon-btn"
                 @click="toggleExpand(category)"
                 title="Budget par personne"
               >
@@ -194,7 +194,7 @@ function formatCurrency(value) {
                 <ChevronUp v-else :size="14" class="text-base-content/60" />
               </button>
               <button
-                class="w-8 h-8 rounded-full bg-base-content/5 hover:bg-red-500/20 flex items-center justify-center transition-colors"
+                class="brutal-icon-btn brutal-icon-btn-danger"
                 @click="deleteBudget(category)"
                 title="Supprimer le budget"
               >
@@ -211,7 +211,7 @@ function formatCurrency(value) {
 
           <!-- Budget par personne (mode separate) -->
           <Transition name="slide">
-            <div v-if="isSeparateMode && expandedCategory === category" class="pt-3 border-t border-base-content/5 space-y-3">
+            <div v-if="isSeparateMode && expandedCategory === category" class="pt-3 border-t border-brutal space-y-3">
               <div
                 v-for="owner in store.owners"
                 :key="owner"
@@ -226,7 +226,7 @@ function formatCurrency(value) {
                     placeholder="—"
                     step="1"
                     min="0"
-                    class="w-20 px-2 py-1 rounded-lg bg-base-content/5 border border-base-content/10 text-xs text-base-content text-right tabular-nums placeholder-base-content/30 focus:outline-none focus:border-cyan-500/50"
+                    class="w-20 px-2 py-1 rounded-none bg-base-content/5 border border-brutal text-xs text-base-content text-right tabular-nums placeholder-base-content/30 focus:outline-none focus:border-cyan-500/50"
                   />
                   <span class="text-xs text-base-content/40">€</span>
                 </div>
@@ -238,7 +238,7 @@ function formatCurrency(value) {
 
       <!-- État vide -->
       <div v-else class="text-center py-8">
-        <div class="w-12 h-12 rounded-full bg-base-content/5 flex items-center justify-center mx-auto mb-3">
+        <div class="w-12 h-12 rounded-none bg-base-content/5 flex items-center justify-center mx-auto mb-3">
           <Wallet :size="24" class="text-base-content/40" stroke-width="1.5" />
         </div>
         <p class="text-base-content/50 text-sm">Aucun budget défini</p>

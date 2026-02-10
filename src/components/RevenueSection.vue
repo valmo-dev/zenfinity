@@ -56,11 +56,11 @@ function formatCurrency(value) {
 </script>
 
 <template>
-  <div class="glass-card rounded-2xl overflow-hidden">
+  <div class="glass-card rounded-none overflow-hidden">
     <!-- Header -->
-    <div class="px-6 py-4 border-b border-base-content/5 bg-gradient-to-r from-green-500/10 to-transparent">
+    <div class="px-6 py-4 border-b-3 border-brutal bg-green-500/20">
       <h3 class="text-lg font-bold flex items-center gap-3 text-base-content">
-        <div class="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center">
+        <div class="w-8 h-8 rounded-none bg-green-500/20 flex items-center justify-center">
           <CircleDollarSign :size="16" class="text-green-400" />
         </div>
         Revenus
@@ -87,7 +87,7 @@ function formatCurrency(value) {
               <td class="py-3">
                 <div class="flex items-center gap-2">
                   <div 
-                    class="w-2 h-2 rounded-full"
+class="w-2 h-2 rounded-full"
                     :class="index === 0 ? 'bg-primary' : 'bg-secondary'"
                   ></div>
                   <span class="font-medium text-base-content">{{ owner }}</span>
@@ -97,20 +97,20 @@ function formatCurrency(value) {
                 {{ formatCurrency(store.revenueByOwner(owner)) }} €
               </td>
               <td v-if="!isSinglePerson" class="text-right py-3">
-                <span class="px-2.5 py-1 rounded-full text-xs font-medium bg-base-content/5 text-base-content/60">
+                <span class="px-2.5 py-1 rounded-none text-xs font-medium bg-base-content/5 text-base-content/60">
                   {{ store.contributionPercentage(owner) }}%
                 </span>
               </td>
             </tr>
           </tbody>
           <tfoot>
-            <tr class="border-t border-base-content/10">
+            <tr class="border-t border-brutal">
               <td class="py-3 font-bold text-base-content">Total</td>
               <td class="text-right py-3 tabular-nums font-mono font-bold text-base-content">
                 {{ formatCurrency(store.totalRevenue) }} €
               </td>
               <td v-if="!isSinglePerson" class="text-right py-3">
-                <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-green-500/20 text-green-400">
+                <span class="px-2.5 py-1 rounded-none text-xs font-bold bg-green-500/20 text-green-400">
                   100%
                 </span>
               </td>
@@ -120,7 +120,7 @@ function formatCurrency(value) {
       </div>
 
       <!-- Détail des entrées revenus -->
-      <div v-if="store.revenueItems.length > 0" class="mt-6 pt-4 border-t border-base-content/5">
+      <div v-if="store.revenueItems.length > 0" class="mt-6 pt-4 border-t border-brutal">
         <div class="flex items-center gap-3 mb-4">
           <div class="h-px flex-1 bg-gradient-to-r from-base-content/10 to-transparent"></div>
           <span class="text-xs font-medium text-base-content/40 uppercase tracking-wider">Détail</span>
@@ -130,11 +130,11 @@ function formatCurrency(value) {
           <div
             v-for="item in store.revenueItems"
             :key="item.id"
-            class="flex items-center justify-between text-sm py-2.5 px-4 rounded-xl bg-base-content/3 hover:bg-base-content/5 transition-colors group"
+            class="flex items-center justify-between text-sm py-2.5 px-4 rounded-none bg-base-content/3 hover:bg-base-content/5 transition-colors group"
           >
             <div class="flex items-center gap-3">
               <div 
-                class="w-1.5 h-1.5 rounded-full"
+class="w-1.5 h-1.5 rounded-full"
                 :class="item.owner === store.owners[0] ? 'bg-primary' : 'bg-secondary'"
               ></div>
               <span class="text-base-content/80">{{ item.category }}</span>
@@ -146,14 +146,14 @@ function formatCurrency(value) {
               </span>
               <div class="opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity flex gap-1">
                 <button
-                  class="w-8 h-8 rounded-full bg-base-content/5 hover:bg-base-content/10 flex items-center justify-center transition-colors"
+                  class="brutal-icon-btn"
                   @click="openEdit(item)"
                   title="Modifier ce revenu"
                 >
                   <Pencil :size="14" class="text-base-content/60" />
                 </button>
                 <button
-                  class="w-8 h-8 rounded-full bg-base-content/5 hover:bg-red-500/20 flex items-center justify-center transition-colors"
+                  class="brutal-icon-btn brutal-icon-btn-danger"
                   @click="requestDelete(item)"
                   title="Supprimer ce revenu"
                 >
@@ -167,7 +167,7 @@ function formatCurrency(value) {
 
       <!-- État vide -->
       <div v-else class="text-center py-8">
-        <div class="w-12 h-12 rounded-full bg-base-content/5 flex items-center justify-center mx-auto mb-3">
+        <div class="w-12 h-12 rounded-none bg-base-content/5 flex items-center justify-center mx-auto mb-3">
           <Plus :size="24" class="text-base-content/30" stroke-width="1.5" />
         </div>
         <p class="text-base-content/40 text-sm">Aucun revenu enregistré</p>

@@ -45,16 +45,16 @@ function handleKeydown(e) {
       >
         <!-- Backdrop -->
         <div
-          class="absolute inset-0 bg-black/60 backdrop-blur-sm"
+          class="absolute inset-0 bg-black/70"
           @click="handleCancel"
         ></div>
 
         <!-- Modal -->
-        <div class="relative w-full max-w-sm bg-base-100 border border-base-content/10 rounded-2xl shadow-2xl overflow-hidden" @click.stop>
+        <div class="relative w-full max-w-sm bg-base-100 border-3 border-brutal rounded-none overflow-hidden" style="box-shadow: 6px 6px 0px var(--brutal-shadow)" @click.stop>
           <div class="p-6">
             <!-- Icon -->
             <div class="flex justify-center mb-4">
-              <div class="w-16 h-16 rounded-full bg-red-500/20 flex items-center justify-center">
+              <div class="w-16 h-16 rounded-none bg-red-500/20 flex items-center justify-center">
                 <TriangleAlert :size="32" class="text-red-400" stroke-width="1.5" />
               </div>
             </div>
@@ -67,7 +67,7 @@ function handleKeydown(e) {
             
             <!-- Item name -->
             <p v-if="itemName" class="text-center mb-6">
-              <span class="inline-block px-3 py-1.5 rounded-lg bg-base-content/5 border border-base-content/10 text-base-content font-medium">
+              <span class="inline-block px-3 py-1.5 rounded-none bg-base-content/5 border border-brutal text-base-content font-medium">
                 {{ itemName }}
               </span>
             </p>
@@ -76,13 +76,13 @@ function handleKeydown(e) {
             <!-- Actions -->
             <div class="flex gap-3">
               <button 
-                class="flex-1 px-4 py-3 rounded-xl bg-base-content/5 hover:bg-base-content/10 text-base-content/70 hover:text-base-content font-medium transition-all"
+                class="flex-1 brutal-btn brutal-btn-ghost"
                 @click="handleCancel"
               >
                 Annuler
               </button>
               <button 
-                class="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-red-500 hover:bg-red-600 text-white font-medium shadow-lg shadow-red-500/25 transition-all"
+                class="flex-1 brutal-btn brutal-btn-danger"
                 @click="handleConfirm"
               >
                 <Trash2 :size="16" />

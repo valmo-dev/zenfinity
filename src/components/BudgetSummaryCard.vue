@@ -240,21 +240,21 @@ const cardLabel = computed(() => isJoint.value ? "Budget du foyer" : props.owner
 </script>
 
 <template>
-  <div class="glass-card rounded-2xl overflow-hidden h-full">
-    <!-- Header avec gradient -->
+  <div class="glass-card rounded-none overflow-hidden h-full">
+    <!-- Header -->
     <div
-      class="px-6 py-4 border-b border-base-content/5"
+      class="px-6 py-4 border-b-3 border-brutal"
       :class="
         isJoint
-          ? 'bg-gradient-to-r from-blue-500/20 to-transparent'
+          ? 'bg-blue-500/20'
           : isPrimary
-            ? 'bg-gradient-to-r from-primary/20 to-transparent'
-            : 'bg-gradient-to-r from-secondary/20 to-transparent'
+            ? 'bg-primary/20'
+            : 'bg-secondary/20'
       "
     >
       <h3 class="text-lg font-bold flex items-center gap-3">
         <div
-          class="w-3 h-3 rounded-full"
+class="w-3 h-3 rounded-full"
           :class="
             isJoint
               ? 'bg-blue-500 shadow-lg shadow-blue-500/50'
@@ -273,14 +273,14 @@ const cardLabel = computed(() => isJoint.value ? "Budget du foyer" : props.owner
         <template v-for="(step, index) in steps" :key="index">
           <!-- Ligne de calcul -->
           <div
-            class="tooltip-wrapper w-full flex flex-col sm:flex-row justify-between sm:items-center py-2.5 px-4 rounded-xl text-sm transition-all duration-200 gap-1 sm:gap-0"
+            class="tooltip-wrapper w-full flex flex-col sm:flex-row justify-between sm:items-center py-2.5 px-4 rounded-none text-sm transition-all duration-200 gap-1 sm:gap-0"
             :class="{
               'bg-base-content/5': step.type === 'subtotal',
-              'bg-gradient-to-r from-primary/20 to-primary/5 border border-primary/20':
+              'bg-primary/15 border-3 border-primary/30':
                 step.type === 'total' && isPrimary && !isJoint,
-              'bg-gradient-to-r from-secondary/20 to-secondary/5 border border-secondary/20':
+              'bg-secondary/15 border-3 border-secondary/30':
                 step.type === 'total' && !isPrimary && !isJoint,
-              'bg-gradient-to-r from-blue-500/20 to-blue-500/5 border border-blue-500/20':
+              'bg-blue-500/15 border-3 border-blue-500/30':
                 step.type === 'total' && isJoint,
               'ml-6 opacity-80': step.type === 'detail',
             }"
@@ -305,7 +305,7 @@ const cardLabel = computed(() => isJoint.value ? "Budget du foyer" : props.owner
               >★</span>
               <span v-if="step.type === 'neutral' && step.ownerIndex != null">
                 <span 
-                  class="inline-block w-2 h-2 rounded-full mr-1"
+class="inline-block w-2 h-2 rounded-full mr-1"
                   :class="step.ownerIndex === 0 ? 'bg-primary' : 'bg-secondary'"
                 ></span>
               </span>
@@ -331,25 +331,25 @@ const cardLabel = computed(() => isJoint.value ? "Budget du foyer" : props.owner
           <!-- Séparateur avant les sous-totaux -->
           <div
             v-if="step.type === 'subtract' && steps[index + 1]?.type === 'subtotal'"
-            class="border-t border-base-content/5 my-1"
+            class="border-t border-brutal my-1"
           ></div>
           <!-- Séparateur avant le détail d'épargne -->
           <div
             v-if="step.type === 'subtract' && steps[index + 1]?.type === 'detail'"
-            class="border-t border-base-content/5 my-1 ml-6"
+            class="border-t border-brutal my-1 ml-6"
           ></div>
         </template>
       </div>
 
       <!-- Slider épargne -->
-      <div class="mt-6 pt-6 border-t border-base-content/5 space-y-4">
+      <div class="mt-6 pt-6 border-t border-brutal space-y-4">
         <div class="flex justify-between items-center">
           <label
             class="text-sm font-medium text-base-content/70 tooltip-wrapper tooltip-bottom"
             :data-tooltip="isJoint ? 'Pourcentage du restant épargné par le foyer (réparti 50/50)' : 'Pourcentage du restant à mettre de côté chaque mois'"
             >Taux d'épargne{{ isJoint ? ' du foyer' : '' }}</label
           >
-          <span class="px-3 py-1 rounded-full text-sm font-bold" :class="isJoint ? 'bg-blue-500/20 text-blue-500' : 'bg-primary/20 text-primary'">
+          <span class="px-3 py-1 rounded-none text-sm font-bold" :class="isJoint ? 'bg-blue-500/20 text-blue-500' : 'bg-primary/20 text-primary'">
             {{ savingRate }}%
           </span>
         </div>
@@ -369,7 +369,7 @@ const cardLabel = computed(() => isJoint.value ? "Budget du foyer" : props.owner
 
         <!-- Barre visuelle de progression -->
         <div class="relative">
-          <div class="flex rounded-full overflow-hidden h-3 bg-base-content/5">
+          <div class="flex rounded-none overflow-hidden h-3 bg-base-content/5">
             <div
               class="transition-all duration-300 ease-out"
               :class="isJoint ? 'bg-gradient-to-r from-blue-500 to-blue-500/70' : isPrimary ? 'bg-gradient-to-r from-primary to-primary/70' : 'bg-gradient-to-r from-secondary to-secondary/70'"
@@ -382,7 +382,7 @@ const cardLabel = computed(() => isJoint.value ? "Budget du foyer" : props.owner
           </div>
           <!-- Indicateur -->
           <div 
-            class="absolute top-1/2 -translate-y-1/2 w-1 h-5 bg-base-content/30 rounded-full transition-all duration-300"
+            class="absolute top-1/2 -translate-y-1/2 w-1 h-5 bg-base-content/30 rounded-none transition-all duration-300"
             :style="{ left: `${savingRate}%`, transform: 'translateX(-50%) translateY(-50%)' }"
           ></div>
         </div>

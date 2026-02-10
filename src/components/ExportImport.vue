@@ -60,11 +60,11 @@ function handleImport(event) {
 </script>
 
 <template>
-  <div class="glass-card rounded-2xl overflow-hidden">
+  <div class="glass-card rounded-none overflow-hidden">
     <!-- Header -->
-    <div class="px-6 py-4 border-b border-base-content/5 bg-gradient-to-r from-purple-500/10 to-transparent">
+    <div class="px-6 py-4 bg-purple-500/20 border-b-3 border-brutal">
       <h3 class="text-lg font-bold flex items-center gap-3 text-base-content">
-        <div class="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center">
+        <div class="w-8 h-8 rounded-none bg-purple-500/20 flex items-center justify-center">
           <Upload :size="16" class="text-purple-400" />
         </div>
         Import / Export
@@ -76,29 +76,29 @@ function handleImport(event) {
       <div class="flex flex-wrap gap-3">
         <!-- Export JSON -->
         <button 
-          class="group flex items-center gap-3 px-5 py-3 rounded-full bg-base-content/5 hover:bg-primary/20 border border-base-content/10 hover:border-primary/30 transition-all duration-300"
+          class="brutal-btn bg-base-content/5 hover:bg-primary/20"
           @click="exportJSON"
         >
           <Download :size="16" class="text-primary" />
-          <span class="text-sm font-medium text-base-content/80 group-hover:text-base-content">Export JSON</span>
+          <span class="text-sm font-medium">Export JSON</span>
         </button>
 
         <!-- Export CSV -->
         <button 
-          class="group flex items-center gap-3 px-5 py-3 rounded-full bg-base-content/5 hover:bg-secondary/20 border border-base-content/10 hover:border-secondary/30 transition-all duration-300"
+          class="brutal-btn bg-base-content/5 hover:bg-secondary/20"
           @click="exportCSV"
         >
           <Download :size="16" class="text-secondary" />
-          <span class="text-sm font-medium text-base-content/80 group-hover:text-base-content">Export CSV</span>
+          <span class="text-sm font-medium">Export CSV</span>
         </button>
 
         <!-- Import JSON -->
         <button 
-          class="group flex items-center gap-3 px-5 py-3 rounded-full bg-base-content/5 hover:bg-purple-500/20 border border-base-content/10 hover:border-purple-500/30 transition-all duration-300"
+          class="brutal-btn bg-base-content/5 hover:bg-purple-500/20"
           @click="triggerImport"
         >
           <Upload :size="16" class="text-purple-400" />
-          <span class="text-sm font-medium text-base-content/80 group-hover:text-base-content">Import JSON</span>
+          <span class="text-sm font-medium">Import JSON</span>
         </button>
 
         <input
@@ -113,14 +113,14 @@ function handleImport(event) {
       <!-- Message d'import -->
       <div
         v-if="importMessage"
-        class="mt-4 px-4 py-3 rounded-xl flex items-center gap-3 transition-all duration-300"
+        class="mt-4 px-4 py-3 rounded-none flex items-center gap-3 transition-all duration-300"
         :class="{
           'bg-green-500/20 border border-green-500/30': importMessage.type === 'success',
           'bg-red-500/20 border border-red-500/30': importMessage.type === 'error',
         }"
       >
         <div 
-          class="w-6 h-6 rounded-full flex items-center justify-center"
+          class="w-6 h-6 rounded-none flex items-center justify-center"
           :class="{
             'bg-green-500/30': importMessage.type === 'success',
             'bg-red-500/30': importMessage.type === 'error',

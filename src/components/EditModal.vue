@@ -65,27 +65,28 @@ function handleSubmit() {
       >
         <!-- Backdrop -->
         <div
-          class="absolute inset-0 bg-black/60 backdrop-blur-sm"
+          class="absolute inset-0 bg-black/70"
           @click="emit('close')"
         ></div>
 
         <!-- Modal -->
         <div
-          class="relative w-full max-w-md bg-base-100 border border-base-content/10 rounded-2xl shadow-2xl overflow-hidden"
+          class="relative w-full max-w-md bg-base-100 border-3 border-brutal rounded-none overflow-hidden"
+          style="box-shadow: 6px 6px 0px var(--brutal-shadow)"
           @click.stop
         >
           <!-- Close button -->
           <button
-            class="absolute right-4 top-4 w-8 h-8 rounded-full bg-base-content/5 hover:bg-base-content/10 flex items-center justify-center transition-colors z-10"
+            class="absolute right-4 top-4 brutal-icon-btn z-10"
             @click="emit('close')"
           >
             <X :size="16" class="text-base-content/60" />
           </button>
 
           <!-- Header -->
-          <div class="px-6 py-4 border-b border-base-content/10 bg-gradient-to-r from-secondary/10 to-transparent">
+          <div class="px-6 py-4 bg-secondary/20 border-b-3 border-brutal">
             <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-full bg-secondary/20 flex items-center justify-center">
+              <div class="w-10 h-10 rounded-none bg-secondary/20 flex items-center justify-center">
                 <Pencil :size="20" class="text-secondary" />
               </div>
               <h3 class="font-bold text-xl text-base-content">Modifier l'entrée</h3>
@@ -101,7 +102,7 @@ function handleSubmit() {
                   <label class="text-sm font-medium text-base-content/70">Type</label>
                   <select 
                     v-model="editType" 
-                    class="w-full px-4 py-3 rounded-xl bg-base-content/5 border border-base-content/10 text-base-content focus:border-secondary/50 focus:outline-none focus:ring-2 focus:ring-secondary/20 transition-all"
+                    class="w-full px-4 py-3 rounded-none bg-base-content/5 border border-brutal text-base-content focus:border-secondary/50 focus:outline-none focus:ring-2 focus:ring-secondary/20 transition-all"
                   >
                     <option value="Revenu" class="bg-base-100">Revenu</option>
                     <option value="Charge" class="bg-base-100">Charge</option>
@@ -111,7 +112,7 @@ function handleSubmit() {
                   <label class="text-sm font-medium text-base-content/70">Assigné à</label>
                   <select 
                     v-model="editOwner" 
-                    class="w-full px-4 py-3 rounded-xl bg-base-content/5 border border-base-content/10 text-base-content focus:border-secondary/50 focus:outline-none focus:ring-2 focus:ring-secondary/20 transition-all"
+                    class="w-full px-4 py-3 rounded-none bg-base-content/5 border border-brutal text-base-content focus:border-secondary/50 focus:outline-none focus:ring-2 focus:ring-secondary/20 transition-all"
                   >
                     <option v-for="o in store.owners" :key="o" :value="o" class="bg-base-100">{{ o }}</option>
                     <option value="Commun" class="bg-base-100">Commun</option>
@@ -139,8 +140,8 @@ function handleSubmit() {
                   type="number"
                   step="0.01"
                   min="0.01"
-                  class="w-full px-4 py-3 rounded-xl bg-base-content/5 border text-base-content placeholder-base-content/30 focus:outline-none focus:ring-2 transition-all"
-                  :class="errors.amount ? 'border-red-500/50 focus:border-red-500 focus:ring-red-500/20' : 'border-base-content/10 focus:border-secondary/50 focus:ring-secondary/20'"
+                  class="w-full px-4 py-3 rounded-none bg-base-content/5 border text-base-content placeholder-base-content/30 focus:outline-none focus:ring-2 transition-all"
+                  :class="errors.amount ? 'border-red-500/50 focus:border-red-500 focus:ring-red-500/20' : 'border-brutal focus:border-secondary/50 focus:ring-secondary/20'"
                 />
                 <p v-if="errors.amount" class="text-xs text-red-400 mt-1">{{ errors.amount }}</p>
               </div>
@@ -149,14 +150,14 @@ function handleSubmit() {
               <div class="flex justify-end gap-3 pt-4">
                 <button 
                   type="button" 
-                  class="px-5 py-2.5 rounded-xl bg-base-content/5 hover:bg-base-content/10 text-base-content/70 hover:text-base-content font-medium transition-all"
+                  class="brutal-btn brutal-btn-ghost"
                   @click="emit('close')"
                 >
                   Annuler
                 </button>
                 <button 
                   type="submit" 
-                  class="px-5 py-2.5 rounded-xl bg-primary hover:bg-primary/90 text-primary-content font-medium transition-colors"
+                  class="brutal-btn brutal-btn-primary"
                 >
                   Sauvegarder
                 </button>

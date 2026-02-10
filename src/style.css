@@ -1,33 +1,32 @@
 @import "tailwindcss";
 @plugin "daisyui";
 
-/* Thème ZenFinity Dark - Noir profond + Rouge moderne */
+/* ==========================================
+   ZENFINITY NEO-BRUTALIST THEMES
+   ========================================== */
+
+/* Thème ZenFinity Dark - Neo-Brutalist */
 @plugin "daisyui/theme" {
   name: "zenfinity-dark";
   default: true;
   prefersdark: true;
   color-scheme: dark;
   
-  /* Palette noir profond */
-  --color-base-100: oklch(13% 0.01 0);      /* Noir très profond */
-  --color-base-200: oklch(10% 0.01 0);      /* Noir encore plus profond */
-  --color-base-300: oklch(7% 0.005 0);      /* Quasi-noir */
-  --color-base-content: oklch(95% 0.005 0); /* Blanc cassé */
+  --color-base-100: oklch(18% 0.01 0);
+  --color-base-200: oklch(14% 0.01 0);
+  --color-base-300: oklch(10% 0.005 0);
+  --color-base-content: oklch(95% 0.005 0);
   
-  /* Rouge accent #DA0037 converti en OKLCH */
   --color-primary: oklch(55% 0.22 25);
   --color-primary-content: oklch(100% 0 0);
   
-  /* Rouge secondaire plus clair */
   --color-secondary: oklch(65% 0.20 25);
   --color-secondary-content: oklch(100% 0 0);
   
-  /* Accent rouge rosé */
   --color-accent: oklch(60% 0.18 10);
   --color-accent-content: oklch(100% 0 0);
   
-  /* Neutres et états */
-  --color-neutral: oklch(20% 0.01 0);
+  --color-neutral: oklch(22% 0.01 0);
   --color-neutral-content: oklch(90% 0.005 0);
   --color-info: oklch(70% 0.15 250);
   --color-info-content: oklch(10% 0 0);
@@ -38,43 +37,38 @@
   --color-error: oklch(60% 0.22 25);
   --color-error-content: oklch(100% 0 0);
   
-  /* Rayons arrondis modernes */
-  --radius-selector: 9999px;
-  --radius-field: 0.75rem;
-  --radius-box: 1rem;
+  /* Sharp corners - true neo-brutalist */
+  --radius-selector: 0;
+  --radius-field: 0;
+  --radius-box: 0;
   --size-selector: 0.25rem;
   --size-field: 0.25rem;
-  --border: 1px;
-  --depth: 1;
+  --border: 3px;
+  --depth: 0;
   --noise: 0;
 }
 
-/* Thème ZenFinity Light - Clair et moderne */
+/* Thème ZenFinity Light - Neo-Brutalist */
 @plugin "daisyui/theme" {
   name: "zenfinity-light";
   default: false;
   prefersdark: false;
   color-scheme: light;
   
-  /* Palette claire */
-  --color-base-100: oklch(98% 0.005 0);     /* Blanc cassé */
-  --color-base-200: oklch(95% 0.005 0);     /* Gris très clair */
-  --color-base-300: oklch(92% 0.005 0);     /* Gris clair */
-  --color-base-content: oklch(20% 0.01 0);  /* Texte sombre */
+  --color-base-100: oklch(97% 0.01 80);
+  --color-base-200: oklch(94% 0.01 80);
+  --color-base-300: oklch(90% 0.01 80);
+  --color-base-content: oklch(15% 0.01 0);
   
-  /* Rouge accent */
   --color-primary: oklch(50% 0.22 25);
   --color-primary-content: oklch(100% 0 0);
   
-  /* Rouge secondaire */
   --color-secondary: oklch(55% 0.18 25);
   --color-secondary-content: oklch(100% 0 0);
   
-  /* Accent */
   --color-accent: oklch(55% 0.16 10);
   --color-accent-content: oklch(100% 0 0);
   
-  /* Neutres et états */
   --color-neutral: oklch(30% 0.01 0);
   --color-neutral-content: oklch(95% 0.005 0);
   --color-info: oklch(55% 0.15 250);
@@ -86,81 +80,70 @@
   --color-error: oklch(55% 0.22 25);
   --color-error-content: oklch(100% 0 0);
   
-  /* Rayons arrondis modernes */
-  --radius-selector: 9999px;
-  --radius-field: 0.75rem;
-  --radius-box: 1rem;
+  /* Sharp corners - true neo-brutalist */
+  --radius-selector: 0;
+  --radius-field: 0;
+  --radius-box: 0;
   --size-selector: 0.25rem;
   --size-field: 0.25rem;
-  --border: 1px;
-  --depth: 1;
+  --border: 3px;
+  --depth: 0;
   --noise: 0;
 }
 
-/* Variables CSS personnalisées pour effets - Thème sombre */
+/* ==========================================
+   NEO-BRUTALIST CSS CUSTOM PROPERTIES
+   ========================================== */
+
 [data-theme="zenfinity-dark"] {
-  --glass-bg: rgba(255, 255, 255, 0.03);
-  --glass-border: rgba(255, 255, 255, 0.08);
-  --glass-hover-border: rgba(255, 255, 255, 0.12);
-  --glow-primary: rgba(218, 0, 55, 0.4);
-  --glow-primary-soft: rgba(218, 0, 55, 0.15);
+  --brutal-border: oklch(65% 0.005 0);
+  --brutal-shadow: oklch(0% 0 0);
+  --brutal-bg: oklch(18% 0.01 0);
+  --brutal-bg-card: oklch(22% 0.01 0);
+  --brutal-bg-hover: oklch(25% 0.01 0);
   --text-muted: rgba(255, 255, 255, 0.7);
   --text-muted-2: rgba(255, 255, 255, 0.5);
   --text-muted-3: rgba(255, 255, 255, 0.4);
-  --bg-body-start: oklch(7% 0.005 0);
-  --bg-body-end: oklch(5% 0.005 0);
-  --scrollbar-thumb: rgba(255, 255, 255, 0.1);
-  --scrollbar-thumb-hover: rgba(255, 255, 255, 0.2);
-  --header-bg: rgba(7, 7, 7, 0.8);
-  --toast-bg: rgba(20, 20, 20, 0.95);
-  --tooltip-bg: rgba(0, 0, 0, 0.9);
-  --subtle-bg: rgba(255, 255, 255, 0.05);
-  --subtle-bg-hover: rgba(255, 255, 255, 0.03);
-  --subtle-border: rgba(255, 255, 255, 0.1);
+  --scrollbar-thumb: rgba(255, 255, 255, 0.15);
+  --scrollbar-thumb-hover: rgba(255, 255, 255, 0.25);
+  --toast-bg: oklch(22% 0.01 0);
+  --tooltip-bg: oklch(10% 0.01 0);
   --track-bg: rgba(255, 255, 255, 0.1);
-  --inset-highlight: rgba(255, 255, 255, 0.05);
-  --inset-highlight-hover: rgba(255, 255, 255, 0.08);
+  --header-bg: oklch(14% 0.01 0);
 }
 
-/* Variables CSS personnalisées pour effets - Thème clair */
 [data-theme="zenfinity-light"] {
-  --glass-bg: rgba(255, 255, 255, 0.7);
-  --glass-border: rgba(0, 0, 0, 0.08);
-  --glass-hover-border: rgba(0, 0, 0, 0.15);
-  --glow-primary: rgba(218, 0, 55, 0.3);
-  --glow-primary-soft: rgba(218, 0, 55, 0.1);
+  --brutal-border: oklch(30% 0.01 0);
+  --brutal-shadow: oklch(30% 0.01 0);
+  --brutal-bg: oklch(97% 0.01 80);
+  --brutal-bg-card: oklch(100% 0 0);
+  --brutal-bg-hover: oklch(95% 0.01 80);
   --text-muted: rgba(0, 0, 0, 0.7);
   --text-muted-2: rgba(0, 0, 0, 0.5);
   --text-muted-3: rgba(0, 0, 0, 0.4);
-  --bg-body-start: oklch(96% 0.005 0);
-  --bg-body-end: oklch(92% 0.005 0);
   --scrollbar-thumb: rgba(0, 0, 0, 0.15);
-  --scrollbar-thumb-hover: rgba(0, 0, 0, 0.25);
-  --header-bg: rgba(255, 255, 255, 0.85);
-  --toast-bg: rgba(255, 255, 255, 0.95);
-  --tooltip-bg: rgba(30, 30, 30, 0.95);
-  --subtle-bg: rgba(0, 0, 0, 0.05);
-  --subtle-bg-hover: rgba(0, 0, 0, 0.03);
-  --subtle-border: rgba(0, 0, 0, 0.1);
+  --scrollbar-thumb-hover: rgba(0, 0, 0, 0.3);
+  --toast-bg: oklch(100% 0 0);
+  --tooltip-bg: oklch(15% 0.01 0);
   --track-bg: rgba(0, 0, 0, 0.1);
-  --inset-highlight: rgba(255, 255, 255, 0.8);
-  --inset-highlight-hover: rgba(255, 255, 255, 0.9);
+  --header-bg: oklch(94% 0.01 80);
 }
 
+/* ==========================================
+   BASE STYLES
+   ========================================== */
 
-
-/* Reset transitions pour de meilleures performances */
 * {
-  @apply transition-colors duration-200;
+  @apply transition-colors duration-150;
 }
 
-/* Fond avec subtil dégradé */
 body {
-  background: linear-gradient(180deg, var(--bg-body-start) 0%, var(--bg-body-end) 100%);
+  background: var(--brutal-bg);
   min-height: 100vh;
+  font-family: system-ui, -apple-system, sans-serif;
 }
 
-/* Scrollbar personnalisée style moderne */
+/* Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -172,155 +155,323 @@ body {
 
 ::-webkit-scrollbar-thumb {
   background: var(--scrollbar-thumb);
-  border-radius: 9999px;
+  border-radius: 0;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--scrollbar-thumb-hover);
 }
 
-/* Effet Glass moderne pour les cartes */
+/* ==========================================
+   NEO-BRUTALIST CARD SYSTEM
+   ========================================== */
+
+.brutal-card {
+  background: var(--brutal-bg-card);
+  border: 3px solid var(--brutal-border);
+  border-radius: 0;
+  box-shadow: 4px 4px 0px var(--brutal-shadow);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.brutal-card-header {
+  padding: 1rem 1.5rem;
+  border-bottom: 3px solid var(--brutal-border);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Backward compatibility */
 .glass-card {
-  background: var(--glass-bg);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--glass-border);
-  box-shadow: 
-    0 4px 30px rgba(0, 0, 0, 0.3),
-    inset 0 1px 0 var(--inset-highlight);
+  background: var(--brutal-bg-card);
+  border: 3px solid var(--brutal-border);
+  border-radius: 0;
+  box-shadow: 4px 4px 0px var(--brutal-shadow);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-.glass-card:hover {
-  border-color: var(--glass-hover-border);
-  box-shadow: 
-    0 8px 40px rgba(0, 0, 0, 0.4),
-    inset 0 1px 0 var(--inset-highlight-hover);
+.stat-card {
+  position: relative;
+  background: var(--brutal-bg-card);
+  border: 3px solid var(--brutal-border);
+  border-radius: 0;
+  box-shadow: 4px 4px 0px var(--brutal-shadow);
+  overflow: hidden;
 }
 
-[data-theme="zenfinity-light"] .glass-card {
-  box-shadow: 
-    0 4px 30px rgba(0, 0, 0, 0.08),
-    inset 0 1px 0 var(--inset-highlight);
+.stat-card::before {
+  display: none;
 }
 
-[data-theme="zenfinity-light"] .glass-card:hover {
-  box-shadow: 
-    0 8px 40px rgba(0, 0, 0, 0.12),
-    inset 0 1px 0 var(--inset-highlight-hover);
+/* Shadow variants */
+.brutal-shadow-active {
+  box-shadow: 2px 2px 0px var(--brutal-shadow) !important;
+  transform: translate(2px, 2px) !important;
 }
 
-/* Cards améliorées avec effet hover */
-.card {
-  @apply transition-all duration-300;
-  border: 1px solid var(--glass-border);
-  background: var(--glass-bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+.brutal-shadow-sm {
+  box-shadow: 3px 3px 0px var(--brutal-shadow);
 }
 
-.card:hover {
-  border-color: var(--glass-hover-border);
-  transform: translateY(-2px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-}
+/* ==========================================
+   NEO-BRUTALIST BUTTONS
+   ========================================== */
 
-[data-theme="zenfinity-light"] .card:hover {
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
-}
-
-/* Boutons modernes style pill */
 .btn {
-  @apply font-medium tracking-wide;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  @apply font-bold uppercase tracking-wide;
+  border: 3px solid var(--brutal-border);
+  border-radius: 0;
+  box-shadow: 3px 3px 0px var(--brutal-shadow);
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.btn:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0px var(--brutal-shadow);
+}
+
+.btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px var(--brutal-shadow);
 }
 
 .btn-primary {
-  box-shadow: 0 4px 20px var(--glow-primary-soft);
+  box-shadow: 3px 3px 0px var(--brutal-shadow);
 }
 
 .btn-primary:hover {
-  box-shadow: 0 8px 30px var(--glow-primary);
-  transform: translateY(-1px);
+  box-shadow: 4px 4px 0px var(--brutal-shadow);
+  transform: translate(-1px, -1px);
 }
 
-/* Boutons ghost avec glow subtil au hover */
+.btn-ghost {
+  border-color: transparent;
+  box-shadow: none;
+}
+
 .btn-ghost:hover {
-  background: var(--subtle-bg);
+  background: var(--brutal-bg-hover);
+  border-color: var(--brutal-border);
+  box-shadow: 3px 3px 0px var(--brutal-shadow);
 }
 
-/* Tables modernes */
+.brutal-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-weight: 800;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 3px solid var(--brutal-border);
+  border-radius: 0;
+  box-shadow: 3px 3px 0px var(--brutal-shadow);
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  background: var(--brutal-bg-card);
+  color: var(--color-base-content);
+}
+
+.brutal-btn:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0px var(--brutal-shadow);
+}
+
+.brutal-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px var(--brutal-shadow);
+}
+
+.brutal-btn-primary {
+  background: var(--color-primary);
+  color: var(--color-primary-content);
+}
+
+.brutal-btn-danger {
+  background: var(--color-error);
+  color: var(--color-error-content);
+}
+
+.brutal-btn-sm {
+  padding: 0.5rem 1rem;
+  font-size: 0.75rem;
+}
+
+.brutal-btn-ghost {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.brutal-btn-ghost:hover {
+  background: var(--brutal-bg-hover);
+  border-color: var(--brutal-border);
+  box-shadow: 3px 3px 0px var(--brutal-shadow);
+}
+
+/* Small icon buttons (edit, delete, toggle, etc.) */
+.brutal-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border: 2px solid var(--brutal-border);
+  border-radius: 0;
+  background: var(--brutal-bg-card);
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.1s ease;
+  box-shadow: 2px 2px 0px var(--brutal-shadow);
+}
+
+.brutal-icon-btn:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0px var(--brutal-shadow);
+  background: var(--brutal-bg-hover);
+}
+
+.brutal-icon-btn:active {
+  transform: translate(1px, 1px);
+  box-shadow: 0px 0px 0px var(--brutal-shadow);
+}
+
+.brutal-icon-btn-danger:hover {
+  background: oklch(55% 0.22 25 / 0.2);
+  border-color: var(--color-error);
+}
+
+/* ==========================================
+   NEO-BRUTALIST INPUTS
+   ========================================== */
+
+.input, .select, .textarea {
+  background: var(--brutal-bg-card);
+  border: 3px solid var(--brutal-border);
+  border-radius: 0;
+  transition: box-shadow 0.15s ease;
+}
+
+.input:focus, .select:focus, .textarea:focus {
+  background: var(--brutal-bg-card);
+  border-color: var(--color-primary);
+  box-shadow: 3px 3px 0px var(--brutal-shadow);
+  outline: none;
+}
+
+.brutal-input {
+  background: var(--brutal-bg-card);
+  border: 3px solid var(--brutal-border);
+  border-radius: 0;
+}
+
+.brutal-input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 3px 3px 0px var(--brutal-shadow);
+  outline: none;
+}
+
+/* ==========================================
+   NEO-BRUTALIST TABLES
+   ========================================== */
+
 .table {
   @apply border-separate border-spacing-0;
 }
 
 .table :where(thead tr, tfoot tr) {
-  border-color: var(--subtle-border);
+  border-color: var(--brutal-border);
 }
 
 .table tbody tr {
-  @apply transition-colors duration-200;
+  @apply transition-colors duration-150;
 }
 
 .table tbody tr:hover {
-  background: var(--subtle-bg-hover);
+  background: var(--brutal-bg-hover);
 }
 
-/* Font mono pour les chiffres */
+/* ==========================================
+   TYPOGRAPHY
+   ========================================== */
+
 .tabular-nums {
   font-variant-numeric: tabular-nums;
 }
 
-/* Dividers subtils */
-.divider {
-  @apply opacity-30;
+.section-title {
+  @apply relative inline-flex items-center gap-4 text-lg font-black uppercase tracking-wide;
 }
 
-/* Badge avec glow */
+.section-title::after {
+  content: '';
+  @apply h-1 flex-1 bg-base-content;
+  min-width: 40px;
+  border-radius: 0;
+}
+
+/* ==========================================
+   BADGES
+   ========================================== */
+
+.badge {
+  border: 2px solid var(--brutal-border);
+  border-radius: 0;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+}
+
 .badge-primary {
-  box-shadow: 0 0 12px var(--glow-primary-soft);
+  box-shadow: 2px 2px 0px var(--brutal-shadow);
 }
 
-/* Range slider custom - utilise les CSS variables DaisyUI v5 */
+/* ==========================================
+   RANGE SLIDER
+   ========================================== */
+
 .range {
   --range-fill: 0;
   --range-bg: var(--track-bg);
 }
 
-/* Mobile - zone tactile améliorée */
 @media (max-width: 768px) {
   .range {
     padding: 8px 0;
   }
 }
 
-/* Input fields modernes */
-.input, .select, .textarea {
-  background: var(--subtle-bg);
-  border-color: var(--subtle-border);
-  transition: all 0.2s ease;
+/* ==========================================
+   DIVIDERS
+   ========================================== */
+
+.divider {
+  @apply opacity-40;
+  border-color: var(--brutal-border);
 }
 
-.input:focus, .select:focus, .textarea:focus {
-  background: var(--subtle-bg);
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px var(--glow-primary-soft);
-}
+/* ==========================================
+   MODAL
+   ========================================== */
 
-/* Modal backdrop amélioré */
 .modal-backdrop {
-  background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.7);
 }
 
 [data-theme="zenfinity-light"] .modal-backdrop {
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.4);
 }
 
-/* Animations fluides */
+/* ==========================================
+   ANIMATIONS
+   ========================================== */
+
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(12px);
   }
   to {
     opacity: 1;
@@ -328,85 +479,6 @@ body {
   }
 }
 
-@keyframes pulse-glow {
-  0%, 100% {
-    box-shadow: 0 0 20px var(--glow-primary-soft);
-  }
-  50% {
-    box-shadow: 0 0 30px var(--glow-primary);
-  }
-}
-
-.animate-fade-in-up {
-  animation: fadeInUp 0.5s ease-out;
-}
-
-/* Header glass effect */
-.header-glass {
-  background: var(--header-bg);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--glass-border);
-}
-
-[data-theme="zenfinity-light"] .header-glass {
-  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
-}
-
-/* Section titles avec ligne décorative */
-.section-title {
-  @apply relative inline-flex items-center gap-4 text-lg font-semibold;
-}
-
-.section-title::after {
-  content: '';
-  @apply h-px flex-1;
-  background: linear-gradient(to right, var(--subtle-border), transparent);
-  min-width: 60px;
-}
-
-/* Stat cards avec gradient border */
-.stat-card {
-  position: relative;
-  background: var(--glass-bg);
-  border-radius: 1rem;
-  overflow: hidden;
-}
-
-.stat-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 1rem;
-  padding: 1px;
-  background: linear-gradient(135deg, rgba(218, 0, 55, 0.3), transparent 50%);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-}
-
-/* Tooltips modernes */
-[data-tip]::before {
-  @apply bg-neutral text-neutral-content text-xs px-3 py-2 rounded-lg;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-}
-
-[data-theme="zenfinity-light"] [data-tip]::before {
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-}
-
-/* Focus visible moderne */
-:focus-visible {
-  @apply outline-none ring-2 ring-primary/50 ring-offset-2 ring-offset-base-300;
-}
-
-
-/* ==========================================
-   ANIMATIONS DE FEEDBACK
-   ========================================== */
-
-/* Animation d'entrée pour les nouveaux éléments */
 @keyframes slideInRight {
   from {
     opacity: 0;
@@ -458,6 +530,10 @@ body {
   }
 }
 
+.animate-fade-in-up {
+  animation: fadeInUp 0.4s ease-out;
+}
+
 .animate-slide-in {
   animation: slideInRight 0.3s ease-out;
 }
@@ -502,30 +578,26 @@ body {
   align-items: center;
   gap: 0.75rem;
   padding: 1rem 1.25rem;
-  border-radius: 1rem;
+  border-radius: 0;
   background: var(--toast-bg);
-  backdrop-filter: blur(20px);
-  border: 1px solid var(--glass-border);
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+  border: 3px solid var(--brutal-border);
+  box-shadow: 4px 4px 0px var(--brutal-shadow);
   animation: slideInRight 0.3s ease-out;
   max-width: 360px;
   color: var(--color-base-content);
-}
-
-[data-theme="zenfinity-light"] .toast-notification {
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  font-weight: 700;
 }
 
 .toast-notification.toast-success {
-  border-color: rgba(34, 197, 94, 0.3);
+  border-color: oklch(55% 0.19 150);
 }
 
 .toast-notification.toast-error {
-  border-color: rgba(239, 68, 68, 0.3);
+  border-color: oklch(55% 0.22 25);
 }
 
 .toast-notification.toast-info {
-  border-color: rgba(59, 130, 246, 0.3);
+  border-color: oklch(55% 0.15 250);
 }
 
 .toast-notification.toast-exiting {
@@ -533,8 +605,16 @@ body {
 }
 
 /* ==========================================
-   TOOLTIPS AMÉLIORÉS
+   TOOLTIPS
    ========================================== */
+
+[data-tip]::before {
+  @apply bg-neutral text-neutral-content text-xs px-3 py-2;
+  border-radius: 0;
+  border: 2px solid var(--brutal-border);
+  box-shadow: 3px 3px 0px var(--brutal-shadow);
+  font-weight: 700;
+}
 
 .tooltip-wrapper {
   position: relative;
@@ -550,15 +630,16 @@ body {
   background: var(--tooltip-bg);
   color: white;
   font-size: 0.75rem;
-  font-weight: 500;
-  border-radius: 0.5rem;
+  font-weight: 700;
+  border-radius: 0;
+  border: 2px solid var(--brutal-border);
+  box-shadow: 3px 3px 0px var(--brutal-shadow);
   white-space: nowrap;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.2s, visibility 0.2s, transform 0.2s;
+  transition: opacity 0.15s, visibility 0.15s, transform 0.15s;
   pointer-events: none;
   z-index: 50;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 .tooltip-wrapper::before {
@@ -571,7 +652,7 @@ body {
   border-top-color: var(--tooltip-bg);
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.2s, visibility 0.2s;
+  transition: opacity 0.15s, visibility 0.15s;
   pointer-events: none;
   z-index: 50;
 }
@@ -586,7 +667,6 @@ body {
   transform: translateX(-50%) translateY(-12px);
 }
 
-/* Tooltip positions */
 .tooltip-bottom::after {
   bottom: auto;
   top: 100%;
@@ -603,4 +683,49 @@ body {
 
 .tooltip-bottom:hover::after {
   transform: translateX(-50%) translateY(12px);
+}
+
+/* ==========================================
+   FOCUS STYLES
+   ========================================== */
+
+:focus-visible {
+  @apply outline-none ring-2 ring-primary ring-offset-2 ring-offset-base-200;
+}
+
+/* ==========================================
+   UTILITY: border-3
+   ========================================== */
+
+.border-brutal {
+  border-color: var(--brutal-border);
+}
+
+.border-3 {
+  border-width: 3px;
+}
+
+.border-t-3 {
+  border-top-width: 3px;
+}
+
+.border-b-3 {
+  border-bottom-width: 3px;
+}
+
+.border-l-3 {
+  border-left-width: 3px;
+}
+
+.border-r-3 {
+  border-right-width: 3px;
+}
+
+/* ==========================================
+   HEADER (backward compat)
+   ========================================== */
+
+.header-glass {
+  background: var(--header-bg);
+  border-bottom: 3px solid var(--brutal-border);
 }

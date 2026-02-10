@@ -36,9 +36,9 @@ function formatCurrency(value) {
 <template>
   <div class="space-y-1">
     <!-- Barre de progression -->
-    <div class="relative h-2 rounded-full bg-base-content/5 overflow-hidden">
+    <div class="relative h-3 rounded-none bg-base-content/10 border-2 border-brutal overflow-hidden">
       <div
-        class="absolute inset-y-0 left-0 rounded-full transition-all duration-500 ease-out"
+        class="absolute inset-y-0 left-0 rounded-none transition-all duration-500 ease-out"
         :class="{
           'bg-gradient-to-r from-emerald-500 to-emerald-400': status === 'ok',
           'bg-gradient-to-r from-amber-500 to-amber-400': status === 'warning',

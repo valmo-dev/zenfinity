@@ -73,25 +73,26 @@ function handleClose() {
       >
         <!-- Backdrop -->
         <div
-          class="absolute inset-0 bg-black/60 backdrop-blur-sm"
+          class="absolute inset-0 bg-black/70"
           @click="handleClose"
         ></div>
 
         <!-- Modal -->
         <div
-          class="relative w-full max-w-md bg-base-100 border border-base-content/10 rounded-2xl shadow-2xl overflow-hidden"
+          class="relative w-full max-w-md bg-base-100 border-3 border-brutal rounded-none overflow-hidden"
+          style="box-shadow: 6px 6px 0px var(--brutal-shadow)"
         >
           <!-- Header -->
-          <div class="px-6 py-4 border-b border-base-content/10 bg-gradient-to-r from-blue-500/10 to-transparent">
+          <div class="px-6 py-4 bg-blue-500/20 border-b-3 border-brutal">
             <div class="flex items-center justify-between">
               <h2 class="text-lg font-bold text-base-content flex items-center gap-3">
-                <div class="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center">
+                <div class="w-8 h-8 rounded-none bg-blue-500/20 flex items-center justify-center">
                   <Settings :size="16" class="text-blue-400" />
                 </div>
                 Paramètres
               </h2>
               <button
-                class="w-8 h-8 rounded-full bg-base-content/5 hover:bg-base-content/10 flex items-center justify-center transition-colors"
+                class="brutal-icon-btn"
                 @click="handleClose"
               >
                 <X :size="16" class="text-base-content/60" />
@@ -109,10 +110,10 @@ function handleClose() {
               <div class="flex flex-col gap-2">
                 <button
                   type="button"
-                  class="w-full py-3 px-4 rounded-xl border-2 transition-all duration-200 flex items-center gap-3 text-left"
+                  class="w-full py-3 px-4 rounded-none border-2 transition-all duration-200 flex items-center gap-3 text-left"
                   :class="householdMode === 'single' 
                     ? 'border-primary bg-primary/20 text-primary' 
-                    : 'border-base-content/10 bg-base-content/5 text-base-content/60 hover:bg-base-content/10'"
+                    : 'border-brutal bg-base-content/5 text-base-content/60 hover:bg-base-content/10'"
                   @click="householdMode = 'single'"
                 >
                   <User :size="20" class="flex-shrink-0" />
@@ -123,10 +124,10 @@ function handleClose() {
                 </button>
                 <button
                   type="button"
-                  class="w-full py-3 px-4 rounded-xl border-2 transition-all duration-200 flex items-center gap-3 text-left"
+                  class="w-full py-3 px-4 rounded-none border-2 transition-all duration-200 flex items-center gap-3 text-left"
                   :class="householdMode === 'separate' 
                     ? 'border-primary bg-primary/20 text-primary' 
-                    : 'border-base-content/10 bg-base-content/5 text-base-content/60 hover:bg-base-content/10'"
+                    : 'border-brutal bg-base-content/5 text-base-content/60 hover:bg-base-content/10'"
                   @click="householdMode = 'separate'"
                 >
                   <UsersRound :size="20" class="flex-shrink-0" />
@@ -137,10 +138,10 @@ function handleClose() {
                 </button>
                 <button
                   type="button"
-                  class="w-full py-3 px-4 rounded-xl border-2 transition-all duration-200 flex items-center gap-3 text-left"
+                  class="w-full py-3 px-4 rounded-none border-2 transition-all duration-200 flex items-center gap-3 text-left"
                   :class="householdMode === 'joint' 
                     ? 'border-primary bg-primary/20 text-primary' 
-                    : 'border-base-content/10 bg-base-content/5 text-base-content/60 hover:bg-base-content/10'"
+                    : 'border-brutal bg-base-content/5 text-base-content/60 hover:bg-base-content/10'"
                   @click="householdMode = 'joint'"
                 >
                   <Handshake :size="20" class="flex-shrink-0" />
@@ -165,14 +166,14 @@ function handleClose() {
                 >
                   <div class="absolute left-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
                     <div 
-                      class="w-2 h-2 rounded-full"
+class="w-2 h-2 rounded-full"
                       :class="index === 0 ? 'bg-primary' : 'bg-secondary'"
                     ></div>
                   </div>
                   <input
                     v-model="ownerNames[index]"
                     type="text"
-                    class="w-full pl-10 pr-4 py-3 bg-base-content/5 border border-base-content/10 rounded-xl text-base-content placeholder-base-content/30 focus:outline-none focus:border-primary/50 focus:bg-base-content/10 transition-all"
+                    class="w-full pl-10 pr-4 py-3 bg-base-content/5 border border-brutal rounded-none text-base-content placeholder-base-content/30 focus:outline-none focus:border-primary/50 focus:bg-base-content/10 transition-all"
                     :placeholder="`Personne ${index + 1}`"
                     maxlength="30"
                   />
@@ -184,7 +185,7 @@ function handleClose() {
             </div>
 
             <!-- Info -->
-            <div class="p-4 rounded-xl bg-blue-500/10 border border-blue-500/20">
+            <div class="p-4 rounded-none bg-blue-500/10 border border-blue-500/20">
               <div class="flex gap-3">
                 <Info :size="20" class="text-blue-400 flex-shrink-0 mt-0.5" />
                 <p class="text-sm text-blue-400/80">
@@ -195,17 +196,17 @@ function handleClose() {
           </div>
 
           <!-- Footer -->
-          <div class="px-6 py-4 border-t border-base-content/10 flex justify-end gap-3">
+          <div class="px-6 py-4 border-t border-brutal flex justify-end gap-3">
             <button
               type="button"
-              class="px-5 py-2.5 rounded-xl bg-base-content/5 hover:bg-base-content/10 text-base-content/70 font-medium transition-colors"
+              class="brutal-btn brutal-btn-ghost"
               @click="handleClose"
             >
               Annuler
             </button>
             <button
               type="button"
-              class="px-5 py-2.5 rounded-xl bg-primary hover:bg-primary/90 text-primary-content font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              class="brutal-btn brutal-btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
               :disabled="!isValid"
               @click="handleSubmit"
             >

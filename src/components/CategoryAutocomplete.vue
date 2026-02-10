@@ -138,12 +138,12 @@ const showDropdown = computed(
       v-model="inputValue"
       type="text"
       :placeholder="placeholder"
-      class="w-full px-4 py-3 rounded-xl bg-base-content/5 border text-base-content placeholder-base-content/30 focus:outline-none focus:ring-2 transition-all"
+      class="w-full px-4 py-3 rounded-none bg-base-content/5 border text-base-content placeholder-base-content/30 focus:outline-none focus:ring-2 transition-all"
       :class="hasError
         ? 'border-red-500/50 focus:border-red-500 focus:ring-red-500/20'
         : focusColor === 'secondary'
-          ? 'border-base-content/10 focus:border-secondary/50 focus:ring-secondary/20'
-          : 'border-base-content/10 focus:border-primary/50 focus:ring-primary/20'"
+        ? 'border-brutal focus:border-secondary/50 focus:ring-secondary/20'
+          : 'border-brutal focus:border-primary/50 focus:ring-primary/20'"
       autocomplete="off"
       @focus="onFocus"
       @blur="onBlur"
@@ -155,13 +155,14 @@ const showDropdown = computed(
     <Transition name="dropdown">
       <div
         v-if="showDropdown"
-        class="absolute z-50 w-full mt-1 py-1 rounded-xl bg-base-100 border border-base-content/10 shadow-2xl max-h-48 overflow-y-auto"
+        class="absolute z-50 w-full mt-1 py-1 rounded-none bg-base-100 border-3 border-base-content max-h-48 overflow-y-auto"
+        style="box-shadow: 4px 4px 0px var(--brutal-shadow)"
       >
         <button
           v-for="(cat, index) in suggestions"
           :key="cat"
           type="button"
-          class="w-full text-left px-4 py-2 text-sm transition-colors"
+          class="w-full text-left px-4 py-2 text-sm transition-colors border-b border-brutal last:border-b-0"
           :class="index === highlightIndex
             ? 'bg-primary/20 text-base-content'
             : 'text-base-content/80 hover:bg-base-content/5'"
