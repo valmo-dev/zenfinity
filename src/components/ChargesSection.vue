@@ -1,8 +1,10 @@
 <script setup>
-import { ref, inject } from "vue";
+import { ref, inject, computed } from "vue";
 import { useBudgetStore } from "../stores/budget";
+import { Users, Pencil, Trash2, Plus } from "lucide-vue-next";
 import EditModal from "./EditModal.vue";
 import ConfirmModal from "./ConfirmModal.vue";
+import BudgetProgressBar from "./BudgetProgressBar.vue";
 
 const store = useBudgetStore();
 const showToast = inject("showToast", () => {});
@@ -13,6 +15,27 @@ const selectedItem = ref(null);
 // Confirmation de suppression
 const showDeleteConfirm = ref(false);
 const itemToDelete = ref(null);
+
+const isSinglePerson = computed(() => store.owners.length === 1);
+const isJointMode = computed(() => store.householdMode === "joint");
+
+// En mode 1 personne, fusionner charges communes + personnelles
+function allChargeItems(owner) {
+  const personal = store.personalChargeItems(owner);
+  if (isSinglePerson.value) {
+    return [...personal, ...store.communalChargeItems];
+  }
+  return personal;
+}
+
+// Total charges personnelles (inclut communes en mode 1 personne)
+function allChargesTotal(owner) {
+  const personal = store.personalChargesByOwner(owner);
+  if (isSinglePerson.value) {
+    return personal + store.totalCommunalCharges;
+  }
+  return personal;
+}
 
 function openEdit(item) {
   selectedItem.value = item;
@@ -50,20 +73,110 @@ function formatCurrency(value) {
     maximumFractionDigits: 2,
   });
 }
+
+// Feature 3 : Catégories avec budget - tracking des catégories déjà affichées
+// pour montrer la barre une seule fois par catégorie
+function getCategoryBudgetStatus(category, owner) {
+  return store.categoryBudgetStatus(category, owner);
+}
+
+// Extraire les catégories uniques d'une liste d'items pour afficher les barres budget
+function uniqueCategories(items) {
+  const seen = new Set();
+  return items
+    .map((i) => i.category)
+    .filter((cat) => {
+      if (seen.has(cat)) return false;
+      seen.add(cat);
+      return store.categoryBudgets[cat] != null;
+    });
+}
 </script>
 
 <template>
   <div class="space-y-6">
-    <!-- Charges communes -->
-    <div class="glass-card rounded-2xl overflow-hidden">
+    <!-- Mode joint : une seule liste de charges du foyer -->
+    <div v-if="isJointMode" class="glass-card rounded-2xl overflow-hidden">
       <!-- Header -->
-      <div class="px-6 py-4 border-b border-white/5 bg-gradient-to-r from-amber-500/10 to-transparent">
+      <div class="px-6 py-4 border-b border-base-content/5 bg-gradient-to-r from-blue-500/10 to-transparent">
         <div class="flex items-center justify-between">
-          <h3 class="text-lg font-bold flex items-center gap-3 text-white">
+          <h3 class="text-lg font-bold flex items-center gap-3 text-base-content">
+            <div class="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center">
+              <Users :size="16" class="text-blue-400" />
+            </div>
+            Charges du foyer
+          </h3>
+          <span 
+            class="px-4 py-1.5 rounded-full text-sm font-bold bg-blue-500/20 text-blue-400"
+            title="Total des charges du foyer"
+          >
+            {{ formatCurrency(store.totalCharges) }} €
+          </span>
+        </div>
+      </div>
+
+      <div class="p-6">
+        <div v-if="store.allChargeItems.length > 0" class="space-y-2">
+          <div
+            v-for="item in store.allChargeItems"
+            :key="item.id"
+            class="flex items-center justify-between py-3 px-4 rounded-xl bg-base-content/3 hover:bg-base-content/5 transition-all duration-200 group"
+          >
+            <span class="font-medium text-base-content/90">{{ item.category }}</span>
+            <div class="flex items-center gap-3">
+              <span class="tabular-nums font-mono text-red-400/90">
+                −{{ formatCurrency(item.amount) }} €
+              </span>
+              <div class="opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity flex gap-1">
+                <button
+                  class="w-8 h-8 rounded-full bg-base-content/5 hover:bg-base-content/10 flex items-center justify-center transition-colors"
+                  @click="openEdit(item)"
+                  title="Modifier cette entrée"
+                >
+                  <Pencil :size="14" class="text-base-content/60" />
+                </button>
+                <button
+                  class="w-8 h-8 rounded-full bg-base-content/5 hover:bg-red-500/20 flex items-center justify-center transition-colors"
+                  @click="requestDelete(item)"
+                  title="Supprimer cette entrée"
+                >
+                  <Trash2 :size="14" class="text-red-400" />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Budget bars par catégorie (mode joint) -->
+          <div v-if="uniqueCategories(store.allChargeItems).length > 0" class="mt-4 pt-3 border-t border-base-content/5 space-y-3">
+            <div v-for="cat in uniqueCategories(store.allChargeItems)" :key="cat" class="px-4">
+              <p class="text-xs text-base-content/50 mb-1">{{ cat }}</p>
+              <BudgetProgressBar
+                :spent="store.categorySpending(cat)"
+                :budget="store.categoryBudgets[cat].global"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- État vide -->
+        <div v-else class="text-center py-8">
+          <div class="w-12 h-12 rounded-full bg-base-content/5 flex items-center justify-center mx-auto mb-3">
+            <Users :size="24" class="text-base-content/40" stroke-width="1.5" />
+          </div>
+          <p class="text-base-content/50 text-sm">Aucune charge</p>
+          <p class="text-base-content/30 text-xs mt-1">Ajoutez une charge via le bouton "Ajouter"</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mode separate : charges communes (masqué en mode 1 personne et joint) -->
+    <div v-if="!isSinglePerson && !isJointMode" class="glass-card rounded-2xl overflow-hidden">
+      <!-- Header -->
+      <div class="px-6 py-4 border-b border-base-content/5 bg-gradient-to-r from-amber-500/10 to-transparent">
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-bold flex items-center gap-3 text-base-content">
             <div class="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
+              <Users :size="16" class="text-amber-400" />
             </div>
             Charges communes
           </h3>
@@ -83,49 +196,56 @@ function formatCurrency(value) {
             <div
               v-for="item in store.communalChargeItems"
               :key="item.id"
-              class="flex items-center justify-between py-3 px-4 rounded-xl bg-white/3 hover:bg-white/5 transition-all duration-200 group"
+              class="flex items-center justify-between py-3 px-4 rounded-xl bg-base-content/3 hover:bg-base-content/5 transition-all duration-200 group"
             >
-              <span class="font-medium text-white/90">{{ item.category }}</span>
+              <span class="font-medium text-base-content/90">{{ item.category }}</span>
               <div class="flex items-center gap-3">
                 <span class="tabular-nums font-mono text-amber-400">
                   −{{ formatCurrency(item.amount) }} €
                 </span>
-                <div class="opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
+                <div class="opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity flex gap-1">
                   <button
-                    class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors"
+                    class="w-8 h-8 rounded-full bg-base-content/5 hover:bg-base-content/10 flex items-center justify-center transition-colors"
                     @click="openEdit(item)"
                     title="Modifier cette entrée"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-white/60" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                    </svg>
+                    <Pencil :size="14" class="text-base-content/60" />
                   </button>
                   <button
-                    class="w-8 h-8 rounded-full bg-white/5 hover:bg-red-500/20 flex items-center justify-center transition-colors"
+                    class="w-8 h-8 rounded-full bg-base-content/5 hover:bg-red-500/20 flex items-center justify-center transition-colors"
                     @click="requestDelete(item)"
                     title="Supprimer cette entrée"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                    </svg>
+                    <Trash2 :size="14" class="text-red-400" />
                   </button>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Répartition -->
-          <div class="mt-6 pt-4 border-t border-white/5">
+          <!-- Budget bars par catégorie (charges communes) -->
+          <div v-if="uniqueCategories(store.communalChargeItems).length > 0" class="mt-4 pt-3 border-t border-base-content/5 space-y-3">
+            <div v-for="cat in uniqueCategories(store.communalChargeItems)" :key="cat" class="px-4">
+              <p class="text-xs text-base-content/50 mb-1">{{ cat }}</p>
+              <BudgetProgressBar
+                :spent="store.categorySpending(cat)"
+                :budget="store.categoryBudgets[cat].global"
+              />
+            </div>
+          </div>
+
+          <!-- Répartition (seulement pour 2 personnes) -->
+          <div v-if="!isSinglePerson" class="mt-6 pt-4 border-t border-base-content/5">
             <div class="flex items-center gap-3 mb-4">
-              <div class="h-px flex-1 bg-gradient-to-r from-white/10 to-transparent"></div>
-              <span class="text-xs font-medium text-white/50 uppercase tracking-wider">Répartition</span>
-              <div class="h-px flex-1 bg-gradient-to-l from-white/10 to-transparent"></div>
+              <div class="h-px flex-1 bg-gradient-to-r from-base-content/10 to-transparent"></div>
+              <span class="text-xs font-medium text-base-content/50 uppercase tracking-wider">Répartition</span>
+              <div class="h-px flex-1 bg-gradient-to-l from-base-content/10 to-transparent"></div>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div
                 v-for="(owner, index) in store.owners"
                 :key="owner"
-                class="flex justify-between items-center py-3 px-4 rounded-xl bg-white/3"
+                class="flex justify-between items-center py-3 px-4 rounded-xl bg-base-content/3"
                 :title="`Part de ${owner} basée sur ${store.communalChargesDistribution[owner]}% du total`"
               >
                 <div class="flex items-center gap-2">
@@ -133,10 +253,10 @@ function formatCurrency(value) {
                     class="w-2 h-2 rounded-full"
                     :class="index === 0 ? 'bg-primary' : 'bg-secondary'"
                   ></div>
-                  <span class="text-white/80">{{ owner }}</span>
-                  <span class="text-white/50 text-xs">({{ store.communalChargesDistribution[owner] }}%)</span>
+                  <span class="text-base-content/80">{{ owner }}</span>
+                  <span class="text-base-content/50 text-xs">({{ store.communalChargesDistribution[owner] }}%)</span>
                 </div>
-                <span class="tabular-nums font-mono font-medium text-white">
+                <span class="tabular-nums font-mono font-medium text-base-content">
                   {{ formatCurrency(store.communalChargesShare(owner)) }} €
                 </span>
               </div>
@@ -146,19 +266,21 @@ function formatCurrency(value) {
 
         <!-- État vide -->
         <div v-else class="text-center py-8">
-          <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-3">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
+          <div class="w-12 h-12 rounded-full bg-base-content/5 flex items-center justify-center mx-auto mb-3">
+            <Users :size="24" class="text-base-content/40" stroke-width="1.5" />
           </div>
-          <p class="text-white/50 text-sm">Aucune charge commune</p>
-          <p class="text-white/30 text-xs mt-1">Ajoutez une charge commune via le bouton "Ajouter"</p>
+          <p class="text-base-content/50 text-sm">Aucune charge commune</p>
+          <p class="text-base-content/30 text-xs mt-1">Ajoutez une charge commune via le bouton "Ajouter"</p>
         </div>
       </div>
     </div>
 
-    <!-- Charges personnelles -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Charges personnelles (masqué en mode joint) -->
+    <div
+      v-if="!isJointMode"
+      class="grid grid-cols-1 gap-6"
+      :class="{ 'lg:grid-cols-2': !isSinglePerson }"
+    >
       <div
         v-for="(owner, index) in store.owners"
         :key="owner"
@@ -166,11 +288,11 @@ function formatCurrency(value) {
       >
         <!-- Header -->
         <div 
-          class="px-6 py-4 border-b border-white/5"
+          class="px-6 py-4 border-b border-base-content/5"
           :class="index === 0 ? 'bg-gradient-to-r from-primary/15 to-transparent' : 'bg-gradient-to-r from-secondary/15 to-transparent'"
         >
           <div class="flex items-center justify-between">
-            <h3 class="text-lg font-bold flex items-center gap-3 text-white">
+            <h3 class="text-lg font-bold flex items-center gap-3 text-base-content">
               <div 
                 class="w-3 h-3 rounded-full"
                 :class="index === 0 ? 'bg-primary shadow-lg shadow-primary/50' : 'bg-secondary shadow-lg shadow-secondary/50'"
@@ -182,56 +304,61 @@ function formatCurrency(value) {
               :class="index === 0 ? 'bg-primary/20 text-primary' : 'bg-secondary/20 text-secondary'"
               :title="`Total des charges personnelles de ${owner}`"
             >
-              {{ formatCurrency(store.personalChargesByOwner(owner)) }} €
+              {{ formatCurrency(allChargesTotal(owner)) }} €
             </span>
           </div>
         </div>
 
         <div class="p-6">
-          <div v-if="store.personalChargeItems(owner).length > 0" class="space-y-2">
+          <div v-if="allChargeItems(owner).length > 0" class="space-y-2">
             <div
-              v-for="item in store.personalChargeItems(owner)"
+              v-for="item in allChargeItems(owner)"
               :key="item.id"
-              class="flex items-center justify-between py-3 px-4 rounded-xl bg-white/3 hover:bg-white/5 transition-all duration-200 group"
+              class="flex items-center justify-between py-3 px-4 rounded-xl bg-base-content/3 hover:bg-base-content/5 transition-all duration-200 group"
             >
-              <span class="text-white/90">{{ item.category }}</span>
+              <span class="text-base-content/90">{{ item.category }}</span>
               <div class="flex items-center gap-3">
                 <span class="tabular-nums font-mono text-red-400/90">
                   −{{ formatCurrency(item.amount) }} €
                 </span>
-                <div class="opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
+                <div class="opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity flex gap-1">
                   <button
-                    class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors"
+                    class="w-8 h-8 rounded-full bg-base-content/5 hover:bg-base-content/10 flex items-center justify-center transition-colors"
                     @click="openEdit(item)"
                     title="Modifier cette entrée"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-white/60" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                    </svg>
+                    <Pencil :size="14" class="text-base-content/60" />
                   </button>
                   <button
-                    class="w-8 h-8 rounded-full bg-white/5 hover:bg-red-500/20 flex items-center justify-center transition-colors"
+                    class="w-8 h-8 rounded-full bg-base-content/5 hover:bg-red-500/20 flex items-center justify-center transition-colors"
                     @click="requestDelete(item)"
                     title="Supprimer cette entrée"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                    </svg>
+                    <Trash2 :size="14" class="text-red-400" />
                   </button>
                 </div>
+              </div>
+            </div>
+
+            <!-- Budget bars par catégorie (charges personnelles) -->
+            <div v-if="uniqueCategories(allChargeItems(owner)).length > 0" class="mt-4 pt-3 border-t border-base-content/5 space-y-3">
+              <div v-for="cat in uniqueCategories(allChargeItems(owner))" :key="cat" class="px-4">
+                <p class="text-xs text-base-content/50 mb-1">{{ cat }}</p>
+                <BudgetProgressBar
+                  :spent="store.categorySpending(cat, owner)"
+                  :budget="(store.categoryBudgets[cat]?.perPerson?.[owner] ?? store.categoryBudgets[cat]?.global) || 0"
+                />
               </div>
             </div>
           </div>
 
           <!-- État vide -->
           <div v-else class="text-center py-8">
-            <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-3">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-              </svg>
+            <div class="w-12 h-12 rounded-full bg-base-content/5 flex items-center justify-center mx-auto mb-3">
+              <Plus :size="24" class="text-base-content/40" stroke-width="1.5" />
             </div>
-            <p class="text-white/50 text-sm">Aucune charge personnelle</p>
-            <p class="text-white/30 text-xs mt-1">Ajoutez une charge via le bouton "Ajouter"</p>
+            <p class="text-base-content/50 text-sm">Aucune charge personnelle</p>
+            <p class="text-base-content/30 text-xs mt-1">Ajoutez une charge via le bouton "Ajouter"</p>
           </div>
         </div>
       </div>

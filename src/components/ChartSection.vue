@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from "vue";
 import { useBudgetStore } from "../stores/budget";
+import { PieChart, BarChart3 } from "lucide-vue-next";
 import { Doughnut, Bar } from "vue-chartjs";
 import {
   Chart as ChartJS,
@@ -40,6 +41,8 @@ const chartColors = [
   "rgba(100, 181, 246, 0.85)", // light blue
 ];
 
+const isDark = computed(() => store.theme === "zenfinity-dark");
+
 const hasCharges = computed(() => Object.keys(store.chargesBreakdown).length > 0);
 const hasMultipleMonths = computed(() => store.monthlyEvolution.length > 1);
 
@@ -53,16 +56,16 @@ const doughnutData = computed(() => {
       {
         data: values,
         backgroundColor: labels.map((_, i) => chartColors[i % chartColors.length]),
-        borderColor: "rgba(0, 0, 0, 0.5)",
+        borderColor: isDark.value ? "rgba(0, 0, 0, 0.5)" : "rgba(255, 255, 255, 0.5)",
         borderWidth: 2,
         hoverBorderWidth: 3,
-        hoverBorderColor: "rgba(255, 255, 255, 0.3)",
+        hoverBorderColor: isDark.value ? "rgba(255, 255, 255, 0.3)" : "rgba(0, 0, 0, 0.3)",
       },
     ],
   };
 });
 
-const doughnutOptions = {
+const doughnutOptions = computed(() => ({
   responsive: true,
   maintainAspectRatio: false,
   cutout: "65%",
@@ -70,7 +73,7 @@ const doughnutOptions = {
     legend: {
       position: "bottom",
       labels: {
-        color: "rgba(255, 255, 255, 0.7)",
+        color: isDark.value ? "rgba(255, 255, 255, 0.7)" : "rgba(0, 0, 0, 0.7)",
         font: { size: 12, family: "inherit" },
         padding: 16,
         usePointStyle: true,
@@ -78,11 +81,15 @@ const doughnutOptions = {
       },
     },
     tooltip: {
-      backgroundColor: "rgba(0, 0, 0, 0.85)",
+      backgroundColor: isDark.value ? "rgba(0, 0, 0, 0.85)" : "rgba(255, 255, 255, 0.95)",
+      titleColor: isDark.value ? "rgba(255, 255, 255, 0.9)" : "rgba(0, 0, 0, 0.9)",
+      bodyColor: isDark.value ? "rgba(255, 255, 255, 0.8)" : "rgba(0, 0, 0, 0.8)",
       titleFont: { size: 13 },
       bodyFont: { size: 12 },
       padding: 12,
       cornerRadius: 8,
+      borderColor: isDark.value ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.1)",
+      borderWidth: 1,
       callbacks: {
         label: (ctx) => {
           const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
@@ -92,7 +99,7 @@ const doughnutOptions = {
       },
     },
   },
-};
+}));
 
 const barData = computed(() => {
   const evolution = store.monthlyEvolution;
@@ -127,14 +134,14 @@ const barData = computed(() => {
   };
 });
 
-const barOptions = {
+const barOptions = computed(() => ({
   responsive: true,
   maintainAspectRatio: false,
   plugins: {
     legend: {
       position: "bottom",
       labels: {
-        color: "rgba(255, 255, 255, 0.7)",
+        color: isDark.value ? "rgba(255, 255, 255, 0.7)" : "rgba(0, 0, 0, 0.7)",
         font: { size: 12, family: "inherit" },
         padding: 16,
         usePointStyle: true,
@@ -142,11 +149,15 @@ const barOptions = {
       },
     },
     tooltip: {
-      backgroundColor: "rgba(0, 0, 0, 0.85)",
+      backgroundColor: isDark.value ? "rgba(0, 0, 0, 0.85)" : "rgba(255, 255, 255, 0.95)",
+      titleColor: isDark.value ? "rgba(255, 255, 255, 0.9)" : "rgba(0, 0, 0, 0.9)",
+      bodyColor: isDark.value ? "rgba(255, 255, 255, 0.8)" : "rgba(0, 0, 0, 0.8)",
       titleFont: { size: 13 },
       bodyFont: { size: 12 },
       padding: 12,
       cornerRadius: 8,
+      borderColor: isDark.value ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.1)",
+      borderWidth: 1,
       callbacks: {
         label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.y.toFixed(2)} €`,
       },
@@ -155,24 +166,24 @@ const barOptions = {
   scales: {
     x: {
       ticks: { 
-        color: "rgba(255, 255, 255, 0.5)", 
+        color: isDark.value ? "rgba(255, 255, 255, 0.5)" : "rgba(0, 0, 0, 0.5)", 
         font: { size: 11 } 
       },
       grid: { display: false },
     },
     y: {
       ticks: {
-        color: "rgba(255, 255, 255, 0.5)",
+        color: isDark.value ? "rgba(255, 255, 255, 0.5)" : "rgba(0, 0, 0, 0.5)",
         font: { size: 11 },
         callback: (val) => `${val} €`,
       },
       grid: { 
-        color: "rgba(255, 255, 255, 0.05)",
+        color: isDark.value ? "rgba(255, 255, 255, 0.05)" : "rgba(0, 0, 0, 0.05)",
         drawBorder: false,
       },
     },
   },
-};
+}));
 </script>
 
 <template>
@@ -180,13 +191,10 @@ const barOptions = {
     <!-- Répartition des charges (Doughnut) -->
     <div v-if="hasCharges" class="glass-card rounded-2xl overflow-hidden">
       <!-- Header -->
-      <div class="px-6 py-4 border-b border-white/5 bg-gradient-to-r from-primary/10 to-transparent">
-        <h3 class="text-lg font-bold flex items-center gap-3 text-white">
+      <div class="px-6 py-4 border-b border-base-content/5 bg-gradient-to-r from-primary/10 to-transparent">
+        <h3 class="text-lg font-bold flex items-center gap-3 text-base-content">
           <div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
-              <path stroke-linecap="round" stroke-linejoin="round" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
-            </svg>
+            <PieChart :size="16" class="text-primary" />
           </div>
           Répartition des charges
         </h3>
@@ -201,12 +209,10 @@ const barOptions = {
     <!-- Évolution mensuelle (Bar) -->
     <div v-if="hasMultipleMonths" class="glass-card rounded-2xl overflow-hidden">
       <!-- Header -->
-      <div class="px-6 py-4 border-b border-white/5 bg-gradient-to-r from-blue-500/10 to-transparent">
-        <h3 class="text-lg font-bold flex items-center gap-3 text-white">
+      <div class="px-6 py-4 border-b border-base-content/5 bg-gradient-to-r from-blue-500/10 to-transparent">
+        <h3 class="text-lg font-bold flex items-center gap-3 text-base-content">
           <div class="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-            </svg>
+            <BarChart3 :size="16" class="text-blue-400" />
           </div>
           Évolution mensuelle
         </h3>
@@ -224,12 +230,10 @@ const barOptions = {
       class="glass-card rounded-2xl overflow-hidden"
     >
       <div class="p-8 text-center">
-        <div class="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-4">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-          </svg>
+        <div class="w-16 h-16 rounded-full bg-base-content/5 flex items-center justify-center mx-auto mb-4">
+          <BarChart3 :size="32" class="text-base-content/30" stroke-width="1.5" />
         </div>
-        <p class="text-white/40">Les graphiques apparaitront une fois des données ajoutées</p>
+        <p class="text-base-content/40">Les graphiques apparaitront une fois des données ajoutées</p>
       </div>
     </div>
   </div>

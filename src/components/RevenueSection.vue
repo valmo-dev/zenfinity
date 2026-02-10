@@ -1,7 +1,51 @@
 <script setup>
+import { ref, inject, computed } from "vue";
 import { useBudgetStore } from "../stores/budget";
+import { CircleDollarSign, Pencil, Trash2, Plus } from "lucide-vue-next";
+import EditModal from "./EditModal.vue";
+import ConfirmModal from "./ConfirmModal.vue";
 
 const store = useBudgetStore();
+const showToast = inject("showToast", () => {});
+
+const showEditModal = ref(false);
+const selectedItem = ref(null);
+
+// Confirmation de suppression
+const showDeleteConfirm = ref(false);
+const itemToDelete = ref(null);
+
+const isSinglePerson = computed(() => store.owners.length === 1);
+
+function openEdit(item) {
+  selectedItem.value = item;
+  showEditModal.value = true;
+}
+
+function handleEditClose() {
+  showEditModal.value = false;
+  showToast("success", "Revenu modifié avec succès");
+}
+
+function requestDelete(item) {
+  itemToDelete.value = item;
+  showDeleteConfirm.value = true;
+}
+
+function confirmDelete() {
+  if (itemToDelete.value) {
+    const categoryName = itemToDelete.value.category;
+    store.deleteItem(itemToDelete.value.id);
+    showToast("success", `"${categoryName}" supprimé`);
+    itemToDelete.value = null;
+  }
+  showDeleteConfirm.value = false;
+}
+
+function cancelDelete() {
+  itemToDelete.value = null;
+  showDeleteConfirm.value = false;
+}
 
 function formatCurrency(value) {
   return Number(value).toLocaleString("fr-FR", {
@@ -14,12 +58,10 @@ function formatCurrency(value) {
 <template>
   <div class="glass-card rounded-2xl overflow-hidden">
     <!-- Header -->
-    <div class="px-6 py-4 border-b border-white/5 bg-gradient-to-r from-green-500/10 to-transparent">
-      <h3 class="text-lg font-bold flex items-center gap-3 text-white">
+    <div class="px-6 py-4 border-b border-base-content/5 bg-gradient-to-r from-green-500/10 to-transparent">
+      <h3 class="text-lg font-bold flex items-center gap-3 text-base-content">
         <div class="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
+          <CircleDollarSign :size="16" class="text-green-400" />
         </div>
         Revenus
       </h3>
@@ -30,17 +72,17 @@ function formatCurrency(value) {
       <div class="overflow-x-auto">
         <table class="w-full">
           <thead>
-            <tr class="text-white/50 text-sm">
-              <th class="text-left py-3 font-medium">Personne</th>
+            <tr class="text-base-content/50 text-sm">
+              <th class="text-left py-3 font-medium">{{ isSinglePerson ? 'Source' : 'Personne' }}</th>
               <th class="text-right py-3 font-medium">Montant</th>
-              <th class="text-right py-3 font-medium tooltip-wrapper" data-tooltip="Pourcentage du revenu total du ménage">Part</th>
+              <th v-if="!isSinglePerson" class="text-right py-3 font-medium tooltip-wrapper" data-tooltip="Pourcentage du revenu total du ménage">Part</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-white/5">
+          <tbody class="divide-y divide-base-content/5">
             <tr 
               v-for="(owner, index) in store.owners" 
               :key="owner"
-              class="hover:bg-white/3 transition-colors"
+              class="hover:bg-base-content/3 transition-colors"
             >
               <td class="py-3">
                 <div class="flex items-center gap-2">
@@ -48,26 +90,26 @@ function formatCurrency(value) {
                     class="w-2 h-2 rounded-full"
                     :class="index === 0 ? 'bg-primary' : 'bg-secondary'"
                   ></div>
-                  <span class="font-medium text-white">{{ owner }}</span>
+                  <span class="font-medium text-base-content">{{ owner }}</span>
                 </div>
               </td>
-              <td class="text-right py-3 tabular-nums font-mono text-white/80">
+              <td class="text-right py-3 tabular-nums font-mono text-base-content/80">
                 {{ formatCurrency(store.revenueByOwner(owner)) }} €
               </td>
-              <td class="text-right py-3">
-                <span class="px-2.5 py-1 rounded-full text-xs font-medium bg-white/5 text-white/60">
+              <td v-if="!isSinglePerson" class="text-right py-3">
+                <span class="px-2.5 py-1 rounded-full text-xs font-medium bg-base-content/5 text-base-content/60">
                   {{ store.contributionPercentage(owner) }}%
                 </span>
               </td>
             </tr>
           </tbody>
           <tfoot>
-            <tr class="border-t border-white/10">
-              <td class="py-3 font-bold text-white">Total</td>
-              <td class="text-right py-3 tabular-nums font-mono font-bold text-white">
+            <tr class="border-t border-base-content/10">
+              <td class="py-3 font-bold text-base-content">Total</td>
+              <td class="text-right py-3 tabular-nums font-mono font-bold text-base-content">
                 {{ formatCurrency(store.totalRevenue) }} €
               </td>
-              <td class="text-right py-3">
+              <td v-if="!isSinglePerson" class="text-right py-3">
                 <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-green-500/20 text-green-400">
                   100%
                 </span>
@@ -78,42 +120,74 @@ function formatCurrency(value) {
       </div>
 
       <!-- Détail des entrées revenus -->
-      <div v-if="store.revenueItems.length > 0" class="mt-6 pt-4 border-t border-white/5">
+      <div v-if="store.revenueItems.length > 0" class="mt-6 pt-4 border-t border-base-content/5">
         <div class="flex items-center gap-3 mb-4">
-          <div class="h-px flex-1 bg-gradient-to-r from-white/10 to-transparent"></div>
-          <span class="text-xs font-medium text-white/40 uppercase tracking-wider">Détail</span>
-          <div class="h-px flex-1 bg-gradient-to-l from-white/10 to-transparent"></div>
+          <div class="h-px flex-1 bg-gradient-to-r from-base-content/10 to-transparent"></div>
+          <span class="text-xs font-medium text-base-content/40 uppercase tracking-wider">Détail</span>
+          <div class="h-px flex-1 bg-gradient-to-l from-base-content/10 to-transparent"></div>
         </div>
-        <div class="space-y-2">
+                <div class="space-y-2">
           <div
             v-for="item in store.revenueItems"
             :key="item.id"
-            class="flex items-center justify-between text-sm py-2.5 px-4 rounded-xl bg-white/3 hover:bg-white/5 transition-colors group"
+            class="flex items-center justify-between text-sm py-2.5 px-4 rounded-xl bg-base-content/3 hover:bg-base-content/5 transition-colors group"
           >
             <div class="flex items-center gap-3">
               <div 
                 class="w-1.5 h-1.5 rounded-full"
                 :class="item.owner === store.owners[0] ? 'bg-primary' : 'bg-secondary'"
               ></div>
-              <span class="text-white/80">{{ item.category }}</span>
-              <span class="text-white/40 text-xs">({{ item.owner }})</span>
+              <span class="text-base-content/80">{{ item.category }}</span>
+              <span class="text-base-content/40 text-xs">({{ item.owner }})</span>
             </div>
-            <span class="tabular-nums font-mono font-medium text-green-400">
-              +{{ formatCurrency(item.amount) }} €
-            </span>
+            <div class="flex items-center gap-3">
+              <span class="tabular-nums font-mono font-medium text-green-400">
+                +{{ formatCurrency(item.amount) }} €
+              </span>
+              <div class="opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity flex gap-1">
+                <button
+                  class="w-8 h-8 rounded-full bg-base-content/5 hover:bg-base-content/10 flex items-center justify-center transition-colors"
+                  @click="openEdit(item)"
+                  title="Modifier ce revenu"
+                >
+                  <Pencil :size="14" class="text-base-content/60" />
+                </button>
+                <button
+                  class="w-8 h-8 rounded-full bg-base-content/5 hover:bg-red-500/20 flex items-center justify-center transition-colors"
+                  @click="requestDelete(item)"
+                  title="Supprimer ce revenu"
+                >
+                  <Trash2 :size="14" class="text-red-400" />
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
       <!-- État vide -->
       <div v-else class="text-center py-8">
-        <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-3">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-          </svg>
+        <div class="w-12 h-12 rounded-full bg-base-content/5 flex items-center justify-center mx-auto mb-3">
+          <Plus :size="24" class="text-base-content/30" stroke-width="1.5" />
         </div>
-        <p class="text-white/40 text-sm">Aucun revenu enregistré</p>
+        <p class="text-base-content/40 text-sm">Aucun revenu enregistré</p>
       </div>
     </div>
+
+    <!-- Modales -->
+    <EditModal
+      :isOpen="showEditModal"
+      :item="selectedItem"
+      @close="handleEditClose"
+    />
+
+    <ConfirmModal
+      :isOpen="showDeleteConfirm"
+      title="Supprimer ce revenu ?"
+      message="Ce revenu sera définitivement supprimé de votre budget."
+      :itemName="itemToDelete?.category"
+      @confirm="confirmDelete"
+      @cancel="cancelDelete"
+    />
   </div>
 </template>

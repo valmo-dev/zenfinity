@@ -1,8 +1,10 @@
 <script setup>
-import { computed } from "vue";
+import { computed, inject } from "vue";
 import { useBudgetStore } from "../stores/budget";
+import { ChevronLeft, ChevronRight, Copy, Repeat } from "lucide-vue-next";
 
 const store = useBudgetStore();
+const showToast = inject("showToast", () => {});
 
 const MONTH_NAMES = [
   "Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
@@ -31,12 +33,26 @@ const canDuplicate = computed(() => {
 
 function duplicatePrevious() {
   store.duplicateMonth(previousMonth.value, store.selectedMonth);
+  showToast("success", `Entrées dupliquées depuis ${previousMonthDisplay.value}`);
 }
 
 const previousMonthDisplay = computed(() => {
   const [year, month] = previousMonth.value.split("-").map(Number);
   return `${MONTH_NAMES[month - 1]} ${year}`;
 });
+
+// Feature 1 : Récurrences
+const canApplyRecurring = computed(() => {
+  return (
+    store.activeRecurringItems.length > 0 &&
+    !store.hasRecurringBeenApplied(store.selectedMonth)
+  );
+});
+
+function applyRecurring() {
+  const count = store.applyRecurringItems(store.selectedMonth);
+  showToast("success", `${count} entrée${count > 1 ? 's' : ''} récurrente${count > 1 ? 's' : ''} appliquée${count > 1 ? 's' : ''}`);
+}
 </script>
 
 <template>
@@ -45,18 +61,16 @@ const previousMonthDisplay = computed(() => {
     <div class="flex items-center gap-6">
       <!-- Bouton précédent -->
       <button
-        class="group w-12 h-12 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 flex items-center justify-center transition-all duration-300"
+        class="group w-12 h-12 rounded-full bg-base-content/5 hover:bg-base-content/10 border border-base-content/10 hover:border-base-content/20 flex items-center justify-center transition-all duration-300"
         @click="navigateMonth(-1)"
         aria-label="Mois précédent"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white/70 group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
-        </svg>
+        <ChevronLeft :size="20" class="text-base-content/70 group-hover:text-base-content transition-colors" />
       </button>
 
       <!-- Affichage du mois -->
       <div class="text-center min-w-56">
-        <h2 class="text-3xl font-bold tracking-tight text-white">
+        <h2 class="text-3xl font-bold tracking-tight text-base-content">
           {{ displayMonth }}
         </h2>
         <div class="flex items-center justify-center gap-2 mt-1">
@@ -68,28 +82,42 @@ const previousMonthDisplay = computed(() => {
 
       <!-- Bouton suivant -->
       <button
-        class="group w-12 h-12 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 flex items-center justify-center transition-all duration-300"
+        class="group w-12 h-12 rounded-full bg-base-content/5 hover:bg-base-content/10 border border-base-content/10 hover:border-base-content/20 flex items-center justify-center transition-all duration-300"
         @click="navigateMonth(1)"
         aria-label="Mois suivant"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white/70 group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-        </svg>
+        <ChevronRight :size="20" class="text-base-content/70 group-hover:text-base-content transition-colors" />
       </button>
     </div>
 
-    <!-- Bouton de duplication -->
-    <button
-      v-if="canDuplicate"
-      class="group flex items-center gap-3 px-5 py-2.5 rounded-full bg-white/5 hover:bg-primary/20 border border-white/10 hover:border-primary/30 transition-all duration-300"
-      @click="duplicatePrevious"
-    >
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-      </svg>
-      <span class="text-sm font-medium text-white/80 group-hover:text-white">
-        Dupliquer depuis {{ previousMonthDisplay }}
-      </span>
-    </button>
+    <!-- Boutons d'action -->
+    <div class="flex flex-wrap items-center justify-center gap-3">
+      <!-- Appliquer les récurrences -->
+      <button
+        v-if="canApplyRecurring"
+        class="group flex items-center gap-3 px-5 py-2.5 rounded-full bg-violet-500/10 hover:bg-violet-500/20 border border-violet-500/20 hover:border-violet-500/30 transition-all duration-300"
+        @click="applyRecurring"
+      >
+        <Repeat :size="16" class="text-violet-400" />
+        <span class="text-sm font-medium text-base-content/80 group-hover:text-base-content">
+          Appliquer les récurrences
+        </span>
+        <span class="px-2 py-0.5 rounded-full text-xs font-bold bg-violet-500/20 text-violet-400">
+          {{ store.activeRecurringItems.length }}
+        </span>
+      </button>
+
+      <!-- Bouton de duplication (fallback) -->
+      <button
+        v-if="canDuplicate"
+        class="group flex items-center gap-3 px-5 py-2.5 rounded-full bg-base-content/5 hover:bg-primary/20 border border-base-content/10 hover:border-primary/30 transition-all duration-300"
+        @click="duplicatePrevious"
+      >
+        <Copy :size="16" class="text-primary" />
+        <span class="text-sm font-medium text-base-content/80 group-hover:text-base-content">
+          Dupliquer depuis {{ previousMonthDisplay }}
+        </span>
+      </button>
+    </div>
   </div>
 </template>

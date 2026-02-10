@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
+import { Check, X, Info } from "lucide-vue-next";
 
 const toasts = ref([]);
 let toastId = 0;
@@ -65,28 +66,17 @@ defineExpose({ addToast, removeToast });
             'bg-blue-500/20': toast.type === 'info',
           }"
         >
-          <!-- Success -->
-          <svg v-if="toast.type === 'success'" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-          </svg>
-          <!-- Error -->
-          <svg v-else-if="toast.type === 'error'" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-          <!-- Info -->
-          <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
+          <Check v-if="toast.type === 'success'" :size="16" class="text-green-400" />
+          <X v-else-if="toast.type === 'error'" :size="16" class="text-red-400" />
+          <Info v-else :size="16" class="text-blue-400" />
         </div>
         
         <!-- Message -->
-        <p class="text-sm text-white/90 font-medium">{{ toast.message }}</p>
+        <p class="text-sm text-base-content/90 font-medium">{{ toast.message }}</p>
         
         <!-- Close button -->
-        <button class="ml-auto w-6 h-6 rounded-full hover:bg-white/10 flex items-center justify-center transition-colors">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-white/50" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-          </svg>
+        <button class="ml-auto w-6 h-6 rounded-full hover:bg-base-content/10 flex items-center justify-center transition-colors">
+          <X :size="14" class="text-base-content/50" />
         </button>
       </div>
     </div>

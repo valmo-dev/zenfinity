@@ -1,6 +1,8 @@
 <script setup>
 import { ref, watch } from "vue";
 import { useBudgetStore } from "../stores/budget";
+import { X, Pencil } from "lucide-vue-next";
+import CategoryAutocomplete from "./CategoryAutocomplete.vue";
 
 const store = useBudgetStore();
 
@@ -55,102 +57,125 @@ function handleSubmit() {
 </script>
 
 <template>
-  <dialog :class="['modal', { 'modal-open': isOpen }]">
-    <div class="modal-box glass-card border border-white/10 max-w-md rounded-2xl" @click.stop>
-      <!-- Close button -->
-      <button
-        class="absolute right-4 top-4 w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors"
-        @click="emit('close')"
+  <Teleport to="body">
+    <Transition name="modal">
+      <div
+        v-if="isOpen"
+        class="fixed inset-0 z-50 flex items-center justify-center p-4"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white/60" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
+        <!-- Backdrop -->
+        <div
+          class="absolute inset-0 bg-black/60 backdrop-blur-sm"
+          @click="emit('close')"
+        ></div>
 
-      <!-- Header -->
-      <div class="flex items-center gap-3 mb-6">
-        <div class="w-10 h-10 rounded-full bg-secondary/20 flex items-center justify-center">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-          </svg>
-        </div>
-        <h3 class="font-bold text-xl text-white">Modifier l'entrée</h3>
-      </div>
-
-      <form @submit.prevent="handleSubmit" class="space-y-5">
-        <!-- Type et Owner -->
-        <div class="grid grid-cols-2 gap-4">
-          <div class="space-y-2">
-            <label class="text-sm font-medium text-white/70">Type</label>
-            <select 
-              v-model="editType" 
-              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:border-secondary/50 focus:outline-none focus:ring-2 focus:ring-secondary/20 transition-all"
-            >
-              <option value="Revenu" class="bg-neutral">Revenu</option>
-              <option value="Charge" class="bg-neutral">Charge</option>
-            </select>
-          </div>
-          <div class="space-y-2">
-            <label class="text-sm font-medium text-white/70">Assigné à</label>
-            <select 
-              v-model="editOwner" 
-              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:border-secondary/50 focus:outline-none focus:ring-2 focus:ring-secondary/20 transition-all"
-            >
-              <option v-for="o in store.owners" :key="o" :value="o" class="bg-neutral">{{ o }}</option>
-              <option value="Commun" class="bg-neutral">Commun</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Catégorie -->
-        <div class="space-y-2">
-          <label class="text-sm font-medium text-white/70">Catégorie</label>
-          <input
-            v-model="editCategory"
-            type="text"
-            class="w-full px-4 py-3 rounded-xl bg-white/5 border text-white placeholder-white/30 focus:outline-none focus:ring-2 transition-all"
-            :class="errors.category ? 'border-red-500/50 focus:border-red-500 focus:ring-red-500/20' : 'border-white/10 focus:border-secondary/50 focus:ring-secondary/20'"
-          />
-          <p v-if="errors.category" class="text-xs text-red-400 mt-1">{{ errors.category }}</p>
-        </div>
-
-        <!-- Montant -->
-        <div class="space-y-2">
-          <label class="text-sm font-medium text-white/70">Montant (EUR)</label>
-          <input
-            v-model.number="editAmount"
-            type="number"
-            step="0.01"
-            min="0.01"
-            class="w-full px-4 py-3 rounded-xl bg-white/5 border text-white placeholder-white/30 focus:outline-none focus:ring-2 transition-all"
-            :class="errors.amount ? 'border-red-500/50 focus:border-red-500 focus:ring-red-500/20' : 'border-white/10 focus:border-secondary/50 focus:ring-secondary/20'"
-          />
-          <p v-if="errors.amount" class="text-xs text-red-400 mt-1">{{ errors.amount }}</p>
-        </div>
-
-        <!-- Actions -->
-        <div class="flex justify-end gap-3 pt-4">
-          <button 
-            type="button" 
-            class="px-5 py-2.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-white/70 hover:text-white font-medium transition-all"
+        <!-- Modal -->
+        <div
+          class="relative w-full max-w-md bg-base-100 border border-base-content/10 rounded-2xl shadow-2xl overflow-hidden"
+          @click.stop
+        >
+          <!-- Close button -->
+          <button
+            class="absolute right-4 top-4 w-8 h-8 rounded-full bg-base-content/5 hover:bg-base-content/10 flex items-center justify-center transition-colors z-10"
             @click="emit('close')"
           >
-            Annuler
+            <X :size="16" class="text-base-content/60" />
           </button>
-          <button 
-            type="submit" 
-            class="group flex items-center gap-2 px-5 py-2.5 rounded-full bg-white text-black hover:bg-white/90 font-medium shadow-xl transition-all"
-          >
-            Sauvegarder
-            <div class="w-5 h-5 rounded-full bg-secondary flex items-center justify-center">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-              </svg>
+
+          <!-- Header -->
+          <div class="px-6 py-4 border-b border-base-content/10 bg-gradient-to-r from-secondary/10 to-transparent">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full bg-secondary/20 flex items-center justify-center">
+                <Pencil :size="20" class="text-secondary" />
+              </div>
+              <h3 class="font-bold text-xl text-base-content">Modifier l'entrée</h3>
             </div>
-          </button>
+          </div>
+
+          <!-- Body -->
+          <div class="p-6">
+            <form @submit.prevent="handleSubmit" class="space-y-5">
+              <!-- Type et Owner -->
+              <div class="grid grid-cols-2 gap-4">
+                <div class="space-y-2">
+                  <label class="text-sm font-medium text-base-content/70">Type</label>
+                  <select 
+                    v-model="editType" 
+                    class="w-full px-4 py-3 rounded-xl bg-base-content/5 border border-base-content/10 text-base-content focus:border-secondary/50 focus:outline-none focus:ring-2 focus:ring-secondary/20 transition-all"
+                  >
+                    <option value="Revenu" class="bg-base-100">Revenu</option>
+                    <option value="Charge" class="bg-base-100">Charge</option>
+                  </select>
+                </div>
+                <div class="space-y-2">
+                  <label class="text-sm font-medium text-base-content/70">Assigné à</label>
+                  <select 
+                    v-model="editOwner" 
+                    class="w-full px-4 py-3 rounded-xl bg-base-content/5 border border-base-content/10 text-base-content focus:border-secondary/50 focus:outline-none focus:ring-2 focus:ring-secondary/20 transition-all"
+                  >
+                    <option v-for="o in store.owners" :key="o" :value="o" class="bg-base-100">{{ o }}</option>
+                    <option value="Commun" class="bg-base-100">Commun</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Catégorie -->
+              <div class="space-y-2">
+                <label class="text-sm font-medium text-base-content/70">Catégorie</label>
+                <CategoryAutocomplete
+                  v-model="editCategory"
+                  :type="editType"
+                  :has-error="!!errors.category"
+                  focus-color="secondary"
+                />
+                <p v-if="errors.category" class="text-xs text-red-400 mt-1">{{ errors.category }}</p>
+              </div>
+
+              <!-- Montant -->
+              <div class="space-y-2">
+                <label class="text-sm font-medium text-base-content/70">Montant (EUR)</label>
+                <input
+                  v-model.number="editAmount"
+                  type="number"
+                  step="0.01"
+                  min="0.01"
+                  class="w-full px-4 py-3 rounded-xl bg-base-content/5 border text-base-content placeholder-base-content/30 focus:outline-none focus:ring-2 transition-all"
+                  :class="errors.amount ? 'border-red-500/50 focus:border-red-500 focus:ring-red-500/20' : 'border-base-content/10 focus:border-secondary/50 focus:ring-secondary/20'"
+                />
+                <p v-if="errors.amount" class="text-xs text-red-400 mt-1">{{ errors.amount }}</p>
+              </div>
+
+              <!-- Actions -->
+              <div class="flex justify-end gap-3 pt-4">
+                <button 
+                  type="button" 
+                  class="px-5 py-2.5 rounded-xl bg-base-content/5 hover:bg-base-content/10 text-base-content/70 hover:text-base-content font-medium transition-all"
+                  @click="emit('close')"
+                >
+                  Annuler
+                </button>
+                <button 
+                  type="submit" 
+                  class="px-5 py-2.5 rounded-xl bg-primary hover:bg-primary/90 text-primary-content font-medium transition-colors"
+                >
+                  Sauvegarder
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
-      </form>
-    </div>
-    <div class="modal-backdrop bg-black/80 backdrop-blur-sm" @click="emit('close')"></div>
-  </dialog>
+      </div>
+    </Transition>
+  </Teleport>
 </template>
+
+<style scoped>
+.modal-enter-active,
+.modal-leave-active {
+  transition: opacity 0.2s ease;
+}
+.modal-enter-from,
+.modal-leave-to {
+  opacity: 0;
+}
+</style>

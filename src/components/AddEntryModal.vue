@@ -1,6 +1,8 @@
 <script setup>
-import { ref, watch } from "vue";
+import { ref, watch, computed } from "vue";
 import { useBudgetStore } from "../stores/budget";
+import { X, Plus } from "lucide-vue-next";
+import CategoryAutocomplete from "./CategoryAutocomplete.vue";
 
 const store = useBudgetStore();
 
@@ -11,19 +13,38 @@ const props = defineProps({
 const emit = defineEmits(["close", "added"]);
 
 const type = ref("Revenu");
-const owner = ref("Marine");
+const owner = ref(store.owners[0] || "");
 const category = ref("");
 const amount = ref("");
+const addAsRecurring = ref(false);
 const errors = ref({});
+
+const isSinglePerson = computed(() => store.owners.length === 1);
+const isJointMode = computed(() => store.householdMode === "joint");
+
+// En mode joint, les charges sont automatiquement assignées à "Commun"
+const showOwnerSelector = computed(() => {
+  if (isSinglePerson.value) return false;
+  if (isJointMode.value && type.value === "Charge") return false;
+  return true;
+});
+
+// L'owner effectif (pour le submit)
+const effectiveOwner = computed(() => {
+  if (isSinglePerson.value) return store.owners[0];
+  if (isJointMode.value && type.value === "Charge") return "Commun";
+  return owner.value;
+});
 
 watch(
   () => props.isOpen,
   (val) => {
     if (val) {
       type.value = "Revenu";
-      owner.value = "Marine";
+      owner.value = store.owners[0] || "";
       category.value = "";
       amount.value = "";
+      addAsRecurring.value = false;
       errors.value = {};
     }
   }
@@ -43,116 +64,160 @@ function validate() {
 
 function handleSubmit() {
   if (!validate()) return;
-  store.addItem({
+  const itemData = {
     type: type.value,
-    owner: owner.value,
+    owner: effectiveOwner.value,
     category: category.value.trim(),
     amount: Number(amount.value),
-  });
+  };
+  store.addItem(itemData);
+
+  // Ajouter comme récurrence si coché
+  if (addAsRecurring.value) {
+    store.addRecurringItem({
+      type: itemData.type,
+      owner: itemData.owner,
+      category: itemData.category,
+      amount: itemData.amount,
+    });
+  }
+
   emit("added");
   emit("close");
 }
 </script>
 
 <template>
-  <dialog :class="['modal', { 'modal-open': isOpen }]">
-    <div class="modal-box glass-card border border-white/10 max-w-md rounded-2xl" @click.stop>
-      <!-- Close button -->
-      <button
-        class="absolute right-4 top-4 w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors"
-        @click="emit('close')"
+  <Teleport to="body">
+    <Transition name="modal">
+      <div
+        v-if="isOpen"
+        class="fixed inset-0 z-50 flex items-center justify-center p-4"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white/60" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
+        <!-- Backdrop -->
+        <div
+          class="absolute inset-0 bg-black/60 backdrop-blur-sm"
+          @click="emit('close')"
+        ></div>
 
-      <!-- Header -->
-      <div class="flex items-center gap-3 mb-6">
-        <div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-          </svg>
-        </div>
-        <h3 class="font-bold text-xl text-white">Ajouter une entrée</h3>
-      </div>
-
-      <form @submit.prevent="handleSubmit" class="space-y-5">
-        <!-- Type et Owner -->
-        <div class="grid grid-cols-2 gap-4">
-          <div class="space-y-2">
-            <label class="text-sm font-medium text-white/70">Type</label>
-            <select 
-              v-model="type" 
-              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-            >
-              <option value="Revenu" class="bg-neutral">Revenu</option>
-              <option value="Charge" class="bg-neutral">Charge</option>
-            </select>
-          </div>
-          <div class="space-y-2">
-            <label class="text-sm font-medium text-white/70">Assigné à</label>
-            <select 
-              v-model="owner" 
-              class="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-            >
-              <option v-for="o in store.owners" :key="o" :value="o" class="bg-neutral">{{ o }}</option>
-              <option value="Commun" class="bg-neutral">Commun</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Catégorie -->
-        <div class="space-y-2">
-          <label class="text-sm font-medium text-white/70">Catégorie</label>
-          <input
-            v-model="category"
-            type="text"
-            placeholder="Ex: Salaire, Loyer, Courses..."
-            class="w-full px-4 py-3 rounded-xl bg-white/5 border text-white placeholder-white/30 focus:outline-none focus:ring-2 transition-all"
-            :class="errors.category ? 'border-red-500/50 focus:border-red-500 focus:ring-red-500/20' : 'border-white/10 focus:border-primary/50 focus:ring-primary/20'"
-          />
-          <p v-if="errors.category" class="text-xs text-red-400 mt-1">{{ errors.category }}</p>
-        </div>
-
-        <!-- Montant -->
-        <div class="space-y-2">
-          <label class="text-sm font-medium text-white/70">Montant (EUR)</label>
-          <input
-            v-model.number="amount"
-            type="number"
-            step="0.01"
-            min="0.01"
-            placeholder="0.00"
-            class="w-full px-4 py-3 rounded-xl bg-white/5 border text-white placeholder-white/30 focus:outline-none focus:ring-2 transition-all"
-            :class="errors.amount ? 'border-red-500/50 focus:border-red-500 focus:ring-red-500/20' : 'border-white/10 focus:border-primary/50 focus:ring-primary/20'"
-          />
-          <p v-if="errors.amount" class="text-xs text-red-400 mt-1">{{ errors.amount }}</p>
-        </div>
-
-        <!-- Actions -->
-        <div class="flex justify-end gap-3 pt-4">
-          <button 
-            type="button" 
-            class="px-5 py-2.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-white/70 hover:text-white font-medium transition-all"
+        <!-- Modal -->
+        <div
+          class="relative w-full max-w-md bg-base-100 border border-base-content/10 rounded-2xl shadow-2xl overflow-hidden"
+          @click.stop
+        >
+          <!-- Close button -->
+          <button
+            class="absolute right-4 top-4 w-8 h-8 rounded-full bg-base-content/5 hover:bg-base-content/10 flex items-center justify-center transition-colors z-10"
             @click="emit('close')"
           >
-            Annuler
+            <X :size="16" class="text-base-content/60" />
           </button>
-          <button 
-            type="submit" 
-            class="group flex items-center gap-2 px-5 py-2.5 rounded-full bg-white text-black hover:bg-white/90 font-medium shadow-xl transition-all"
-          >
-            Ajouter
-            <div class="w-5 h-5 rounded-full bg-primary flex items-center justify-center">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-              </svg>
+
+          <!-- Header -->
+          <div class="px-6 py-4 border-b border-base-content/10 bg-gradient-to-r from-primary/10 to-transparent">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+                <Plus :size="20" class="text-primary" />
+              </div>
+              <h3 class="font-bold text-xl text-base-content">Ajouter une entrée</h3>
             </div>
-          </button>
+          </div>
+
+          <!-- Body -->
+          <div class="p-6">
+            <form @submit.prevent="handleSubmit" class="space-y-5">
+              <!-- Type -->
+              <div class="space-y-2">
+                <label class="text-sm font-medium text-base-content/70">Type</label>
+                <select 
+                  v-model="type" 
+                  class="w-full px-4 py-3 rounded-xl bg-base-content/5 border border-base-content/10 text-base-content focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                >
+                  <option value="Revenu" class="bg-base-100">Revenu</option>
+                  <option value="Charge" class="bg-base-100">Charge</option>
+                </select>
+              </div>
+
+              <!-- Owner (seulement si nécessaire) -->
+              <div v-if="showOwnerSelector" class="space-y-2">
+                <label class="text-sm font-medium text-base-content/70">Assigné à</label>
+                <select 
+                  v-model="owner" 
+                  class="w-full px-4 py-3 rounded-xl bg-base-content/5 border border-base-content/10 text-base-content focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                >
+                  <option v-for="o in store.owners" :key="o" :value="o" class="bg-base-100">{{ o }}</option>
+                  <option v-if="type === 'Charge' && !isJointMode" value="Commun" class="bg-base-100">Commun</option>
+                </select>
+              </div>
+
+              <!-- Catégorie -->
+              <div class="space-y-2">
+                <label class="text-sm font-medium text-base-content/70">Catégorie</label>
+                <CategoryAutocomplete
+                  v-model="category"
+                  :type="type"
+                  :has-error="!!errors.category"
+                  placeholder="Ex: Salaire, Loyer, Courses..."
+                />
+                <p v-if="errors.category" class="text-xs text-red-400 mt-1">{{ errors.category }}</p>
+              </div>
+
+              <!-- Montant -->
+              <div class="space-y-2">
+                <label class="text-sm font-medium text-base-content/70">Montant (EUR)</label>
+                <input
+                  v-model.number="amount"
+                  type="number"
+                  step="0.01"
+                  min="0.01"
+                  placeholder="0.00"
+                  class="w-full px-4 py-3 rounded-xl bg-base-content/5 border text-base-content placeholder-base-content/30 focus:outline-none focus:ring-2 transition-all"
+                  :class="errors.amount ? 'border-red-500/50 focus:border-red-500 focus:ring-red-500/20' : 'border-base-content/10 focus:border-primary/50 focus:ring-primary/20'"
+                />
+                <p v-if="errors.amount" class="text-xs text-red-400 mt-1">{{ errors.amount }}</p>
+              </div>
+
+              <!-- Toggle récurrence -->
+              <label class="flex items-center gap-3 py-2 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  v-model="addAsRecurring"
+                  class="checkbox checkbox-sm checkbox-primary"
+                />
+                <span class="text-sm text-base-content/70">Ajouter aussi comme récurrence</span>
+              </label>
+
+              <!-- Actions -->
+              <div class="flex justify-end gap-3 pt-4">
+                <button 
+                  type="button" 
+                  class="px-5 py-2.5 rounded-xl bg-base-content/5 hover:bg-base-content/10 text-base-content/70 hover:text-base-content font-medium transition-all"
+                  @click="emit('close')"
+                >
+                  Annuler
+                </button>
+                <button 
+                  type="submit" 
+                  class="px-5 py-2.5 rounded-xl bg-primary hover:bg-primary/90 text-primary-content font-medium transition-colors"
+                >
+                  Ajouter
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
-      </form>
-    </div>
-    <div class="modal-backdrop bg-black/80 backdrop-blur-sm" @click="emit('close')"></div>
-  </dialog>
+      </div>
+    </Transition>
+  </Teleport>
 </template>
+
+<style scoped>
+.modal-enter-active,
+.modal-leave-active {
+  transition: opacity 0.2s ease;
+}
+.modal-enter-from,
+.modal-leave-to {
+  opacity: 0;
+}
+</style>

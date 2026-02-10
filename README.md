@@ -1,8 +1,8 @@
-# ExpTrack - Documentation
+# ZenFinity - Documentation
 
 ## Introduction
 
-ExpTrack est une application web de suivi budgétaire développée avec Vue.js 3. Elle permet de gérer et visualiser les revenus et dépenses d'un foyer.
+ZenFinity est une application web de suivi budgétaire développée avec Vue.js 3. Elle permet de gérer et visualiser les revenus et dépenses d'un foyer.
 L'application utilise une architecture moderne basée sur Vue 3 Composition API, Pinia pour la gestion d'état, et Tailwind CSS avec la librairie de composant DaisyUI pour l'UI.
 
 ### Fonctionnalités principales

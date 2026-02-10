@@ -1,4 +1,6 @@
 <script setup>
+import { TriangleAlert, Trash2 } from "lucide-vue-next";
+
 const props = defineProps({
   isOpen: Boolean,
   title: {
@@ -36,56 +38,60 @@ function handleKeydown(e) {
 <template>
   <Teleport to="body">
     <Transition name="modal">
-      <dialog 
+      <div 
         v-if="isOpen"
-        class="modal modal-open"
+        class="fixed inset-0 z-50 flex items-center justify-center p-4"
         @keydown="handleKeydown"
       >
-        <div class="modal-box glass-card border border-white/10 max-w-sm rounded-2xl" @click.stop>
-          <!-- Icon -->
-          <div class="flex justify-center mb-4">
-            <div class="w-16 h-16 rounded-full bg-red-500/20 flex items-center justify-center">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-              </svg>
+        <!-- Backdrop -->
+        <div
+          class="absolute inset-0 bg-black/60 backdrop-blur-sm"
+          @click="handleCancel"
+        ></div>
+
+        <!-- Modal -->
+        <div class="relative w-full max-w-sm bg-base-100 border border-base-content/10 rounded-2xl shadow-2xl overflow-hidden" @click.stop>
+          <div class="p-6">
+            <!-- Icon -->
+            <div class="flex justify-center mb-4">
+              <div class="w-16 h-16 rounded-full bg-red-500/20 flex items-center justify-center">
+                <TriangleAlert :size="32" class="text-red-400" stroke-width="1.5" />
+              </div>
+            </div>
+
+            <!-- Title -->
+            <h3 class="font-bold text-xl text-base-content text-center mb-2">{{ title }}</h3>
+            
+            <!-- Message -->
+            <p class="text-base-content/60 text-center text-sm mb-2">{{ message }}</p>
+            
+            <!-- Item name -->
+            <p v-if="itemName" class="text-center mb-6">
+              <span class="inline-block px-3 py-1.5 rounded-lg bg-base-content/5 border border-base-content/10 text-base-content font-medium">
+                {{ itemName }}
+              </span>
+            </p>
+            <div v-else class="mb-4"></div>
+
+            <!-- Actions -->
+            <div class="flex gap-3">
+              <button 
+                class="flex-1 px-4 py-3 rounded-xl bg-base-content/5 hover:bg-base-content/10 text-base-content/70 hover:text-base-content font-medium transition-all"
+                @click="handleCancel"
+              >
+                Annuler
+              </button>
+              <button 
+                class="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-red-500 hover:bg-red-600 text-white font-medium shadow-lg shadow-red-500/25 transition-all"
+                @click="handleConfirm"
+              >
+                <Trash2 :size="16" />
+                Supprimer
+              </button>
             </div>
           </div>
-
-          <!-- Title -->
-          <h3 class="font-bold text-xl text-white text-center mb-2">{{ title }}</h3>
-          
-          <!-- Message -->
-          <p class="text-white/60 text-center text-sm mb-2">{{ message }}</p>
-          
-          <!-- Item name -->
-          <p v-if="itemName" class="text-center mb-6">
-            <span class="inline-block px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-white font-medium">
-              {{ itemName }}
-            </span>
-          </p>
-          <div v-else class="mb-4"></div>
-
-          <!-- Actions -->
-          <div class="flex gap-3">
-            <button 
-              class="flex-1 px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white/70 hover:text-white font-medium transition-all"
-              @click="handleCancel"
-            >
-              Annuler
-            </button>
-            <button 
-              class="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-red-500 hover:bg-red-600 text-white font-medium shadow-lg shadow-red-500/25 transition-all"
-              @click="handleConfirm"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-              </svg>
-              Supprimer
-            </button>
-          </div>
         </div>
-        <div class="modal-backdrop bg-black/80 backdrop-blur-sm" @click="handleCancel"></div>
-      </dialog>
+      </div>
     </Transition>
   </Teleport>
 </template>
