@@ -69,7 +69,7 @@ function applyRecurring() {
       </button>
 
       <!-- Affichage du mois -->
-      <div class="text-center min-w-56">
+      <div class="text-center min-w-0 sm:min-w-56">
         <h2 class="text-3xl font-semibold tracking-tight text-base-content font-mono tabular-nums">
           {{ displayMonth }}
         </h2>

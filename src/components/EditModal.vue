@@ -11,7 +11,7 @@ const props = defineProps({
   item: Object,
 });
 
-const emit = defineEmits(["close"]);
+const emit = defineEmits(["close", "saved"]);
 
 const editType = ref("");
 const editOwner = ref("");
@@ -52,6 +52,7 @@ function handleSubmit() {
     category: editCategory.value.trim(),
     amount: Number(editAmount.value),
   });
+  emit("saved");
   emit("close");
 }
 </script>
@@ -90,78 +91,79 @@ function handleSubmit() {
             </div>
           </div>
 
-          <!-- Body -->
-          <div class="p-6">
-            <form @submit.prevent="handleSubmit" class="space-y-5">
-              <!-- Type et Owner -->
-              <div class="grid grid-cols-2 gap-4">
-                <div class="space-y-2">
-                  <label class="text-[10px] font-mono uppercase tracking-[0.15em] text-base-content/50">Type</label>
-                  <select 
-                    v-model="editType" 
-                    class="w-full px-4 py-3 bg-base-content/5 border border-base-content/[0.06] rounded text-base-content focus:border-secondary/50 focus:outline-none focus:ring-2 focus:ring-secondary/20 transition-all"
-                  >
-                    <option value="Revenu" class="bg-base-100">Revenu</option>
-                    <option value="Charge" class="bg-base-100">Charge</option>
-                  </select>
+          <!-- Body + Footer wrapped in form for Enter key support -->
+          <form @submit.prevent="handleSubmit">
+            <div class="p-6">
+              <div class="space-y-5">
+                <!-- Type et Owner -->
+                <div class="grid grid-cols-2 gap-4">
+                  <div class="space-y-2">
+                    <label class="text-[10px] font-mono uppercase tracking-[0.15em] text-base-content/50">Type</label>
+                    <select 
+                      v-model="editType" 
+                      class="w-full px-4 py-3 bg-base-content/5 border border-base-content/[0.06] rounded text-base-content focus:border-secondary/50 focus:outline-none focus:ring-2 focus:ring-secondary/20 transition-all"
+                    >
+                      <option value="Revenu" class="bg-base-100">Revenu</option>
+                      <option value="Charge" class="bg-base-100">Charge</option>
+                    </select>
+                  </div>
+                  <div class="space-y-2">
+                    <label class="text-[10px] font-mono uppercase tracking-[0.15em] text-base-content/50">Assigné à</label>
+                    <select 
+                      v-model="editOwner" 
+                      class="w-full px-4 py-3 bg-base-content/5 border border-base-content/[0.06] rounded text-base-content focus:border-secondary/50 focus:outline-none focus:ring-2 focus:ring-secondary/20 transition-all"
+                    >
+                      <option v-for="o in store.owners" :key="o" :value="o" class="bg-base-100">{{ o }}</option>
+                      <option value="Commun" class="bg-base-100">Commun</option>
+                    </select>
+                  </div>
                 </div>
+
+                <!-- Catégorie -->
                 <div class="space-y-2">
-                  <label class="text-[10px] font-mono uppercase tracking-[0.15em] text-base-content/50">Assigné à</label>
-                  <select 
-                    v-model="editOwner" 
-                    class="w-full px-4 py-3 bg-base-content/5 border border-base-content/[0.06] rounded text-base-content focus:border-secondary/50 focus:outline-none focus:ring-2 focus:ring-secondary/20 transition-all"
-                  >
-                    <option v-for="o in store.owners" :key="o" :value="o" class="bg-base-100">{{ o }}</option>
-                    <option value="Commun" class="bg-base-100">Commun</option>
-                  </select>
+                  <label class="text-[10px] font-mono uppercase tracking-[0.15em] text-base-content/50">Catégorie</label>
+                  <CategoryAutocomplete
+                    v-model="editCategory"
+                    :type="editType"
+                    :has-error="!!errors.category"
+                    focus-color="secondary"
+                  />
+                  <p v-if="errors.category" class="text-xs font-mono text-[#BF616A] mt-1">{{ errors.category }}</p>
+                </div>
+
+                <!-- Montant -->
+                <div class="space-y-2">
+                  <label class="text-[10px] font-mono uppercase tracking-[0.15em] text-base-content/50">Montant (EUR)</label>
+                  <input
+                    v-model.number="editAmount"
+                    type="number"
+                    step="0.01"
+                    min="0.01"
+                    class="w-full px-4 py-3 bg-base-content/5 border rounded font-mono tabular-nums text-base-content placeholder-base-content/30 focus:outline-none focus:ring-2 transition-all"
+                    :class="errors.amount ? 'border-[#BF616A]/50 focus:border-[#BF616A] focus:ring-[#BF616A]/20' : 'border-base-content/[0.06] focus:border-secondary/50 focus:ring-secondary/20'"
+                  />
+                  <p v-if="errors.amount" class="text-xs font-mono text-[#BF616A] mt-1">{{ errors.amount }}</p>
                 </div>
               </div>
+            </div>
 
-              <!-- Catégorie -->
-              <div class="space-y-2">
-                <label class="text-[10px] font-mono uppercase tracking-[0.15em] text-base-content/50">Catégorie</label>
-                <CategoryAutocomplete
-                  v-model="editCategory"
-                  :type="editType"
-                  :has-error="!!errors.category"
-                  focus-color="secondary"
-                />
-                <p v-if="errors.category" class="text-xs font-mono text-[#BF616A] mt-1">{{ errors.category }}</p>
-              </div>
-
-              <!-- Montant -->
-              <div class="space-y-2">
-                <label class="text-[10px] font-mono uppercase tracking-[0.15em] text-base-content/50">Montant (EUR)</label>
-                <input
-                  v-model.number="editAmount"
-                  type="number"
-                  step="0.01"
-                  min="0.01"
-                  class="w-full px-4 py-3 bg-base-content/5 border rounded font-mono tabular-nums text-base-content placeholder-base-content/30 focus:outline-none focus:ring-2 transition-all"
-                  :class="errors.amount ? 'border-[#BF616A]/50 focus:border-[#BF616A] focus:ring-[#BF616A]/20' : 'border-base-content/[0.06] focus:border-secondary/50 focus:ring-secondary/20'"
-                />
-                <p v-if="errors.amount" class="text-xs font-mono text-[#BF616A] mt-1">{{ errors.amount }}</p>
-              </div>
-            </form>
-          </div>
-
-          <!-- Footer -->
-          <div class="px-6 py-4 border-t border-base-content/[0.06] flex justify-end gap-3">
-            <button 
-              type="button" 
-              class="brutal-btn brutal-btn-ghost"
-              @click="emit('close')"
-            >
-              Annuler
-            </button>
-            <button 
-              type="button" 
-              class="brutal-btn brutal-btn-primary"
-              @click="handleSubmit"
-            >
-              Sauvegarder
-            </button>
-          </div>
+            <!-- Footer -->
+            <div class="px-6 py-4 border-t border-base-content/[0.06] flex justify-end gap-3">
+              <button 
+                type="button" 
+                class="brutal-btn brutal-btn-ghost"
+                @click="emit('close')"
+              >
+                Annuler
+              </button>
+              <button 
+                type="submit" 
+                class="brutal-btn brutal-btn-primary"
+              >
+                Sauvegarder
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </Transition>

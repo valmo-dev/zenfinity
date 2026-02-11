@@ -120,9 +120,10 @@ function handleSubmit() {
             </div>
           </div>
 
-          <!-- Body -->
-          <div class="p-6">
-            <form @submit.prevent="handleSubmit" class="space-y-5">
+          <!-- Body + Footer wrapped in form for Enter key support -->
+          <form @submit.prevent="handleSubmit">
+            <div class="p-6">
+              <div class="space-y-5">
               <!-- Type -->
               <div class="space-y-2">
                 <label
@@ -226,28 +227,28 @@ function handleSubmit() {
                   >Ajouter aussi comme récurrence</span
                 >
               </label>
-            </form>
-          </div>
+              </div>
+            </div>
 
-          <!-- Footer -->
-          <div
-            class="px-6 py-4 border-t border-base-content/[0.06] flex justify-end gap-3"
-          >
-            <button
-              type="button"
-              class="brutal-btn brutal-btn-ghost"
-              @click="emit('close')"
+            <!-- Footer -->
+            <div
+              class="px-6 py-4 border-t border-base-content/[0.06] flex justify-end gap-3"
             >
-              Annuler
-            </button>
-            <button
-              type="button"
-              class="brutal-btn brutal-btn-primary"
-              @click="handleSubmit"
-            >
-              Ajouter
-            </button>
-          </div>
+              <button
+                type="button"
+                class="brutal-btn brutal-btn-ghost"
+                @click="emit('close')"
+              >
+                Annuler
+              </button>
+              <button
+                type="submit"
+                class="brutal-btn brutal-btn-primary"
+              >
+                Ajouter
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </Transition>

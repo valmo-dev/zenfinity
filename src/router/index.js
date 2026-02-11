@@ -1,11 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 import DashboardView from '../views/DashboardView.vue'
-import BudgetView from '../views/BudgetView.vue'
-import RevenusView from '../views/RevenusView.vue'
-import RepartitionView from '../views/RepartitionView.vue'
-import ImportExportView from '../views/ImportExportView.vue'
-import ParametresView from '../views/ParametresView.vue'
 
 const routes = [
   {
@@ -17,32 +12,36 @@ const routes = [
   {
     path: '/budget',
     name: 'budget',
-    component: BudgetView,
+    component: () => import('../views/BudgetView.vue'),
     meta: { title: 'Budget' }
   },
   {
     path: '/revenus',
     name: 'revenus',
-    component: RevenusView,
+    component: () => import('../views/RevenusView.vue'),
     meta: { title: 'Revenus' }
   },
   {
     path: '/repartition',
     name: 'repartition',
-    component: RepartitionView,
+    component: () => import('../views/RepartitionView.vue'),
     meta: { title: 'Répartition' }
   },
   {
     path: '/import-export',
     name: 'import-export',
-    component: ImportExportView,
+    component: () => import('../views/ImportExportView.vue'),
     meta: { title: 'Import / Export' }
   },
   {
     path: '/parametres',
     name: 'parametres',
-    component: ParametresView,
+    component: () => import('../views/ParametresView.vue'),
     meta: { title: 'Paramètres' }
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    redirect: '/'
   }
 ]
 

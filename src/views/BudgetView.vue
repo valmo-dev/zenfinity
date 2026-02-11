@@ -1,7 +1,6 @@
 <script setup>
 import MonthSelector from "../components/MonthSelector.vue";
 import CategoryBudgetManager from "../components/CategoryBudgetManager.vue";
-import BudgetProgressBar from "../components/BudgetProgressBar.vue";
 </script>
 
 <template>

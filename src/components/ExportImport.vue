@@ -6,6 +6,7 @@ import { Upload, Download, Check, X } from "lucide-vue-next";
 const store = useBudgetStore();
 const importMessage = ref(null);
 const fileInput = ref(null);
+const importFullRestore = ref(false);
 
 function downloadFile(content, filename, mimeType) {
   const blob = new Blob([content], { type: mimeType });
@@ -37,7 +38,7 @@ function handleImport(event) {
 
   const reader = new FileReader();
   reader.onload = (e) => {
-    const result = store.importJSON(e.target.result);
+    const result = store.importJSON(e.target.result, importFullRestore.value ? "full" : "month");
     if (result.success) {
       importMessage.value = {
         type: "success",
@@ -108,6 +109,15 @@ function handleImport(event) {
           @change="handleImport"
         />
       </div>
+
+      <!-- Import mode toggle -->
+      <label class="flex items-center gap-2 mt-3 cursor-pointer select-none">
+        <input type="checkbox" v-model="importFullRestore" class="checkbox checkbox-xs checkbox-primary" />
+        <span class="text-xs text-base-content/60">Restauration complète</span>
+        <span class="text-[10px] font-mono text-base-content/30">(remplace toutes les données)</span>
+      </label>
+
+      <p class="text-[10px] font-mono text-base-content/40 mt-3">JSON : toutes les données · CSV : mois sélectionné uniquement</p>
 
       <!-- Message d'import -->
       <div

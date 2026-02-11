@@ -44,6 +44,9 @@ function openEdit(item) {
 
 function handleEditClose() {
   showEditModal.value = false;
+}
+
+function handleEditSaved() {
   showToast("success", "Entrée modifiée avec succès");
 }
 
@@ -349,6 +352,7 @@ class="w-2 h-2 rounded-full"
       :isOpen="showEditModal"
       :item="selectedItem"
       @close="handleEditClose"
+      @saved="handleEditSaved"
     />
 
     <ConfirmModal

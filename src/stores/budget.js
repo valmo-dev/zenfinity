@@ -1,5 +1,14 @@
 import { defineStore } from "pinia";
 
+let _saveTimeout = null;
+function debouncedSave(state) {
+  clearTimeout(_saveTimeout);
+  _saveTimeout = setTimeout(() => {
+    localStorage.setItem("budgetStore", JSON.stringify(state));
+  }, 150);
+}
+
+
 function getCurrentMonth() {
   const now = new Date();
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
@@ -17,50 +26,55 @@ export const DEFAULT_CATEGORIES = {
 
 export const useBudgetStore = defineStore("budget", {
   state: () => {
-    const savedState = localStorage.getItem("budgetStore");
-    if (savedState) {
-      const parsed = JSON.parse(savedState);
-      // Migration : ajouter les champs manquants pour les anciennes données
-      if (parsed.items) {
-        parsed.items = parsed.items.map((item) => ({
-          ...item,
-          id: item.id || crypto.randomUUID(),
-          month: item.month || getCurrentMonth(),
-        }));
+    try {
+      const savedState = localStorage.getItem("budgetStore");
+      if (savedState) {
+        const parsed = JSON.parse(savedState);
+        // Migration : ajouter les champs manquants pour les anciennes données
+        if (parsed.items) {
+          parsed.items = parsed.items.map((item) => ({
+            ...item,
+            id: item.id || crypto.randomUUID(),
+            month: item.month || getCurrentMonth(),
+          }));
+        }
+        // Migration des anciens taux d'épargne individuels
+        const savingRates = parsed.savingRates || {
+          Personne1: parsed.savingRatePersonne1 || 30,
+          Personne2: parsed.savingRatePersonne2 || 30,
+        };
+        // Migration : déduire householdMode si absent
+        const owners = parsed.owners || ["Personne1", "Personne2"];
+        const householdMode =
+          parsed.householdMode ||
+          (owners.length === 1 ? "single" : "separate");
+        return {
+          items: parsed.items || [],
+          savingRates,
+          communalChargesDistribution: parsed.communalChargesDistribution || {
+            Personne1: 60,
+            Personne2: 40,
+          },
+          selectedMonth: parsed.selectedMonth || getCurrentMonth(),
+          owners,
+          householdMode,
+          foyerSavingRate: parsed.foyerSavingRate ?? 30,
+          theme: parsed.theme || "zenfinity-dark",
+          // Feature 1 : Récurrences
+          recurringItems: parsed.recurringItems || [],
+          appliedRecurringMonths: parsed.appliedRecurringMonths || [],
+          // Feature 3 : Budget par catégorie
+          categoryBudgets: parsed.categoryBudgets || {},
+          // Feature 4 : Objectifs d'épargne
+          savingsGoals: (parsed.savingsGoals || []).map((g) => ({
+            ...g,
+            owner: g.owner !== undefined ? g.owner : null,
+          })),
+        };
       }
-      // Migration des anciens taux d'épargne individuels
-      const savingRates = parsed.savingRates || {
-        Personne1: parsed.savingRatePersonne1 || 30,
-        Personne2: parsed.savingRatePersonne2 || 30,
-      };
-      // Migration : déduire householdMode si absent
-      const owners = parsed.owners || ["Personne1", "Personne2"];
-      const householdMode =
-        parsed.householdMode ||
-        (owners.length === 1 ? "single" : "separate");
-      return {
-        items: parsed.items || [],
-        savingRates,
-        communalChargesDistribution: parsed.communalChargesDistribution || {
-          Personne1: 60,
-          Personne2: 40,
-        },
-        selectedMonth: parsed.selectedMonth || getCurrentMonth(),
-        owners,
-        householdMode,
-        foyerSavingRate: parsed.foyerSavingRate ?? 30,
-        theme: parsed.theme || "zenfinity-dark",
-        // Feature 1 : Récurrences
-        recurringItems: parsed.recurringItems || [],
-        appliedRecurringMonths: parsed.appliedRecurringMonths || [],
-        // Feature 3 : Budget par catégorie
-        categoryBudgets: parsed.categoryBudgets || {},
-        // Feature 4 : Objectifs d'épargne
-        savingsGoals: (parsed.savingsGoals || []).map((g) => ({
-          ...g,
-          owner: g.owner !== undefined ? g.owner : null,
-        })),
-      };
+    } catch (e) {
+      // Corrupted localStorage — fall through to default state
+      console.warn("Failed to parse budgetStore from localStorage:", e);
     }
     return {
       items: [],
@@ -290,8 +304,9 @@ export const useBudgetStore = defineStore("budget", {
       );
     },
 
-    foyerSavingPerPerson() {
-      return Number((this.foyerSavingPotential / 2).toFixed(2));
+    foyerSavingPerPerson(state) {
+      const count = state.owners.length || 1;
+      return Number((this.foyerSavingPotential / count).toFixed(2));
     },
 
     foyerRemainingAfterSaving() {
@@ -457,7 +472,7 @@ export const useBudgetStore = defineStore("budget", {
 
   actions: {
     saveState() {
-      localStorage.setItem("budgetStore", JSON.stringify(this.$state));
+      debouncedSave(this.$state);
     },
 
     addItem(item) {

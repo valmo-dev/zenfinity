@@ -231,7 +231,7 @@ const barOptions = computed(() => ({
         <div class="w-16 h-16 rounded-lg bg-base-content/5 flex items-center justify-center mx-auto mb-4">
           <BarChart3 :size="32" class="text-base-content/30" stroke-width="1.5" />
         </div>
-        <p class="text-[11px] font-mono uppercase tracking-[0.15em] text-base-content/40">Les graphiques apparaitront une fois des données ajoutées</p>
+        <p class="text-[11px] font-mono uppercase tracking-[0.15em] text-base-content/40">Les graphiques apparaîtront une fois des données ajoutées</p>
       </div>
     </div>
   </div>

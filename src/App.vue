@@ -39,7 +39,7 @@ provide("showToast", showToast);
 
 function handleEntryAdded() {
   showAddModal.value = false;
-  showToast("success", "Entree ajoutee avec succes");
+  showToast("success", "Entrée ajoutée avec succès");
 }
 </script>
 
@@ -75,7 +75,7 @@ function handleEntryAdded() {
           <div class="hidden sm:flex flex-col items-end mr-1">
             <span
               class="text-[10px] font-mono uppercase tracking-[0.15em] text-base-content/40 leading-tight"
-              >System Status</span
+              >État Système</span
             >
             <div class="flex items-center gap-1.5">
               <span class="relative flex h-2 w-2">
@@ -87,7 +87,7 @@ function handleEntryAdded() {
                 ></span>
               </span>
               <span class="text-xs font-semibold font-mono text-base-content/80"
-                >Operational</span
+                >Opérationnel</span
               >
             </div>
           </div>
