@@ -3,6 +3,7 @@ import { ref, computed, inject } from "vue";
 import { useBudgetStore } from "../stores/budget";
 import { Repeat, Pencil, Trash2, Plus, ToggleLeft, ToggleRight, X, Check } from "lucide-vue-next";
 import ConfirmModal from "./ConfirmModal.vue";
+import CategoryAutocomplete from "./CategoryAutocomplete.vue";
 
 const store = useBudgetStore();
 const showToast = inject("showToast", () => {});
@@ -165,11 +166,10 @@ function formatCurrency(value) {
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div class="space-y-1">
               <label class="text-[10px] font-mono uppercase tracking-[0.15em] text-base-content/50">Catégorie</label>
-              <input
+              <CategoryAutocomplete
                 v-model="newCategory"
-                type="text"
-                placeholder="Ex: Loyer, Salaire..."
-                class="w-full px-3 py-2 bg-base-content/5 border border-base-content/[0.06] text-sm text-base-content placeholder-base-content/30 focus:border-[#B48EAD]/50 focus:outline-none"
+                :type="newType"
+                focus-color="[#B48EAD]"
               />
             </div>
             <div class="space-y-1">

@@ -133,7 +133,7 @@ const steps = computed(() => {
 
   const baseSteps = [
     {
-      label: "Salaire",
+      label: "Revenus",
       value: store.revenueByOwner(props.owner),
       type: "neutral",
       tooltip: "Total des revenus déclarés ce mois-ci",
@@ -288,7 +288,7 @@ const cardLabel = computed(() => isJoint.value ? "Budget du foyer" : props.owner
             :data-tooltip="step.tooltip"
           >
             <span
-              class="flex items-center gap-2 flex-shrink min-w-0"
+              class="flex items-center gap-2 flex-shrink min-w-0 truncate"
               :class="{
                 'text-[#BF616A]/80': step.type === 'subtract',
                 'font-medium text-base-content/70 text-xs uppercase tracking-wider font-mono': step.type === 'subtotal',

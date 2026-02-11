@@ -143,8 +143,11 @@ function resetLocal() {
           </div>
         </div>
 
-        <!-- Save button -->
-        <div class="flex justify-end">
+        <!-- Save / Reset buttons -->
+        <div class="flex justify-end gap-3">
+          <button class="brutal-btn brutal-btn-ghost" @click="resetLocal">
+            Réinitialiser
+          </button>
           <button class="brutal-btn brutal-btn-primary" @click="save">
             Enregistrer
           </button>

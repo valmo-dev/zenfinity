@@ -7,7 +7,7 @@ const store = useBudgetStore();
 
 const isSinglePerson = computed(() => store.owners.length === 1);
 
-const marinePct = computed({
+const firstOwnerPct = computed({
   get: () => store.communalChargesDistribution[store.owners[0]] || 50,
   set: (value) => {
     if (isSinglePerson.value) return;
@@ -19,7 +19,7 @@ const marinePct = computed({
   },
 });
 
-const valentinPct = computed(() => isSinglePerson.value ? 0 : 100 - marinePct.value);
+const secondOwnerPct = computed(() => isSinglePerson.value ? 0 : 100 - firstOwnerPct.value);
 </script>
 
 <template>
@@ -35,20 +35,20 @@ const valentinPct = computed(() => isSinglePerson.value ? 0 : 100 - marinePct.va
 
     <div class="p-6 space-y-5">
       <!-- Labels -->
-      <div class="flex justify-between items-center">
-        <div class="flex items-center gap-3">
-          <div class="w-3 h-3 rounded-full bg-primary"></div>
-          <span class="font-medium text-base-content">{{ store.owners[0] }}</span>
-          <span class="px-3 py-1 text-sm font-semibold bg-primary/20 text-primary">
-            {{ marinePct }}%
+      <div class="flex flex-wrap justify-between items-center gap-2">
+        <div class="flex items-center gap-2 min-w-0">
+          <div class="w-3 h-3 rounded-full bg-primary shrink-0"></div>
+          <span class="font-medium text-base-content truncate">{{ store.owners[0] }}</span>
+          <span class="px-3 py-1 text-sm font-semibold bg-primary/20 text-primary shrink-0">
+            {{ firstOwnerPct }}%
           </span>
         </div>
-        <div class="flex items-center gap-3">
-          <span class="px-3 py-1 text-sm font-semibold bg-secondary/20 text-secondary">
-            {{ valentinPct }}%
+        <div class="flex items-center gap-2 min-w-0">
+          <span class="px-3 py-1 text-sm font-semibold bg-secondary/20 text-secondary shrink-0">
+            {{ secondOwnerPct }}%
           </span>
-          <span class="font-medium text-base-content">{{ store.owners[1] }}</span>
-          <div class="w-3 h-3 rounded-full bg-secondary"></div>
+          <span class="font-medium text-base-content truncate">{{ store.owners[1] }}</span>
+          <div class="w-3 h-3 rounded-full bg-secondary shrink-0"></div>
         </div>
       </div>
 
@@ -59,7 +59,7 @@ const valentinPct = computed(() => isSinglePerson.value ? 0 : 100 - marinePct.va
           min="0"
           max="100"
           step="5"
-          v-model.number="marinePct"
+          v-model.number="firstOwnerPct"
           class="range range-sm range-primary w-full"
         />
       </div>
@@ -69,17 +69,17 @@ const valentinPct = computed(() => isSinglePerson.value ? 0 : 100 - marinePct.va
         <div class="flex overflow-hidden h-3 bg-base-content/5">
           <div
             class="bg-gradient-to-r from-primary to-primary/70 transition-all duration-500 ease-out"
-            :style="{ width: `${marinePct}%` }"
+            :style="{ width: `${firstOwnerPct}%` }"
           ></div>
           <div
             class="bg-gradient-to-l from-secondary to-secondary/70 transition-all duration-500 ease-out"
-            :style="{ width: `${valentinPct}%` }"
+            :style="{ width: `${secondOwnerPct}%` }"
           ></div>
         </div>
         <!-- Indicateur central -->
         <div 
           class="absolute top-1/2 -translate-y-1/2 w-1 h-5 bg-base-content/30 transition-all duration-500"
-          :style="{ left: `${marinePct}%`, transform: 'translateX(-50%) translateY(-50%)' }"
+          :style="{ left: `${firstOwnerPct}%`, transform: 'translateX(-50%) translateY(-50%)' }"
         ></div>
       </div>
 
