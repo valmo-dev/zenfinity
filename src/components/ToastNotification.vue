@@ -59,23 +59,23 @@ defineExpose({ addToast, removeToast });
       >
         <!-- Icon -->
         <div 
-          class="w-8 h-8 rounded-none flex items-center justify-center flex-shrink-0"
+          class="w-8 h-8 flex items-center justify-center flex-shrink-0"
           :class="{
-            'bg-green-500/20': toast.type === 'success',
-            'bg-red-500/20': toast.type === 'error',
-            'bg-blue-500/20': toast.type === 'info',
+            'bg-[#A3BE8C]/15': toast.type === 'success',
+            'bg-[#BF616A]/15': toast.type === 'error',
+            'bg-[#81A1C1]/15': toast.type === 'info',
           }"
         >
-          <Check v-if="toast.type === 'success'" :size="16" class="text-green-400" />
-          <X v-else-if="toast.type === 'error'" :size="16" class="text-red-400" />
-          <Info v-else :size="16" class="text-blue-400" />
+          <Check v-if="toast.type === 'success'" :size="16" class="text-[#A3BE8C]" />
+          <X v-else-if="toast.type === 'error'" :size="16" class="text-[#BF616A]" />
+          <Info v-else :size="16" class="text-[#81A1C1]" />
         </div>
         
         <!-- Message -->
         <p class="text-sm text-base-content/90 font-medium">{{ toast.message }}</p>
         
         <!-- Close button -->
-        <button class="ml-auto w-6 h-6 rounded-none hover:bg-base-content/10 flex items-center justify-center transition-colors">
+        <button class="ml-auto w-6 h-6 hover:bg-base-content/10 flex items-center justify-center transition-colors">
           <X :size="14" class="text-base-content/50" />
         </button>
       </div>

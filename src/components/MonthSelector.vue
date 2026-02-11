@@ -65,16 +65,16 @@ function applyRecurring() {
         @click="navigateMonth(-1)"
         aria-label="Mois précédent"
       >
-        <ChevronLeft :size="24" :stroke-width="2.5" />
+        <ChevronLeft :size="24" :stroke-width="2" />
       </button>
 
       <!-- Affichage du mois -->
       <div class="text-center min-w-56">
-        <h2 class="text-3xl font-bold tracking-tight text-base-content uppercase">
+        <h2 class="text-3xl font-semibold tracking-tight text-base-content font-mono tabular-nums">
           {{ displayMonth }}
         </h2>
         <div class="flex items-center justify-center mt-2">
-          <div class="w-20 bg-base-content h-1 rounded-sm"></div>
+          <div class="w-16 bg-base-content/20 h-px"></div>
         </div>
       </div>
 
@@ -84,7 +84,7 @@ function applyRecurring() {
         @click="navigateMonth(1)"
         aria-label="Mois suivant"
       >
-        <ChevronRight :size="24" :stroke-width="2.5" />
+        <ChevronRight :size="24" :stroke-width="2" />
       </button>
     </div>
 
@@ -93,14 +93,14 @@ function applyRecurring() {
       <!-- Appliquer les récurrences -->
       <button
         v-if="canApplyRecurring"
-        class="brutal-btn bg-violet-500/20 hover:bg-violet-500/30"
+        class="brutal-btn bg-[#B48EAD]/15 hover:bg-[#B48EAD]/30"
         @click="applyRecurring"
       >
-        <Repeat :size="16" class="text-violet-400" />
+        <Repeat :size="16" class="text-[#B48EAD]" />
         <span class="text-sm font-medium">
           Appliquer les récurrences
         </span>
-        <span class="px-2 py-0.5 rounded-none text-xs font-bold bg-violet-500/20 text-violet-400">
+        <span class="px-2 py-0.5 text-xs font-bold bg-[#B48EAD]/15 text-[#B48EAD]">
           {{ store.activeRecurringItems.length }}
         </span>
       </button>

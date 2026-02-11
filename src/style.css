@@ -2,131 +2,173 @@
 @plugin "daisyui";
 
 /* ==========================================
-   ZENFINITY NEO-BRUTALIST THEMES
+   GEIST FONT FACES
    ========================================== */
 
-/* Thème ZenFinity Dark - Neo-Brutalist */
+@font-face {
+  font-family: 'Geist';
+  src: url('./assets/fonts/Geist[wght].woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'GeistMono';
+  src: url('./assets/fonts/GeistMono[wght].woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ==========================================
+   INDUSTRIAL HIGH-TECH NORD THEMES
+   ========================================== */
+
+/* Nord Dark Theme */
 @plugin "daisyui/theme" {
   name: "zenfinity-dark";
   default: true;
   prefersdark: true;
   color-scheme: dark;
   
-  --color-base-100: oklch(18% 0.01 0);
-  --color-base-200: oklch(14% 0.01 0);
-  --color-base-300: oklch(10% 0.005 0);
-  --color-base-content: oklch(95% 0.005 0);
+  /* Polar Night */
+  --color-base-100: #3B4252;
+  --color-base-200: #2E3440;
+  --color-base-300: #272d38;
+  --color-base-content: #ECEFF4;
   
-  --color-primary: oklch(55% 0.22 25);
-  --color-primary-content: oklch(100% 0 0);
+  /* Frost - Primary */
+  --color-primary: #88C0D0;
+  --color-primary-content: #2E3440;
   
-  --color-secondary: oklch(65% 0.20 25);
-  --color-secondary-content: oklch(100% 0 0);
+  /* Frost - Secondary */
+  --color-secondary: #81A1C1;
+  --color-secondary-content: #2E3440;
   
-  --color-accent: oklch(60% 0.18 10);
-  --color-accent-content: oklch(100% 0 0);
+  /* Frost - Accent */
+  --color-accent: #8FBCBB;
+  --color-accent-content: #2E3440;
   
-  --color-neutral: oklch(22% 0.01 0);
-  --color-neutral-content: oklch(90% 0.005 0);
-  --color-info: oklch(70% 0.15 250);
-  --color-info-content: oklch(10% 0 0);
-  --color-success: oklch(72% 0.19 150);
-  --color-success-content: oklch(10% 0 0);
-  --color-warning: oklch(82% 0.16 85);
-  --color-warning-content: oklch(10% 0 0);
-  --color-error: oklch(60% 0.22 25);
-  --color-error-content: oklch(100% 0 0);
+  /* Polar Night - Neutral */
+  --color-neutral: #434C5E;
+  --color-neutral-content: #D8DEE9;
+
+  /* Aurora - Semantic */
+  --color-info: #81A1C1;
+  --color-info-content: #2E3440;
+  --color-success: #A3BE8C;
+  --color-success-content: #2E3440;
+  --color-warning: #EBCB8B;
+  --color-warning-content: #2E3440;
+  --color-error: #BF616A;
+  --color-error-content: #ECEFF4;
   
-  /* Sharp corners - true neo-brutalist */
-  --radius-selector: 0;
-  --radius-field: 0;
-  --radius-box: 0;
+  /* Rounded, soft Industrial */
+  --radius-selector: 0.375rem;
+  --radius-field: 0.375rem;
+  --radius-box: 0.5rem;
   --size-selector: 0.25rem;
   --size-field: 0.25rem;
-  --border: 3px;
+  --border: 1px;
   --depth: 0;
   --noise: 0;
 }
 
-/* Thème ZenFinity Light - Neo-Brutalist */
+/* Nord Light Theme */
 @plugin "daisyui/theme" {
   name: "zenfinity-light";
   default: false;
   prefersdark: false;
   color-scheme: light;
   
-  --color-base-100: oklch(97% 0.01 80);
-  --color-base-200: oklch(94% 0.01 80);
-  --color-base-300: oklch(90% 0.01 80);
-  --color-base-content: oklch(15% 0.01 0);
+  /* Snow Storm */
+  --color-base-100: #ECEFF4;
+  --color-base-200: #E5E9F0;
+  --color-base-300: #D8DEE9;
+  --color-base-content: #2E3440;
   
-  --color-primary: oklch(50% 0.22 25);
-  --color-primary-content: oklch(100% 0 0);
+  /* Frost - Primary */
+  --color-primary: #5E81AC;
+  --color-primary-content: #ECEFF4;
   
-  --color-secondary: oklch(55% 0.18 25);
-  --color-secondary-content: oklch(100% 0 0);
+  /* Frost - Secondary */
+  --color-secondary: #81A1C1;
+  --color-secondary-content: #ECEFF4;
   
-  --color-accent: oklch(55% 0.16 10);
-  --color-accent-content: oklch(100% 0 0);
+  /* Frost - Accent */
+  --color-accent: #8FBCBB;
+  --color-accent-content: #2E3440;
   
-  --color-neutral: oklch(30% 0.01 0);
-  --color-neutral-content: oklch(95% 0.005 0);
-  --color-info: oklch(55% 0.15 250);
-  --color-info-content: oklch(100% 0 0);
-  --color-success: oklch(55% 0.19 150);
-  --color-success-content: oklch(100% 0 0);
-  --color-warning: oklch(70% 0.16 85);
-  --color-warning-content: oklch(10% 0 0);
-  --color-error: oklch(55% 0.22 25);
-  --color-error-content: oklch(100% 0 0);
+  /* Polar Night - Neutral */
+  --color-neutral: #3B4252;
+  --color-neutral-content: #ECEFF4;
+
+  /* Aurora - Semantic */
+  --color-info: #5E81AC;
+  --color-info-content: #ECEFF4;
+  --color-success: #A3BE8C;
+  --color-success-content: #2E3440;
+  --color-warning: #D08770;
+  --color-warning-content: #2E3440;
+  --color-error: #BF616A;
+  --color-error-content: #ECEFF4;
   
-  /* Sharp corners - true neo-brutalist */
-  --radius-selector: 0;
-  --radius-field: 0;
-  --radius-box: 0;
+  /* Rounded, soft Industrial */
+  --radius-selector: 0.375rem;
+  --radius-field: 0.375rem;
+  --radius-box: 0.5rem;
   --size-selector: 0.25rem;
   --size-field: 0.25rem;
-  --border: 3px;
+  --border: 1px;
   --depth: 0;
   --noise: 0;
 }
 
 /* ==========================================
-   NEO-BRUTALIST CSS CUSTOM PROPERTIES
+   NORD CSS CUSTOM PROPERTIES
    ========================================== */
 
 [data-theme="zenfinity-dark"] {
-  --brutal-border: oklch(65% 0.005 0);
-  --brutal-shadow: oklch(0% 0 0);
-  --brutal-bg: oklch(18% 0.01 0);
-  --brutal-bg-card: oklch(22% 0.01 0);
-  --brutal-bg-hover: oklch(25% 0.01 0);
-  --text-muted: rgba(255, 255, 255, 0.7);
-  --text-muted-2: rgba(255, 255, 255, 0.5);
-  --text-muted-3: rgba(255, 255, 255, 0.4);
-  --scrollbar-thumb: rgba(255, 255, 255, 0.15);
-  --scrollbar-thumb-hover: rgba(255, 255, 255, 0.25);
-  --toast-bg: oklch(22% 0.01 0);
-  --tooltip-bg: oklch(10% 0.01 0);
-  --track-bg: rgba(255, 255, 255, 0.1);
-  --header-bg: oklch(14% 0.01 0);
+  --nord-border: #4C566A;
+  --nord-shadow: rgba(0, 0, 0, 0.2);
+  --nord-bg: #2E3440;
+  --nord-bg-card: #3B4252;
+  --nord-bg-hover: #434C5E;
+  --text-muted: rgba(216, 222, 233, 0.7);
+  --text-muted-2: rgba(216, 222, 233, 0.5);
+  --text-muted-3: rgba(216, 222, 233, 0.4);
+  --scrollbar-thumb: rgba(216, 222, 233, 0.15);
+  --scrollbar-thumb-hover: rgba(216, 222, 233, 0.25);
+  --toast-bg: #3B4252;
+  --tooltip-bg: #2E3440;
+  --track-bg: rgba(216, 222, 233, 0.1);
+  --header-bg: #2E3440;
+  --grid-color: rgba(216, 222, 233, 0.03);
+  --scanline-color: rgba(216, 222, 233, 0.015);
+  --terminal-card-bg: #2E3440;
+  --terminal-border: rgba(216, 222, 233, 0.08);
 }
 
 [data-theme="zenfinity-light"] {
-  --brutal-border: oklch(30% 0.01 0);
-  --brutal-shadow: oklch(30% 0.01 0);
-  --brutal-bg: oklch(97% 0.01 80);
-  --brutal-bg-card: oklch(100% 0 0);
-  --brutal-bg-hover: oklch(95% 0.01 80);
-  --text-muted: rgba(0, 0, 0, 0.7);
-  --text-muted-2: rgba(0, 0, 0, 0.5);
-  --text-muted-3: rgba(0, 0, 0, 0.4);
-  --scrollbar-thumb: rgba(0, 0, 0, 0.15);
-  --scrollbar-thumb-hover: rgba(0, 0, 0, 0.3);
-  --toast-bg: oklch(100% 0 0);
-  --tooltip-bg: oklch(15% 0.01 0);
-  --track-bg: rgba(0, 0, 0, 0.1);
-  --header-bg: oklch(94% 0.01 80);
+  --nord-border: #C9CDDA;
+  --nord-shadow: rgba(0, 0, 0, 0.08);
+  --nord-bg: #ECEFF4;
+  --nord-bg-card: #FFFFFF;
+  --nord-bg-hover: #E5E9F0;
+  --text-muted: rgba(46, 52, 64, 0.7);
+  --text-muted-2: rgba(46, 52, 64, 0.5);
+  --text-muted-3: rgba(46, 52, 64, 0.4);
+  --scrollbar-thumb: rgba(46, 52, 64, 0.15);
+  --scrollbar-thumb-hover: rgba(46, 52, 64, 0.3);
+  --toast-bg: #FFFFFF;
+  --tooltip-bg: #2E3440;
+  --track-bg: rgba(46, 52, 64, 0.1);
+  --header-bg: #E5E9F0;
+  --grid-color: rgba(46, 52, 64, 0.03);
+  --scanline-color: rgba(46, 52, 64, 0.012);
+  --terminal-card-bg: #FFFFFF;
+  --terminal-border: rgba(46, 52, 64, 0.1);
 }
 
 /* ==========================================
@@ -138,15 +180,57 @@
 }
 
 body {
-  background: var(--brutal-bg);
+  background: var(--nord-bg);
   min-height: 100vh;
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: 'Geist', system-ui, -apple-system, sans-serif;
+  position: relative;
+}
+
+/* Industrial tech-grid background pattern */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    linear-gradient(var(--grid-color) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse at 50% 50%, black 20%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse at 50% 50%, black 20%, transparent 75%);
+}
+
+/* Subtle CRT-style scanlines overlay */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    var(--scanline-color) 2px,
+    var(--scanline-color) 4px
+  );
+}
+
+code, pre, .font-mono, .tabular-nums {
+  font-family: 'GeistMono', ui-monospace, monospace;
+}
+
+/* Ensure app content renders above background effects */
+#app {
+  position: relative;
+  z-index: 1;
 }
 
 /* Scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -155,7 +239,7 @@ body {
 
 ::-webkit-scrollbar-thumb {
   background: var(--scrollbar-thumb);
-  border-radius: 0;
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -163,86 +247,80 @@ body {
 }
 
 /* ==========================================
-   NEO-BRUTALIST CARD SYSTEM
+   NORD CARD SYSTEM
    ========================================== */
 
-.brutal-card {
-  background: var(--brutal-bg-card);
-  border: 3px solid var(--brutal-border);
-  border-radius: 0;
-  box-shadow: 4px 4px 0px var(--brutal-shadow);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+/* Industrial terminal card */
+.terminal-card {
+  background: var(--terminal-card-bg, var(--nord-bg-card));
+  border: 1px solid var(--terminal-border, var(--nord-border));
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px var(--nord-shadow);
+  transition: box-shadow 0.2s ease;
 }
 
-.brutal-card-header {
-  padding: 1rem 1.5rem;
-  border-bottom: 3px solid var(--brutal-border);
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+.terminal-card:hover {
+  box-shadow: 0 4px 16px var(--nord-shadow);
 }
 
-/* Backward compatibility */
-.glass-card {
-  background: var(--brutal-bg-card);
-  border: 3px solid var(--brutal-border);
-  border-radius: 0;
-  box-shadow: 4px 4px 0px var(--brutal-shadow);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-
-.stat-card {
+/* Terminal total row — the prominent result line */
+.terminal-total-row {
   position: relative;
-  background: var(--brutal-bg-card);
-  border: 3px solid var(--brutal-border);
-  border-radius: 0;
-  box-shadow: 4px 4px 0px var(--brutal-shadow);
-  overflow: hidden;
+  margin-top: 0.5rem;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-radius: 0.375rem;
 }
 
-.stat-card::before {
-  display: none;
+.terminal-total-primary {
+  background: rgba(136, 192, 208, 0.06);
+  border-left: 2px solid var(--color-primary);
+}
+
+.terminal-total-secondary {
+  background: rgba(129, 161, 193, 0.06);
+  border-left: 2px solid var(--color-secondary);
+}
+
+.terminal-total-joint {
+  background: rgba(129, 161, 193, 0.06);
+  border-left: 2px solid var(--color-secondary);
 }
 
 /* Shadow variants */
 .brutal-shadow-active {
-  box-shadow: 2px 2px 0px var(--brutal-shadow) !important;
-  transform: translate(2px, 2px) !important;
-}
-
-.brutal-shadow-sm {
-  box-shadow: 3px 3px 0px var(--brutal-shadow);
+  box-shadow: 0 1px 2px var(--nord-shadow) !important;
 }
 
 /* ==========================================
-   NEO-BRUTALIST BUTTONS
+   NORD BUTTONS
    ========================================== */
 
 .btn {
-  @apply font-bold uppercase tracking-wide;
-  border: 3px solid var(--brutal-border);
-  border-radius: 0;
-  box-shadow: 3px 3px 0px var(--brutal-shadow);
-  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  @apply font-medium tracking-wide;
+  border: 1px solid var(--nord-border);
+  border-radius: 0.375rem;
+  box-shadow: 0 1px 2px var(--nord-shadow);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
 }
 
 .btn:hover {
-  transform: translate(-1px, -1px);
-  box-shadow: 4px 4px 0px var(--brutal-shadow);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px var(--nord-shadow);
 }
 
 .btn:active {
-  transform: translate(2px, 2px);
-  box-shadow: 1px 1px 0px var(--brutal-shadow);
+  transform: translateY(0px);
+  box-shadow: 0 0px 1px var(--nord-shadow);
 }
 
 .btn-primary {
-  box-shadow: 3px 3px 0px var(--brutal-shadow);
+  box-shadow: 0 1px 3px rgba(136, 192, 208, 0.3);
 }
 
 .btn-primary:hover {
-  box-shadow: 4px 4px 0px var(--brutal-shadow);
-  transform: translate(-1px, -1px);
+  box-shadow: 0 3px 10px rgba(136, 192, 208, 0.3);
+  transform: translateY(-1px);
 }
 
 .btn-ghost {
@@ -251,9 +329,9 @@ body {
 }
 
 .btn-ghost:hover {
-  background: var(--brutal-bg-hover);
-  border-color: var(--brutal-border);
-  box-shadow: 3px 3px 0px var(--brutal-shadow);
+  background: var(--nord-bg-hover);
+  border-color: var(--nord-border);
+  box-shadow: none;
 }
 
 .brutal-btn {
@@ -261,27 +339,26 @@ body {
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1.5rem;
-  font-weight: 800;
+  font-weight: 500;
   font-size: 0.875rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  border: 3px solid var(--brutal-border);
-  border-radius: 0;
-  box-shadow: 3px 3px 0px var(--brutal-shadow);
+  letter-spacing: 0.02em;
+  border: 1px solid var(--nord-border);
+  border-radius: 0.375rem;
+  box-shadow: 0 1px 2px var(--nord-shadow);
   cursor: pointer;
-  transition: transform 0.1s ease, box-shadow 0.1s ease;
-  background: var(--brutal-bg-card);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  background: var(--nord-bg-card);
   color: var(--color-base-content);
 }
 
 .brutal-btn:hover {
-  transform: translate(-1px, -1px);
-  box-shadow: 4px 4px 0px var(--brutal-shadow);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px var(--nord-shadow);
 }
 
 .brutal-btn:active {
-  transform: translate(2px, 2px);
-  box-shadow: 1px 1px 0px var(--brutal-shadow);
+  transform: translateY(0px);
+  box-shadow: 0 0px 1px var(--nord-shadow);
 }
 
 .brutal-btn-primary {
@@ -306,9 +383,9 @@ body {
 }
 
 .brutal-btn-ghost:hover {
-  background: var(--brutal-bg-hover);
-  border-color: var(--brutal-border);
-  box-shadow: 3px 3px 0px var(--brutal-shadow);
+  background: var(--nord-bg-hover);
+  border-color: var(--nord-border);
+  box-shadow: none;
 }
 
 /* Small icon buttons (edit, delete, toggle, etc.) */
@@ -318,62 +395,50 @@ body {
   justify-content: center;
   width: 2rem;
   height: 2rem;
-  border: 2px solid var(--brutal-border);
-  border-radius: 0;
-  background: var(--brutal-bg-card);
+  border: 1px solid var(--nord-border);
+  border-radius: 0.375rem;
+  background: var(--nord-bg-card);
   cursor: pointer;
-  transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.1s ease;
-  box-shadow: 2px 2px 0px var(--brutal-shadow);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  box-shadow: 0 1px 2px var(--nord-shadow);
 }
 
 .brutal-icon-btn:hover {
-  transform: translate(-1px, -1px);
-  box-shadow: 3px 3px 0px var(--brutal-shadow);
-  background: var(--brutal-bg-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px var(--nord-shadow);
+  background: var(--nord-bg-hover);
 }
 
 .brutal-icon-btn:active {
-  transform: translate(1px, 1px);
-  box-shadow: 0px 0px 0px var(--brutal-shadow);
+  transform: translateY(0px);
+  box-shadow: none;
 }
 
 .brutal-icon-btn-danger:hover {
-  background: oklch(55% 0.22 25 / 0.2);
+  background: rgba(191, 97, 106, 0.15);
   border-color: var(--color-error);
 }
 
 /* ==========================================
-   NEO-BRUTALIST INPUTS
+   NORD INPUTS
    ========================================== */
 
 .input, .select, .textarea {
-  background: var(--brutal-bg-card);
-  border: 3px solid var(--brutal-border);
-  border-radius: 0;
-  transition: box-shadow 0.15s ease;
+  background: var(--nord-bg-card);
+  border: 1px solid var(--nord-border);
+  border-radius: 0.375rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .input:focus, .select:focus, .textarea:focus {
-  background: var(--brutal-bg-card);
+  background: var(--nord-bg-card);
   border-color: var(--color-primary);
-  box-shadow: 3px 3px 0px var(--brutal-shadow);
-  outline: none;
-}
-
-.brutal-input {
-  background: var(--brutal-bg-card);
-  border: 3px solid var(--brutal-border);
-  border-radius: 0;
-}
-
-.brutal-input:focus {
-  border-color: var(--color-primary);
-  box-shadow: 3px 3px 0px var(--brutal-shadow);
+  box-shadow: 0 0 0 3px rgba(136, 192, 208, 0.15);
   outline: none;
 }
 
 /* ==========================================
-   NEO-BRUTALIST TABLES
+   NORD TABLES
    ========================================== */
 
 .table {
@@ -381,7 +446,7 @@ body {
 }
 
 .table :where(thead tr, tfoot tr) {
-  border-color: var(--brutal-border);
+  border-color: var(--nord-border);
 }
 
 .table tbody tr {
@@ -389,7 +454,7 @@ body {
 }
 
 .table tbody tr:hover {
-  background: var(--brutal-bg-hover);
+  background: var(--nord-bg-hover);
 }
 
 /* ==========================================
@@ -400,32 +465,20 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
-.section-title {
-  @apply relative inline-flex items-center gap-4 text-lg font-black uppercase tracking-wide;
-}
-
-.section-title::after {
-  content: '';
-  @apply h-1 flex-1 bg-base-content;
-  min-width: 40px;
-  border-radius: 0;
-}
-
 /* ==========================================
    BADGES
    ========================================== */
 
 .badge {
-  border: 2px solid var(--brutal-border);
-  border-radius: 0;
-  font-weight: 700;
-  text-transform: uppercase;
+  border: 1px solid var(--nord-border);
+  border-radius: 0.375rem;
+  font-weight: 500;
   font-size: 0.7rem;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.02em;
 }
 
 .badge-primary {
-  box-shadow: 2px 2px 0px var(--brutal-shadow);
+  box-shadow: none;
 }
 
 /* ==========================================
@@ -448,20 +501,8 @@ body {
    ========================================== */
 
 .divider {
-  @apply opacity-40;
-  border-color: var(--brutal-border);
-}
-
-/* ==========================================
-   MODAL
-   ========================================== */
-
-.modal-backdrop {
-  background: rgba(0, 0, 0, 0.7);
-}
-
-[data-theme="zenfinity-light"] .modal-backdrop {
-  background: rgba(0, 0, 0, 0.4);
+  @apply opacity-30;
+  border-color: var(--nord-border);
 }
 
 /* ==========================================
@@ -471,7 +512,7 @@ body {
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translateY(10px);
   }
   to {
     opacity: 1;
@@ -482,7 +523,7 @@ body {
 @keyframes slideInRight {
   from {
     opacity: 0;
-    transform: translateX(20px);
+    transform: translateX(16px);
   }
   to {
     opacity: 1;
@@ -497,14 +538,14 @@ body {
   }
   to {
     opacity: 0;
-    transform: translateX(-20px);
+    transform: translateX(-16px);
   }
 }
 
 @keyframes scaleIn {
   from {
     opacity: 0;
-    transform: scale(0.95);
+    transform: scale(0.97);
   }
   to {
     opacity: 1;
@@ -514,44 +555,20 @@ body {
 
 @keyframes shake {
   0%, 100% { transform: translateX(0); }
-  10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
-  20%, 40%, 60%, 80% { transform: translateX(4px); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-3px); }
+  20%, 40%, 60%, 80% { transform: translateX(3px); }
 }
 
 @keyframes success-pulse {
   0% {
-    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4);
+    box-shadow: 0 0 0 0 rgba(163, 190, 140, 0.4);
   }
   70% {
-    box-shadow: 0 0 0 10px rgba(34, 197, 94, 0);
+    box-shadow: 0 0 0 8px rgba(163, 190, 140, 0);
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+    box-shadow: 0 0 0 0 rgba(163, 190, 140, 0);
   }
-}
-
-.animate-fade-in-up {
-  animation: fadeInUp 0.4s ease-out;
-}
-
-.animate-slide-in {
-  animation: slideInRight 0.3s ease-out;
-}
-
-.animate-slide-out {
-  animation: slideOutLeft 0.3s ease-out forwards;
-}
-
-.animate-scale-in {
-  animation: scaleIn 0.2s ease-out;
-}
-
-.animate-shake {
-  animation: shake 0.5s ease-in-out;
-}
-
-.animate-success-pulse {
-  animation: success-pulse 0.6s ease-out;
 }
 
 /* ==========================================
@@ -578,26 +595,26 @@ body {
   align-items: center;
   gap: 0.75rem;
   padding: 1rem 1.25rem;
-  border-radius: 0;
+  border-radius: 0.5rem;
   background: var(--toast-bg);
-  border: 3px solid var(--brutal-border);
-  box-shadow: 4px 4px 0px var(--brutal-shadow);
+  border: 1px solid var(--nord-border);
+  box-shadow: 0 4px 12px var(--nord-shadow);
   animation: slideInRight 0.3s ease-out;
   max-width: 360px;
   color: var(--color-base-content);
-  font-weight: 700;
+  font-weight: 500;
 }
 
 .toast-notification.toast-success {
-  border-color: oklch(55% 0.19 150);
+  border-color: #A3BE8C;
 }
 
 .toast-notification.toast-error {
-  border-color: oklch(55% 0.22 25);
+  border-color: #BF616A;
 }
 
 .toast-notification.toast-info {
-  border-color: oklch(55% 0.15 250);
+  border-color: #81A1C1;
 }
 
 .toast-notification.toast-exiting {
@@ -610,10 +627,10 @@ body {
 
 [data-tip]::before {
   @apply bg-neutral text-neutral-content text-xs px-3 py-2;
-  border-radius: 0;
-  border: 2px solid var(--brutal-border);
-  box-shadow: 3px 3px 0px var(--brutal-shadow);
-  font-weight: 700;
+  border-radius: 0.375rem;
+  border: 1px solid var(--nord-border);
+  box-shadow: 0 2px 8px var(--nord-shadow);
+  font-weight: 500;
 }
 
 .tooltip-wrapper {
@@ -628,12 +645,12 @@ body {
   transform: translateX(-50%) translateY(-8px);
   padding: 0.5rem 0.75rem;
   background: var(--tooltip-bg);
-  color: white;
+  color: #ECEFF4;
   font-size: 0.75rem;
-  font-weight: 700;
-  border-radius: 0;
-  border: 2px solid var(--brutal-border);
-  box-shadow: 3px 3px 0px var(--brutal-shadow);
+  font-weight: 500;
+  border-radius: 0.375rem;
+  border: 1px solid var(--nord-border);
+  box-shadow: 0 2px 8px var(--nord-shadow);
   white-space: nowrap;
   opacity: 0;
   visibility: hidden;
@@ -690,42 +707,7 @@ body {
    ========================================== */
 
 :focus-visible {
-  @apply outline-none ring-2 ring-primary ring-offset-2 ring-offset-base-200;
+  @apply outline-none ring-2 ring-primary/40 ring-offset-2 ring-offset-base-200;
 }
 
-/* ==========================================
-   UTILITY: border-3
-   ========================================== */
 
-.border-brutal {
-  border-color: var(--brutal-border);
-}
-
-.border-3 {
-  border-width: 3px;
-}
-
-.border-t-3 {
-  border-top-width: 3px;
-}
-
-.border-b-3 {
-  border-bottom-width: 3px;
-}
-
-.border-l-3 {
-  border-left-width: 3px;
-}
-
-.border-r-3 {
-  border-right-width: 3px;
-}
-
-/* ==========================================
-   HEADER (backward compat)
-   ========================================== */
-
-.header-glass {
-  background: var(--header-bg);
-  border-bottom: 3px solid var(--brutal-border);
-}

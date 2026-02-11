@@ -71,25 +71,22 @@ function handleSubmit() {
 
         <!-- Modal -->
         <div
-          class="relative w-full max-w-md bg-base-100 border-3 border-brutal rounded-none overflow-hidden"
-          style="box-shadow: 6px 6px 0px var(--brutal-shadow)"
+          class="terminal-card relative w-full max-w-md overflow-hidden"
           @click.stop
         >
-          <!-- Close button -->
-          <button
-            class="absolute right-4 top-4 brutal-icon-btn z-10"
-            @click="emit('close')"
-          >
-            <X :size="16" class="text-base-content/60" />
-          </button>
-
           <!-- Header -->
-          <div class="px-6 py-4 bg-secondary/20 border-b-3 border-brutal">
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-none bg-secondary/20 flex items-center justify-center">
-                <Pencil :size="20" class="text-secondary" />
+          <div class="px-6 py-4 border-b border-base-content/[0.06]">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <span class="inline-block w-2 h-2 rounded-full bg-secondary"></span>
+                <span class="text-[11px] font-mono uppercase tracking-[0.15em] text-base-content/50">Modifier l'entrée</span>
               </div>
-              <h3 class="font-bold text-xl text-base-content">Modifier l'entrée</h3>
+              <button
+                class="brutal-icon-btn"
+                @click="emit('close')"
+              >
+                <X :size="16" class="text-base-content/60" />
+              </button>
             </div>
           </div>
 
@@ -99,20 +96,20 @@ function handleSubmit() {
               <!-- Type et Owner -->
               <div class="grid grid-cols-2 gap-4">
                 <div class="space-y-2">
-                  <label class="text-sm font-medium text-base-content/70">Type</label>
+                  <label class="text-[10px] font-mono uppercase tracking-[0.15em] text-base-content/50">Type</label>
                   <select 
                     v-model="editType" 
-                    class="w-full px-4 py-3 rounded-none bg-base-content/5 border border-brutal text-base-content focus:border-secondary/50 focus:outline-none focus:ring-2 focus:ring-secondary/20 transition-all"
+                    class="w-full px-4 py-3 bg-base-content/5 border border-base-content/[0.06] rounded text-base-content focus:border-secondary/50 focus:outline-none focus:ring-2 focus:ring-secondary/20 transition-all"
                   >
                     <option value="Revenu" class="bg-base-100">Revenu</option>
                     <option value="Charge" class="bg-base-100">Charge</option>
                   </select>
                 </div>
                 <div class="space-y-2">
-                  <label class="text-sm font-medium text-base-content/70">Assigné à</label>
+                  <label class="text-[10px] font-mono uppercase tracking-[0.15em] text-base-content/50">Assigné à</label>
                   <select 
                     v-model="editOwner" 
-                    class="w-full px-4 py-3 rounded-none bg-base-content/5 border border-brutal text-base-content focus:border-secondary/50 focus:outline-none focus:ring-2 focus:ring-secondary/20 transition-all"
+                    class="w-full px-4 py-3 bg-base-content/5 border border-base-content/[0.06] rounded text-base-content focus:border-secondary/50 focus:outline-none focus:ring-2 focus:ring-secondary/20 transition-all"
                   >
                     <option v-for="o in store.owners" :key="o" :value="o" class="bg-base-100">{{ o }}</option>
                     <option value="Commun" class="bg-base-100">Commun</option>
@@ -122,47 +119,48 @@ function handleSubmit() {
 
               <!-- Catégorie -->
               <div class="space-y-2">
-                <label class="text-sm font-medium text-base-content/70">Catégorie</label>
+                <label class="text-[10px] font-mono uppercase tracking-[0.15em] text-base-content/50">Catégorie</label>
                 <CategoryAutocomplete
                   v-model="editCategory"
                   :type="editType"
                   :has-error="!!errors.category"
                   focus-color="secondary"
                 />
-                <p v-if="errors.category" class="text-xs text-red-400 mt-1">{{ errors.category }}</p>
+                <p v-if="errors.category" class="text-xs font-mono text-[#BF616A] mt-1">{{ errors.category }}</p>
               </div>
 
               <!-- Montant -->
               <div class="space-y-2">
-                <label class="text-sm font-medium text-base-content/70">Montant (EUR)</label>
+                <label class="text-[10px] font-mono uppercase tracking-[0.15em] text-base-content/50">Montant (EUR)</label>
                 <input
                   v-model.number="editAmount"
                   type="number"
                   step="0.01"
                   min="0.01"
-                  class="w-full px-4 py-3 rounded-none bg-base-content/5 border text-base-content placeholder-base-content/30 focus:outline-none focus:ring-2 transition-all"
-                  :class="errors.amount ? 'border-red-500/50 focus:border-red-500 focus:ring-red-500/20' : 'border-brutal focus:border-secondary/50 focus:ring-secondary/20'"
+                  class="w-full px-4 py-3 bg-base-content/5 border rounded font-mono tabular-nums text-base-content placeholder-base-content/30 focus:outline-none focus:ring-2 transition-all"
+                  :class="errors.amount ? 'border-[#BF616A]/50 focus:border-[#BF616A] focus:ring-[#BF616A]/20' : 'border-base-content/[0.06] focus:border-secondary/50 focus:ring-secondary/20'"
                 />
-                <p v-if="errors.amount" class="text-xs text-red-400 mt-1">{{ errors.amount }}</p>
-              </div>
-
-              <!-- Actions -->
-              <div class="flex justify-end gap-3 pt-4">
-                <button 
-                  type="button" 
-                  class="brutal-btn brutal-btn-ghost"
-                  @click="emit('close')"
-                >
-                  Annuler
-                </button>
-                <button 
-                  type="submit" 
-                  class="brutal-btn brutal-btn-primary"
-                >
-                  Sauvegarder
-                </button>
+                <p v-if="errors.amount" class="text-xs font-mono text-[#BF616A] mt-1">{{ errors.amount }}</p>
               </div>
             </form>
+          </div>
+
+          <!-- Footer -->
+          <div class="px-6 py-4 border-t border-base-content/[0.06] flex justify-end gap-3">
+            <button 
+              type="button" 
+              class="brutal-btn brutal-btn-ghost"
+              @click="emit('close')"
+            >
+              Annuler
+            </button>
+            <button 
+              type="button" 
+              class="brutal-btn brutal-btn-primary"
+              @click="handleSubmit"
+            >
+              Sauvegarder
+            </button>
           </div>
         </div>
       </div>
@@ -175,8 +173,20 @@ function handleSubmit() {
 .modal-leave-active {
   transition: opacity 0.2s ease;
 }
+
+.modal-enter-active .terminal-card,
+.modal-leave-active .terminal-card {
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
 .modal-enter-from,
 .modal-leave-to {
+  opacity: 0;
+}
+
+.modal-enter-from .terminal-card,
+.modal-leave-to .terminal-card {
+  transform: scale(0.95);
   opacity: 0;
 }
 </style>

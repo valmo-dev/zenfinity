@@ -60,15 +60,14 @@ function handleImport(event) {
 </script>
 
 <template>
-  <div class="glass-card rounded-none overflow-hidden">
+  <div class="terminal-card overflow-hidden">
     <!-- Header -->
-    <div class="px-6 py-4 bg-purple-500/20 border-b-3 border-brutal">
-      <h3 class="text-lg font-bold flex items-center gap-3 text-base-content">
-        <div class="w-8 h-8 rounded-none bg-purple-500/20 flex items-center justify-center">
-          <Upload :size="16" class="text-purple-400" />
-        </div>
-        Import / Export
-      </h3>
+    <div class="px-6 py-4 flex items-center justify-between border-b border-base-content/[0.06]">
+      <div class="flex items-center gap-3">
+        <span class="inline-block w-2 h-2 rounded-full bg-[#B48EAD]"></span>
+        <span class="text-[11px] font-mono uppercase tracking-[0.15em] text-base-content/50">Import / Export</span>
+      </div>
+      <Upload :size="16" class="text-base-content/30" />
     </div>
 
     <div class="p-6">
@@ -94,10 +93,10 @@ function handleImport(event) {
 
         <!-- Import JSON -->
         <button 
-          class="brutal-btn bg-base-content/5 hover:bg-purple-500/20"
+          class="brutal-btn bg-base-content/5 hover:bg-[#B48EAD]/20"
           @click="triggerImport"
         >
-          <Upload :size="16" class="text-purple-400" />
+          <Upload :size="16" class="text-[#B48EAD]" />
           <span class="text-sm font-medium">Import JSON</span>
         </button>
 
@@ -113,27 +112,27 @@ function handleImport(event) {
       <!-- Message d'import -->
       <div
         v-if="importMessage"
-        class="mt-4 px-4 py-3 rounded-none flex items-center gap-3 transition-all duration-300"
+        class="mt-4 px-4 py-3 flex items-center gap-3 transition-all duration-300"
         :class="{
-          'bg-green-500/20 border border-green-500/30': importMessage.type === 'success',
-          'bg-red-500/20 border border-red-500/30': importMessage.type === 'error',
+          'bg-[#A3BE8C]/15 border border-[#A3BE8C]/30 rounded': importMessage.type === 'success',
+          'bg-[#BF616A]/15 border border-[#BF616A]/30 rounded': importMessage.type === 'error',
         }"
       >
         <div 
-          class="w-6 h-6 rounded-none flex items-center justify-center"
+          class="w-6 h-6 flex items-center justify-center"
           :class="{
-            'bg-green-500/30': importMessage.type === 'success',
-            'bg-red-500/30': importMessage.type === 'error',
+            'bg-[#A3BE8C]/30': importMessage.type === 'success',
+            'bg-[#BF616A]/30': importMessage.type === 'error',
           }"
         >
-          <Check v-if="importMessage.type === 'success'" :size="16" class="text-green-400" />
-          <X v-else :size="16" class="text-red-400" />
+          <Check v-if="importMessage.type === 'success'" :size="16" class="text-[#A3BE8C]" />
+          <X v-else :size="16" class="text-[#BF616A]" />
         </div>
         <span 
           class="text-sm font-medium"
           :class="{
-            'text-green-400': importMessage.type === 'success',
-            'text-red-400': importMessage.type === 'error',
+            'text-[#A3BE8C]': importMessage.type === 'success',
+            'text-[#BF616A]': importMessage.type === 'error',
           }"
         >
           {{ importMessage.text }}

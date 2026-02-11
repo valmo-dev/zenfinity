@@ -27,18 +27,18 @@ function formatMonthLabel(monthStr) {
   return `${MONTH_NAMES_SHORT[month - 1]} ${year}`;
 }
 
-// Couleurs modernes avec le rouge accent
+// Nord Frost + Aurora palette
 const chartColors = [
-  "rgba(218, 0, 55, 0.85)",    // primary red
-  "rgba(255, 107, 107, 0.85)", // coral
-  "rgba(255, 159, 64, 0.85)",  // orange
-  "rgba(255, 205, 86, 0.85)",  // yellow
-  "rgba(75, 192, 192, 0.85)",  // teal
-  "rgba(54, 162, 235, 0.85)",  // blue
-  "rgba(153, 102, 255, 0.85)", // purple
-  "rgba(255, 99, 132, 0.85)",  // pink
-  "rgba(201, 203, 207, 0.85)", // grey
-  "rgba(100, 181, 246, 0.85)", // light blue
+  "rgba(136, 192, 208, 0.85)", // Frost #88C0D0
+  "rgba(191, 97, 106, 0.85)",  // Aurora red #BF616A
+  "rgba(163, 190, 140, 0.85)", // Aurora green #A3BE8C
+  "rgba(208, 135, 112, 0.85)", // Aurora orange #D08770
+  "rgba(235, 203, 139, 0.85)", // Aurora yellow #EBCB8B
+  "rgba(180, 142, 173, 0.85)", // Aurora purple #B48EAD
+  "rgba(129, 161, 193, 0.85)", // Frost #81A1C1
+  "rgba(143, 188, 187, 0.85)", // Frost #8FBCBB
+  "rgba(94, 129, 172, 0.85)",  // Frost #5E81AC
+  "rgba(76, 86, 106, 0.85)",   // Polar Night #4C566A
 ];
 
 const isDark = computed(() => store.theme === "zenfinity-dark");
@@ -56,10 +56,10 @@ const doughnutData = computed(() => {
       {
         data: values,
         backgroundColor: labels.map((_, i) => chartColors[i % chartColors.length]),
-        borderColor: isDark.value ? "rgba(0, 0, 0, 0.5)" : "rgba(255, 255, 255, 0.5)",
+        borderColor: isDark.value ? "rgba(59, 66, 82, 0.8)" : "rgba(236, 239, 244, 0.8)",
         borderWidth: 2,
         hoverBorderWidth: 3,
-        hoverBorderColor: isDark.value ? "rgba(255, 255, 255, 0.3)" : "rgba(0, 0, 0, 0.3)",
+        hoverBorderColor: isDark.value ? "rgba(216, 222, 233, 0.3)" : "rgba(46, 52, 64, 0.3)",
       },
     ],
   };
@@ -73,22 +73,22 @@ const doughnutOptions = computed(() => ({
     legend: {
       position: "bottom",
       labels: {
-        color: isDark.value ? "rgba(255, 255, 255, 0.7)" : "rgba(0, 0, 0, 0.7)",
-        font: { size: 12, family: "inherit" },
+        color: isDark.value ? "rgba(216, 222, 233, 0.7)" : "rgba(46, 52, 64, 0.7)",
+        font: { size: 12, family: "'Geist', sans-serif" },
         padding: 16,
         usePointStyle: true,
         pointStyleWidth: 10,
       },
     },
     tooltip: {
-      backgroundColor: isDark.value ? "rgba(0, 0, 0, 0.85)" : "rgba(255, 255, 255, 0.95)",
-      titleColor: isDark.value ? "rgba(255, 255, 255, 0.9)" : "rgba(0, 0, 0, 0.9)",
-      bodyColor: isDark.value ? "rgba(255, 255, 255, 0.8)" : "rgba(0, 0, 0, 0.8)",
-      titleFont: { size: 13 },
-      bodyFont: { size: 12 },
+      backgroundColor: isDark.value ? "rgba(46, 52, 64, 0.95)" : "rgba(236, 239, 244, 0.95)",
+      titleColor: isDark.value ? "rgba(216, 222, 233, 0.9)" : "rgba(46, 52, 64, 0.9)",
+      bodyColor: isDark.value ? "rgba(216, 222, 233, 0.8)" : "rgba(46, 52, 64, 0.8)",
+      titleFont: { size: 13, family: "'Geist', sans-serif" },
+      bodyFont: { size: 12, family: "'Geist', sans-serif" },
       padding: 12,
       cornerRadius: 8,
-      borderColor: isDark.value ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.1)",
+      borderColor: isDark.value ? "rgba(216, 222, 233, 0.1)" : "rgba(46, 52, 64, 0.1)",
       borderWidth: 1,
       callbacks: {
         label: (ctx) => {
@@ -109,24 +109,24 @@ const barData = computed(() => {
       {
         label: "Revenus",
         data: evolution.map((e) => e.revenus),
-        backgroundColor: "rgba(34, 197, 94, 0.8)",
-        hoverBackgroundColor: "rgba(34, 197, 94, 1)",
+        backgroundColor: "rgba(163, 190, 140, 0.8)",
+        hoverBackgroundColor: "rgba(163, 190, 140, 1)",
         borderRadius: 6,
         borderSkipped: false,
       },
       {
         label: "Charges",
         data: evolution.map((e) => e.charges),
-        backgroundColor: "rgba(218, 0, 55, 0.8)",
-        hoverBackgroundColor: "rgba(218, 0, 55, 1)",
+        backgroundColor: "rgba(191, 97, 106, 0.8)",
+        hoverBackgroundColor: "rgba(191, 97, 106, 1)",
         borderRadius: 6,
         borderSkipped: false,
       },
       {
         label: "Net",
         data: evolution.map((e) => e.net),
-        backgroundColor: "rgba(59, 130, 246, 0.8)",
-        hoverBackgroundColor: "rgba(59, 130, 246, 1)",
+        backgroundColor: "rgba(129, 161, 193, 0.8)",
+        hoverBackgroundColor: "rgba(129, 161, 193, 1)",
         borderRadius: 6,
         borderSkipped: false,
       },
@@ -141,22 +141,22 @@ const barOptions = computed(() => ({
     legend: {
       position: "bottom",
       labels: {
-        color: isDark.value ? "rgba(255, 255, 255, 0.7)" : "rgba(0, 0, 0, 0.7)",
-        font: { size: 12, family: "inherit" },
+        color: isDark.value ? "rgba(216, 222, 233, 0.7)" : "rgba(46, 52, 64, 0.7)",
+        font: { size: 12, family: "'Geist', sans-serif" },
         padding: 16,
         usePointStyle: true,
         pointStyleWidth: 10,
       },
     },
     tooltip: {
-      backgroundColor: isDark.value ? "rgba(0, 0, 0, 0.85)" : "rgba(255, 255, 255, 0.95)",
-      titleColor: isDark.value ? "rgba(255, 255, 255, 0.9)" : "rgba(0, 0, 0, 0.9)",
-      bodyColor: isDark.value ? "rgba(255, 255, 255, 0.8)" : "rgba(0, 0, 0, 0.8)",
-      titleFont: { size: 13 },
-      bodyFont: { size: 12 },
+      backgroundColor: isDark.value ? "rgba(46, 52, 64, 0.95)" : "rgba(236, 239, 244, 0.95)",
+      titleColor: isDark.value ? "rgba(216, 222, 233, 0.9)" : "rgba(46, 52, 64, 0.9)",
+      bodyColor: isDark.value ? "rgba(216, 222, 233, 0.8)" : "rgba(46, 52, 64, 0.8)",
+      titleFont: { size: 13, family: "'Geist', sans-serif" },
+      bodyFont: { size: 12, family: "'Geist', sans-serif" },
       padding: 12,
       cornerRadius: 8,
-      borderColor: isDark.value ? "rgba(255, 255, 255, 0.1)" : "rgba(0, 0, 0, 0.1)",
+      borderColor: isDark.value ? "rgba(216, 222, 233, 0.1)" : "rgba(46, 52, 64, 0.1)",
       borderWidth: 1,
       callbacks: {
         label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.y.toFixed(2)} €`,
@@ -166,19 +166,19 @@ const barOptions = computed(() => ({
   scales: {
     x: {
       ticks: { 
-        color: isDark.value ? "rgba(255, 255, 255, 0.5)" : "rgba(0, 0, 0, 0.5)", 
-        font: { size: 11 } 
+        color: isDark.value ? "rgba(216, 222, 233, 0.5)" : "rgba(46, 52, 64, 0.5)", 
+        font: { size: 11, family: "'Geist', sans-serif" } 
       },
       grid: { display: false },
     },
     y: {
       ticks: {
-        color: isDark.value ? "rgba(255, 255, 255, 0.5)" : "rgba(0, 0, 0, 0.5)",
-        font: { size: 11 },
+        color: isDark.value ? "rgba(216, 222, 233, 0.5)" : "rgba(46, 52, 64, 0.5)",
+        font: { size: 11, family: "'Geist', sans-serif" },
         callback: (val) => `${val} €`,
       },
       grid: { 
-        color: isDark.value ? "rgba(255, 255, 255, 0.05)" : "rgba(0, 0, 0, 0.05)",
+        color: isDark.value ? "rgba(216, 222, 233, 0.05)" : "rgba(46, 52, 64, 0.05)",
         drawBorder: false,
       },
     },
@@ -189,15 +189,14 @@ const barOptions = computed(() => ({
 <template>
   <div class="space-y-6">
     <!-- Répartition des charges (Doughnut) -->
-    <div v-if="hasCharges" class="glass-card rounded-none overflow-hidden">
+    <div v-if="hasCharges" class="terminal-card overflow-hidden">
       <!-- Header -->
-      <div class="px-6 py-4 border-b-3 border-brutal bg-primary/20">
-        <h3 class="text-lg font-bold flex items-center gap-3 text-base-content">
-          <div class="w-8 h-8 rounded-none bg-primary/20 flex items-center justify-center">
-            <PieChart :size="16" class="text-primary" />
-          </div>
-          Répartition des charges
-        </h3>
+      <div class="px-6 py-4 flex items-center justify-between border-b border-base-content/[0.06]">
+        <div class="flex items-center gap-3">
+          <span class="inline-block w-2 h-2 rounded-full bg-primary"></span>
+          <span class="text-[11px] font-mono uppercase tracking-[0.15em] text-base-content/50">Répartition des charges</span>
+        </div>
+        <PieChart :size="14" class="text-base-content/30" />
       </div>
       <div class="p-6">
         <div class="h-72">
@@ -207,15 +206,14 @@ const barOptions = computed(() => ({
     </div>
 
     <!-- Évolution mensuelle (Bar) -->
-    <div v-if="hasMultipleMonths" class="glass-card rounded-none overflow-hidden">
+    <div v-if="hasMultipleMonths" class="terminal-card overflow-hidden">
       <!-- Header -->
-      <div class="px-6 py-4 border-b-3 border-brutal bg-blue-500/20">
-        <h3 class="text-lg font-bold flex items-center gap-3 text-base-content">
-          <div class="w-8 h-8 rounded-none bg-blue-500/20 flex items-center justify-center">
-            <BarChart3 :size="16" class="text-blue-400" />
-          </div>
-          Évolution mensuelle
-        </h3>
+      <div class="px-6 py-4 flex items-center justify-between border-b border-base-content/[0.06]">
+        <div class="flex items-center gap-3">
+          <span class="inline-block w-2 h-2 rounded-full bg-[#81A1C1]"></span>
+          <span class="text-[11px] font-mono uppercase tracking-[0.15em] text-base-content/50">Évolution mensuelle</span>
+        </div>
+        <BarChart3 :size="14" class="text-base-content/30" />
       </div>
       <div class="p-6">
         <div class="h-72">
@@ -227,13 +225,13 @@ const barOptions = computed(() => ({
     <!-- État vide -->
     <div
       v-if="!hasCharges && !hasMultipleMonths"
-      class="glass-card rounded-none overflow-hidden"
+      class="terminal-card overflow-hidden"
     >
       <div class="p-8 text-center">
-        <div class="w-16 h-16 rounded-none bg-base-content/5 flex items-center justify-center mx-auto mb-4">
+        <div class="w-16 h-16 rounded-lg bg-base-content/5 flex items-center justify-center mx-auto mb-4">
           <BarChart3 :size="32" class="text-base-content/30" stroke-width="1.5" />
         </div>
-        <p class="text-base-content/40">Les graphiques apparaitront une fois des données ajoutées</p>
+        <p class="text-[11px] font-mono uppercase tracking-[0.15em] text-base-content/40">Les graphiques apparaitront une fois des données ajoutées</p>
       </div>
     </div>
   </div>

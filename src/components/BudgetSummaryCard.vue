@@ -240,48 +240,49 @@ const cardLabel = computed(() => isJoint.value ? "Budget du foyer" : props.owner
 </script>
 
 <template>
-  <div class="glass-card rounded-none overflow-hidden h-full">
-    <!-- Header -->
+  <div class="terminal-card overflow-hidden h-full">
+    <!-- Header — minimal terminal style with left accent -->
     <div
-      class="px-6 py-4 border-b-3 border-brutal"
-      :class="
-        isJoint
-          ? 'bg-blue-500/20'
-          : isPrimary
-            ? 'bg-primary/20'
-            : 'bg-secondary/20'
-      "
+      class="px-6 py-4 flex items-center justify-between border-b border-base-content/[0.06]"
     >
-      <h3 class="text-lg font-bold flex items-center gap-3">
-        <div
-class="w-3 h-3 rounded-full"
+      <div class="flex items-center gap-3">
+        <span
+          class="inline-block w-2 h-2 rounded-full"
           :class="
             isJoint
-              ? 'bg-blue-500 shadow-lg shadow-blue-500/50'
+              ? 'bg-[#81A1C1]'
               : isPrimary
-                ? 'bg-primary shadow-lg shadow-primary/50'
-                : 'bg-secondary shadow-lg shadow-secondary/50'
+                ? 'bg-primary'
+                : 'bg-secondary'
           "
-        ></div>
-        <span class="text-base-content">{{ cardLabel }}</span>
-      </h3>
+        ></span>
+        <span class="text-[11px] font-mono uppercase tracking-[0.15em] text-base-content/50">{{ cardLabel }}</span>
+      </div>
+      <span
+        class="text-[10px] font-mono uppercase tracking-[0.1em] px-2 py-0.5 rounded"
+        :class="
+          isJoint
+            ? 'text-[#81A1C1]/60 bg-[#81A1C1]/8'
+            : isPrimary
+              ? 'text-primary/60 bg-primary/8'
+              : 'text-secondary/60 bg-secondary/8'
+        "
+      >Live</span>
     </div>
 
     <div class="p-6">
       <!-- Étapes du calcul -->
-      <div class="flex flex-col gap-2">
+      <div class="flex flex-col gap-1">
         <template v-for="(step, index) in steps" :key="index">
           <!-- Ligne de calcul -->
           <div
-            class="tooltip-wrapper w-full flex flex-col sm:flex-row justify-between sm:items-center py-2.5 px-4 rounded-none text-sm transition-all duration-200 gap-1 sm:gap-0"
+            class="tooltip-wrapper w-full flex flex-col sm:flex-row justify-between sm:items-center py-2.5 px-4 text-sm transition-all duration-200 gap-1 sm:gap-0 rounded"
             :class="{
-              'bg-base-content/5': step.type === 'subtotal',
-              'bg-primary/15 border-3 border-primary/30':
-                step.type === 'total' && isPrimary && !isJoint,
-              'bg-secondary/15 border-3 border-secondary/30':
-                step.type === 'total' && !isPrimary && !isJoint,
-              'bg-blue-500/15 border-3 border-blue-500/30':
-                step.type === 'total' && isJoint,
+              'bg-base-content/[0.03]': step.type === 'subtotal',
+              'terminal-total-row': step.type === 'total',
+              'terminal-total-primary': step.type === 'total' && isPrimary && !isJoint,
+              'terminal-total-secondary': step.type === 'total' && !isPrimary && !isJoint,
+              'terminal-total-joint': step.type === 'total' && isJoint,
               'ml-6 opacity-80': step.type === 'detail',
             }"
             :data-tooltip="step.tooltip"
@@ -289,23 +290,24 @@ class="w-3 h-3 rounded-full"
             <span
               class="flex items-center gap-2 flex-shrink min-w-0"
               :class="{
-                'text-red-400/80': step.type === 'subtract',
-                'font-medium text-base-content/90': step.type === 'subtotal',
-                'font-bold text-base-content': step.type === 'total',
-                'text-base-content/70': step.type === 'neutral',
-                'text-base-content/50 text-xs': step.type === 'detail',
+                'text-[#BF616A]/80': step.type === 'subtract',
+                'font-medium text-base-content/70 text-xs uppercase tracking-wider font-mono': step.type === 'subtotal',
+                'font-semibold text-base-content uppercase tracking-wider text-xs font-mono': step.type === 'total',
+                'text-base-content/50 text-xs uppercase tracking-wider font-mono': step.type === 'neutral',
+                'text-base-content/40 text-[11px] font-mono': step.type === 'detail',
               }"
             >
-              <span v-if="step.type === 'subtract'" class="text-red-400 text-xs">−</span>
-              <span v-else-if="step.type === 'subtotal'" class="text-base-content/50">=</span>
-              <span v-else-if="step.type === 'detail'" class="text-base-content/30">↳</span>
+              <span v-if="step.type === 'subtract'" class="text-[#BF616A]/60 text-[10px] font-mono">&#x2212;</span>
+              <span v-else-if="step.type === 'subtotal'" class="text-base-content/30 text-[10px] font-mono">=</span>
+              <span v-else-if="step.type === 'detail'" class="text-base-content/20 text-[10px] font-mono">&#x21B3;</span>
               <span
                 v-else-if="step.type === 'total'"
-                :class="isJoint ? 'text-blue-500' : isPrimary ? 'text-primary' : 'text-secondary'"
-              >★</span>
+                class="text-[10px]"
+                :class="isJoint ? 'text-[#81A1C1]/60' : isPrimary ? 'text-primary/60' : 'text-secondary/60'"
+              >&#x25C6;</span>
               <span v-if="step.type === 'neutral' && step.ownerIndex != null">
-                <span 
-class="inline-block w-2 h-2 rounded-full mr-1"
+                <span
+                  class="inline-block w-1.5 h-1.5 rounded-full mr-1"
                   :class="step.ownerIndex === 0 ? 'bg-primary' : 'bg-secondary'"
                 ></span>
               </span>
@@ -314,14 +316,14 @@ class="inline-block w-2 h-2 rounded-full mr-1"
             <span
               class="tabular-nums font-mono flex-shrink-0 sm:ml-4 self-end sm:self-auto"
               :class="{
-                'text-red-400/80': step.type === 'subtract',
-                'font-medium text-base-content/90': step.type === 'subtotal',
-                'font-bold text-lg': step.type === 'total',
+                'text-[#BF616A]/70 text-sm': step.type === 'subtract',
+                'font-medium text-base-content/80 text-sm': step.type === 'subtotal',
+                'font-semibold text-xl tracking-tight': step.type === 'total',
                 'text-primary': step.type === 'total' && isPrimary && !isJoint,
                 'text-secondary': step.type === 'total' && !isPrimary && !isJoint,
-                'text-blue-500': step.type === 'total' && isJoint,
-                'text-base-content/70': step.type === 'neutral',
-                'text-base-content/40 text-xs': step.type === 'detail',
+                'text-[#81A1C1]': step.type === 'total' && isJoint,
+                'text-base-content/60 text-sm': step.type === 'neutral',
+                'text-base-content/30 text-[11px]': step.type === 'detail',
               }"
             >
               {{ step.type === "subtract" || step.type === "detail" ? formatCurrency(Math.abs(step.value)) : formatCurrency(step.value) }} €
@@ -331,25 +333,28 @@ class="inline-block w-2 h-2 rounded-full mr-1"
           <!-- Séparateur avant les sous-totaux -->
           <div
             v-if="step.type === 'subtract' && steps[index + 1]?.type === 'subtotal'"
-            class="border-t border-brutal my-1"
+            class="border-t border-base-content/[0.06] my-1"
           ></div>
           <!-- Séparateur avant le détail d'épargne -->
           <div
             v-if="step.type === 'subtract' && steps[index + 1]?.type === 'detail'"
-            class="border-t border-brutal my-1 ml-6"
+            class="border-t border-base-content/[0.06] my-1 ml-6"
           ></div>
         </template>
       </div>
 
       <!-- Slider épargne -->
-      <div class="mt-6 pt-6 border-t border-brutal space-y-4">
+      <div class="mt-6 pt-6 border-t border-base-content/[0.06] space-y-4">
         <div class="flex justify-between items-center">
           <label
-            class="text-sm font-medium text-base-content/70 tooltip-wrapper tooltip-bottom"
+            class="text-[11px] font-mono uppercase tracking-[0.15em] text-base-content/50 tooltip-wrapper tooltip-bottom"
             :data-tooltip="isJoint ? 'Pourcentage du restant épargné par le foyer (réparti 50/50)' : 'Pourcentage du restant à mettre de côté chaque mois'"
             >Taux d'épargne{{ isJoint ? ' du foyer' : '' }}</label
           >
-          <span class="px-3 py-1 rounded-none text-sm font-bold" :class="isJoint ? 'bg-blue-500/20 text-blue-500' : 'bg-primary/20 text-primary'">
+          <span
+            class="px-2.5 py-0.5 text-sm font-mono font-semibold rounded"
+            :class="isJoint ? 'bg-[#81A1C1]/10 text-[#81A1C1]' : 'bg-primary/10 text-primary'"
+          >
             {{ savingRate }}%
           </span>
         </div>
@@ -369,26 +374,17 @@ class="inline-block w-2 h-2 rounded-full mr-1"
 
         <!-- Barre visuelle de progression -->
         <div class="relative">
-          <div class="flex rounded-none overflow-hidden h-3 bg-base-content/5">
+            <div class="flex overflow-hidden h-2 rounded-full bg-base-content/[0.04]">
             <div
-              class="transition-all duration-300 ease-out"
-              :class="isJoint ? 'bg-gradient-to-r from-blue-500 to-blue-500/70' : isPrimary ? 'bg-gradient-to-r from-primary to-primary/70' : 'bg-gradient-to-r from-secondary to-secondary/70'"
+              class="transition-all duration-300 ease-out rounded-full"
+              :class="isJoint ? 'bg-gradient-to-r from-[#81A1C1] to-[#81A1C1]/50' : isPrimary ? 'bg-gradient-to-r from-primary to-primary/50' : 'bg-gradient-to-r from-secondary to-secondary/50'"
               :style="{ width: `${savingRate}%` }"
             ></div>
-            <div
-              class="bg-base-content/5 transition-all duration-300 ease-out"
-              :style="{ width: `${100 - savingRate}%` }"
-            ></div>
           </div>
-          <!-- Indicateur -->
-          <div 
-            class="absolute top-1/2 -translate-y-1/2 w-1 h-5 bg-base-content/30 rounded-none transition-all duration-300"
-            :style="{ left: `${savingRate}%`, transform: 'translateX(-50%) translateY(-50%)' }"
-          ></div>
         </div>
 
         <!-- Échelle -->
-        <div class="flex justify-between text-xs text-base-content/30 px-1">
+        <div class="flex justify-between text-[10px] font-mono text-base-content/50 px-1">
           <span>0%</span>
           <span>25%</span>
           <span>50%</span>
