@@ -50,45 +50,51 @@ function handleKeydown(e) {
         ></div>
 
         <!-- Modal -->
-        <div class="relative w-full max-w-sm bg-base-100 border-3 border-brutal rounded-none overflow-hidden" style="box-shadow: 6px 6px 0px var(--brutal-shadow)" @click.stop>
+        <div class="terminal-card relative w-full max-w-sm overflow-hidden" @click.stop>
+          <!-- Header -->
+          <div class="px-6 py-4 border-b border-base-content/[0.06]">
+            <div class="flex items-center gap-3">
+              <span class="inline-block w-2 h-2 rounded-full bg-[#BF616A]"></span>
+              <span class="text-[11px] font-mono uppercase tracking-[0.15em] text-base-content/50">{{ title }}</span>
+            </div>
+          </div>
+
+          <!-- Body -->
           <div class="p-6">
             <!-- Icon -->
             <div class="flex justify-center mb-4">
-              <div class="w-16 h-16 rounded-none bg-red-500/20 flex items-center justify-center">
-                <TriangleAlert :size="32" class="text-red-400" stroke-width="1.5" />
+              <div class="w-14 h-14 rounded-lg bg-[#BF616A]/10 flex items-center justify-center">
+                <TriangleAlert :size="28" class="text-[#BF616A]" stroke-width="1.5" />
               </div>
             </div>
-
-            <!-- Title -->
-            <h3 class="font-bold text-xl text-base-content text-center mb-2">{{ title }}</h3>
             
             <!-- Message -->
-            <p class="text-base-content/60 text-center text-sm mb-2">{{ message }}</p>
+            <p class="text-base-content/60 text-center text-sm font-mono mb-2">{{ message }}</p>
             
             <!-- Item name -->
-            <p v-if="itemName" class="text-center mb-6">
-              <span class="inline-block px-3 py-1.5 rounded-none bg-base-content/5 border border-brutal text-base-content font-medium">
+            <p v-if="itemName" class="text-center mb-2">
+              <span class="inline-block px-3 py-1.5 bg-base-content/5 border border-base-content/[0.06] rounded text-base-content font-mono tabular-nums text-sm">
                 {{ itemName }}
               </span>
             </p>
-            <div v-else class="mb-4"></div>
+            <div v-else class="mb-2"></div>
+          </div>
 
-            <!-- Actions -->
-            <div class="flex gap-3">
-              <button 
-                class="flex-1 brutal-btn brutal-btn-ghost"
-                @click="handleCancel"
-              >
-                Annuler
-              </button>
-              <button 
-                class="flex-1 brutal-btn brutal-btn-danger"
-                @click="handleConfirm"
-              >
-                <Trash2 :size="16" />
-                Supprimer
-              </button>
-            </div>
+          <!-- Footer -->
+          <div class="px-6 py-4 border-t border-base-content/[0.06] flex gap-3">
+            <button 
+              class="flex-1 brutal-btn brutal-btn-ghost"
+              @click="handleCancel"
+            >
+              Annuler
+            </button>
+            <button 
+              class="flex-1 brutal-btn brutal-btn-danger"
+              @click="handleConfirm"
+            >
+              <Trash2 :size="16" />
+              Supprimer
+            </button>
           </div>
         </div>
       </div>
@@ -102,8 +108,8 @@ function handleKeydown(e) {
   transition: opacity 0.2s ease;
 }
 
-.modal-enter-active .modal-box,
-.modal-leave-active .modal-box {
+.modal-enter-active .terminal-card,
+.modal-leave-active .terminal-card {
   transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
@@ -112,8 +118,8 @@ function handleKeydown(e) {
   opacity: 0;
 }
 
-.modal-enter-from .modal-box,
-.modal-leave-to .modal-box {
+.modal-enter-from .terminal-card,
+.modal-leave-to .terminal-card {
   transform: scale(0.95);
   opacity: 0;
 }

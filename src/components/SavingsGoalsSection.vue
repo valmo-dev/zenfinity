@@ -185,64 +185,66 @@ function ownerLabel(goal) {
 }
 
 function ownerColorClass(goal) {
-  if (!goal.owner) return "bg-blue-500/20 text-blue-400";
+  if (!goal.owner) return "bg-[#81A1C1]/15 text-[#81A1C1]";
   const idx = store.owners.indexOf(goal.owner);
   return idx === 0 ? "bg-primary/20 text-primary" : "bg-secondary/20 text-secondary";
 }
 </script>
 
 <template>
-  <div class="glass-card rounded-none overflow-hidden">
+  <div class="terminal-card overflow-hidden">
     <!-- Header -->
-    <div class="px-6 py-4 border-b-3 border-brutal bg-amber-500/20">
-      <div class="flex items-center justify-between">
-        <h3 class="text-lg font-bold flex items-center gap-3 text-base-content">
-          <div class="w-8 h-8 rounded-none bg-amber-500/20 flex items-center justify-center">
-            <Target :size="16" class="text-amber-400" />
-          </div>
-          Objectifs d'épargne
-        </h3>
-        <button
-          class="brutal-btn brutal-btn-sm bg-amber-500/10 hover:bg-amber-500/20 text-amber-400"
-          @click="showAddForm = !showAddForm"
+    <div class="px-6 py-4 flex items-center justify-between border-b border-base-content/[0.06]">
+      <div class="flex items-center gap-3">
+        <span class="inline-block w-2 h-2 rounded-full bg-[#EBCB8B]"></span>
+        <span class="text-[11px] font-mono uppercase tracking-[0.15em] text-base-content/50">Objectifs d'épargne</span>
+        <span
+          v-if="store.savingsGoals.length > 0"
+          class="text-[10px] font-mono px-2 py-0.5 rounded bg-[#EBCB8B]/8 text-[#EBCB8B]/60"
         >
-          <Plus :size="14" />
-          Nouvel objectif
-        </button>
+          {{ store.savingsGoals.length }}
+        </span>
       </div>
+      <button
+        class="brutal-btn brutal-btn-sm bg-[#EBCB8B]/10 hover:bg-[#EBCB8B]/15 text-[#EBCB8B]"
+        @click="showAddForm = !showAddForm"
+      >
+        <Plus :size="14" />
+        Nouvel objectif
+      </button>
     </div>
 
     <div class="p-6 space-y-4">
 
       <!-- Formulaire d'ajout -->
       <Transition name="slide">
-        <div v-if="showAddForm" class="p-4 rounded-none bg-base-content/5 border-3 border-brutal space-y-3">
+        <div v-if="showAddForm" class="p-4 bg-base-content/5 border border-base-content/[0.06] rounded space-y-3">
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" :class="{ 'sm:grid-cols-3': showOwnerSelector }">
             <div class="space-y-1">
-              <label class="text-xs font-medium text-base-content/50">Nom de l'objectif</label>
+              <label class="text-[10px] font-mono uppercase tracking-[0.15em] text-base-content/50">Nom de l'objectif</label>
               <input
                 v-model="newName"
                 type="text"
                 placeholder="Ex: Vacances, Fonds d'urgence..."
-                class="w-full px-3 py-2 rounded-none bg-base-content/5 border border-brutal text-sm text-base-content placeholder-base-content/30 focus:border-amber-500/50 focus:outline-none"
+                class="w-full px-3 py-2 bg-base-content/5 border border-base-content/[0.06] text-sm text-base-content placeholder-base-content/30 focus:border-[#EBCB8B]/50 focus:outline-none"
               />
             </div>
             <div class="space-y-1">
-              <label class="text-xs font-medium text-base-content/50">Montant cible (EUR)</label>
+              <label class="text-[10px] font-mono uppercase tracking-[0.15em] text-base-content/50">Montant cible (EUR)</label>
               <input
                 v-model.number="newTarget"
                 type="number"
                 step="1"
                 min="1"
                 placeholder="0"
-                class="w-full px-3 py-2 rounded-none bg-base-content/5 border border-brutal text-sm text-base-content placeholder-base-content/30 focus:border-amber-500/50 focus:outline-none"
+                class="w-full px-3 py-2 bg-base-content/5 border border-base-content/[0.06] text-sm text-base-content placeholder-base-content/30 focus:border-[#EBCB8B]/50 focus:outline-none"
               />
             </div>
             <div v-if="showOwnerSelector" class="space-y-1">
-              <label class="text-xs font-medium text-base-content/50">Propriétaire</label>
+              <label class="text-[10px] font-mono uppercase tracking-[0.15em] text-base-content/50">Propriétaire</label>
               <select
                 v-model="newOwner"
-                class="w-full px-3 py-2 rounded-none bg-base-content/5 border border-brutal text-sm text-base-content focus:border-amber-500/50 focus:outline-none"
+                class="w-full px-3 py-2 bg-base-content/5 border border-base-content/[0.06] text-sm text-base-content focus:border-[#EBCB8B]/50 focus:outline-none"
               >
                 <option :value="null">Commun</option>
                 <option v-for="owner in store.owners" :key="owner" :value="owner">{{ owner }}</option>
@@ -257,7 +259,7 @@ function ownerColorClass(goal) {
               Annuler
             </button>
             <button
-              class="brutal-btn brutal-btn-sm bg-amber-500 hover:bg-amber-600 text-white"
+              class="brutal-btn brutal-btn-sm bg-[#EBCB8B] hover:bg-[#EBCB8B]/80 text-[#2E3440]"
               @click="addGoal"
             >
               Créer l'objectif
@@ -271,7 +273,7 @@ function ownerColorClass(goal) {
         <div
           v-for="goal in store.savingsGoals"
           :key="goal.id"
-          class="p-4 rounded-none border-3 border-brutal bg-base-content/5 space-y-3"
+            class="p-4 border border-base-content/[0.06] rounded bg-base-content/5 space-y-3"
         >
           <!-- Header de l'objectif -->
           <div class="flex items-center justify-between">
@@ -279,27 +281,27 @@ function ownerColorClass(goal) {
               <div class="flex items-center gap-2 flex-1 flex-wrap">
                 <input
                   v-model="editName"
-                  class="px-2 py-1 rounded-none bg-base-content/5 border border-brutal text-sm text-base-content w-36 focus:outline-none focus:border-amber-500/50"
+                  class="px-2 py-1 bg-base-content/5 border border-base-content/[0.06] text-sm text-base-content w-36 focus:outline-none focus:border-[#EBCB8B]/50"
                 />
                 <input
                   v-model.number="editTarget"
                   type="number"
                   step="1"
-                  class="px-2 py-1 rounded-none bg-base-content/5 border border-brutal text-sm text-base-content w-24 focus:outline-none focus:border-amber-500/50"
+                  class="px-2 py-1 bg-base-content/5 border border-base-content/[0.06] text-sm text-base-content w-24 focus:outline-none focus:border-[#EBCB8B]/50"
                 />
                 <span class="text-xs text-base-content/40">€</span>
                 <select
                   v-if="showOwnerSelector"
                   v-model="editOwner"
-                  class="px-2 py-1 rounded-none bg-base-content/5 border border-brutal text-sm text-base-content w-28 focus:outline-none focus:border-amber-500/50"
+                  class="px-2 py-1 bg-base-content/5 border border-base-content/[0.06] text-sm text-base-content w-28 focus:outline-none focus:border-[#EBCB8B]/50"
                 >
                   <option :value="null">Commun</option>
                   <option v-for="o in store.owners" :key="o" :value="o">{{ o }}</option>
                 </select>
               </div>
               <div class="flex gap-1">
-                <button class="brutal-icon-btn bg-emerald-500/20 hover:bg-emerald-500/30" @click="saveEdit(goal.id)">
-                  <Check :size="14" class="text-emerald-400" />
+                <button class="brutal-icon-btn bg-[#A3BE8C]/15 hover:bg-[#A3BE8C]/25" @click="saveEdit(goal.id)">
+                  <Check :size="14" class="text-[#A3BE8C]" />
                 </button>
                 <button class="brutal-icon-btn" @click="cancelEdit">
                   <X :size="14" class="text-base-content/60" />
@@ -312,7 +314,7 @@ function ownerColorClass(goal) {
                   <h4 class="font-medium text-base-content/90">{{ goal.name }}</h4>
                   <span
                     v-if="showOwnerSelector"
-                    class="inline-flex items-center gap-1 px-2 py-0.5 rounded-none text-[10px] font-medium"
+                    class="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium"
                     :class="ownerColorClass(goal)"
                   >
                     <Users v-if="!goal.owner" :size="10" />
@@ -344,7 +346,7 @@ function ownerColorClass(goal) {
                   @click="requestDelete(goal)"
                   title="Supprimer"
                 >
-                  <Trash2 :size="14" class="text-red-400" />
+                  <Trash2 :size="14" class="text-[#BF616A]" />
                 </button>
               </div>
             </template>
@@ -352,14 +354,14 @@ function ownerColorClass(goal) {
 
           <!-- Barre de progression -->
           <div class="space-y-1">
-            <div class="relative h-3 rounded-none bg-base-content/5 border-2 border-brutal overflow-hidden">
+            <div class="relative h-2 bg-base-content/5 rounded-full overflow-hidden">
               <div
-                class="absolute inset-y-0 left-0 rounded-none transition-all duration-500 ease-out bg-gradient-to-r from-amber-500 to-amber-400"
+                class="absolute inset-y-0 left-0 transition-all duration-500 ease-out bg-gradient-to-r from-[#EBCB8B] to-[#EBCB8B]/70"
                 :style="{ width: `${store.goalProgress(goal.id).percentage}%` }"
               ></div>
             </div>
             <div class="flex justify-between text-xs">
-              <span class="text-amber-400/70 font-medium">{{ store.goalProgress(goal.id).percentage }}%</span>
+              <span class="text-[#EBCB8B]/70 font-medium">{{ store.goalProgress(goal.id).percentage }}%</span>
               <span class="text-base-content/40">
                 Reste {{ formatCurrency(store.goalProgress(goal.id).remaining) }} €
               </span>
@@ -369,17 +371,17 @@ function ownerColorClass(goal) {
           <!-- Indicateur d'épargne contextuel (par owner) -->
           <div
             v-if="goalSavingPotential(goal) > 0"
-            class="flex flex-wrap items-center gap-4 p-2.5 rounded-none bg-base-content/3 text-xs"
+            class="flex flex-wrap items-center gap-4 p-2.5 bg-base-content/3 text-xs"
           >
             <div class="flex items-center gap-1.5">
-              <div class="w-1.5 h-1.5 rounded-full bg-emerald-400"></div>
+              <div class="w-1.5 h-1.5 rounded-full bg-[#A3BE8C]"></div>
               <span class="text-base-content/50">Épargne{{ goal.owner ? ` ${goal.owner}` : store.isJointMode ? ' foyer' : '' }} :</span>
               <span class="font-mono font-medium text-base-content/70">{{ formatCurrency(goalSavingPotential(goal)) }} €</span>
             </div>
             <div class="flex items-center gap-1.5">
-              <div class="w-1.5 h-1.5 rounded-full bg-amber-400"></div>
+              <div class="w-1.5 h-1.5 rounded-full bg-[#EBCB8B]"></div>
               <span class="text-base-content/50">Alloué :</span>
-              <span class="font-mono font-medium text-amber-400/80">{{ formatCurrency(goalContextAllocated(goal)) }} €</span>
+              <span class="font-mono font-medium text-[#EBCB8B]/80">{{ formatCurrency(goalContextAllocated(goal)) }} €</span>
             </div>
             <div class="flex items-center gap-1.5">
               <div class="w-1.5 h-1.5 rounded-full bg-base-content/20"></div>
@@ -395,7 +397,7 @@ function ownerColorClass(goal) {
             <div
               v-for="(o, idx) in store.owners"
               :key="o"
-              class="flex items-center justify-between p-3 rounded-none bg-base-content/3"
+              class="flex items-center justify-between p-3 bg-base-content/3"
             >
               <div class="flex items-center gap-2">
                 <span
@@ -412,7 +414,7 @@ class="inline-block w-2 h-2 rounded-full"
                   step="1"
                   min="0"
                   placeholder="0"
-                  class="w-24 px-2 py-1 rounded-none bg-base-content/5 border border-brutal text-sm text-base-content text-right tabular-nums placeholder-base-content/30 focus:outline-none focus:border-amber-500/50"
+                  class="w-24 px-2 py-1 bg-base-content/5 border border-base-content/[0.06] text-sm text-base-content text-right tabular-nums placeholder-base-content/30 focus:outline-none focus:border-[#EBCB8B]/50"
                 />
                 <span class="text-xs text-base-content/40">€</span>
               </div>
@@ -420,11 +422,11 @@ class="inline-block w-2 h-2 rounded-full"
             <!-- Total commun -->
             <div class="flex items-center justify-between px-3 py-1.5 text-xs text-base-content/50">
               <span>Total ce mois</span>
-              <span class="font-mono font-medium text-amber-400/80">{{ formatCurrency(getAllocation(goal.id)) }} €</span>
+              <span class="font-mono font-medium text-[#EBCB8B]/80">{{ formatCurrency(getAllocation(goal.id)) }} €</span>
             </div>
           </div>
           <!-- Objectif personnel ou mode single : un seul input -->
-          <div v-else class="flex items-center justify-between p-3 rounded-none bg-base-content/3">
+          <div v-else class="flex items-center justify-between p-3 bg-base-content/3">
             <span class="text-sm text-base-content/70">Allocation ce mois</span>
             <div class="flex items-center gap-2">
               <input
@@ -434,7 +436,7 @@ class="inline-block w-2 h-2 rounded-full"
                 step="1"
                 min="0"
                 placeholder="0"
-                class="w-24 px-2 py-1 rounded-none bg-base-content/5 border border-brutal text-sm text-base-content text-right tabular-nums placeholder-base-content/30 focus:outline-none focus:border-amber-500/50"
+                class="w-24 px-2 py-1 bg-base-content/5 border border-base-content/[0.06] text-sm text-base-content text-right tabular-nums placeholder-base-content/30 focus:outline-none focus:border-[#EBCB8B]/50"
               />
               <span class="text-xs text-base-content/40">€</span>
             </div>
@@ -442,19 +444,19 @@ class="inline-block w-2 h-2 rounded-full"
 
           <!-- Historique (dépliable) -->
           <Transition name="slide">
-            <div v-if="expandedGoalId === goal.id" class="pt-3 border-t border-brutal">
-              <h5 class="text-xs font-medium text-base-content/50 uppercase tracking-wider mb-2">Historique des versements</h5>
+            <div v-if="expandedGoalId === goal.id" class="pt-3 border-t border-base-content/[0.06]">
+              <h5 class="text-[10px] font-mono uppercase tracking-[0.15em] text-base-content/40 mb-2">Historique des versements</h5>
               <div v-if="goal.allocations.length > 0" class="space-y-1">
                 <div
                   v-for="(alloc, ai) in [...goal.allocations].sort((a, b) => b.month.localeCompare(a.month) || (a.owner || '').localeCompare(b.owner || ''))"
                   :key="`${alloc.month}-${alloc.owner || ai}`"
-                  class="flex justify-between py-1.5 px-3 rounded-none text-sm"
+                  class="flex justify-between py-1.5 px-3 text-sm"
                 >
                   <span class="text-base-content/60 flex items-center gap-2">
                     {{ formatMonth(alloc.month) }}
                     <span
                       v-if="alloc.owner"
-                      class="inline-flex items-center px-1.5 py-0.5 rounded-none text-[10px] font-medium"
+                      class="inline-flex items-center px-1.5 py-0.5 text-[10px] font-medium"
                       :class="store.owners.indexOf(alloc.owner) === 0 ? 'bg-primary/15 text-primary' : 'bg-secondary/15 text-secondary'"
                     >
                       {{ alloc.owner }}
@@ -465,7 +467,7 @@ class="inline-block w-2 h-2 rounded-full"
                   </span>
                 </div>
               </div>
-              <p v-else class="text-xs text-base-content/30 text-center py-2">Aucun versement encore</p>
+              <p v-else class="text-xs text-base-content/50 text-center py-2">Aucun versement encore</p>
             </div>
           </Transition>
         </div>
@@ -473,11 +475,11 @@ class="inline-block w-2 h-2 rounded-full"
 
       <!-- État vide -->
       <div v-else class="text-center py-8">
-        <div class="w-12 h-12 rounded-none bg-base-content/5 flex items-center justify-center mx-auto mb-3">
+        <div class="w-12 h-12 rounded-lg bg-base-content/5 flex items-center justify-center mx-auto mb-3">
           <Target :size="24" class="text-base-content/40" stroke-width="1.5" />
         </div>
-        <p class="text-base-content/50 text-sm">Aucun objectif d'épargne</p>
-        <p class="text-base-content/30 text-xs mt-1">Définissez des objectifs pour suivre votre progression d'épargne</p>
+        <p class="text-[11px] font-mono uppercase tracking-[0.15em] text-base-content/40">Aucun objectif d'épargne</p>
+        <p class="text-base-content/50 text-xs mt-1">Définissez des objectifs pour suivre votre progression d'épargne</p>
       </div>
     </div>
 

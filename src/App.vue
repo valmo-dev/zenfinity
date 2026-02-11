@@ -58,7 +58,7 @@ function handleEntryAdded() {
     >
       <!-- Top bar -->
       <header
-        class="sticky top-0 z-20 bg-base-200 border-b-3 border-brutal px-4 sm:px-6 py-3 flex items-center justify-between"
+        class="sticky top-0 z-20 bg-base-200 border-b border-base-content/[0.06] px-4 sm:px-6 py-4 flex items-center justify-between"
       >
         <!-- Mobile menu button -->
         <button
@@ -71,6 +71,27 @@ function handleEntryAdded() {
         <div class="flex-1"></div>
 
         <div class="flex items-center gap-3">
+          <!-- System Status indicator -->
+          <div class="hidden sm:flex flex-col items-end mr-1">
+            <span
+              class="text-[10px] font-mono uppercase tracking-[0.15em] text-base-content/40 leading-tight"
+              >System Status</span
+            >
+            <div class="flex items-center gap-1.5">
+              <span class="relative flex h-2 w-2">
+                <span
+                  class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#A3BE8C] opacity-75"
+                ></span>
+                <span
+                  class="relative inline-flex rounded-full h-2 w-2 bg-[#A3BE8C]"
+                ></span>
+              </span>
+              <span class="text-xs font-semibold font-mono text-base-content/80"
+                >Operational</span
+              >
+            </div>
+          </div>
+
           <!-- Theme toggle -->
           <button
             class="brutal-btn w-10 h-10 !p-0 flex items-center justify-center cursor-pointer"
@@ -79,8 +100,8 @@ function handleEntryAdded() {
               isDarkTheme ? 'Passer au theme clair' : 'Passer au theme sombre'
             "
           >
-            <Sun v-if="isDarkTheme" :size="20" :stroke-width="2.5" />
-            <Moon v-else :size="20" :stroke-width="2.5" />
+            <Sun v-if="isDarkTheme" :size="20" :stroke-width="2" />
+            <Moon v-else :size="20" :stroke-width="2" />
           </button>
 
           <!-- Add button -->
@@ -89,22 +110,20 @@ function handleEntryAdded() {
             @click="showAddModal = true"
             title="Ajouter un revenu ou une charge"
           >
-            <Plus :size="18" stroke-width="3" />
+            <Plus :size="18" stroke-width="2" />
             <span class="hidden sm:inline">Ajouter</span>
           </button>
         </div>
       </header>
 
       <!-- Router content -->
-      <main class="p-4 sm:p-6 lg:p-8 max-w-6xl">
+      <main class="p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto">
         <router-view />
       </main>
 
       <!-- Footer -->
-      <footer class="border-t-3 border-brutal p-6 text-center">
-        <p
-          class="text-xs font-bold uppercase tracking-widest text-base-content/30"
-        >
+      <footer class="border-t border-base-content/[0.06] p-6 text-center">
+        <p class="text-xs font-medium tracking-widest text-base-content/50">
           ZenFinity &middot; Budget Tracker
         </p>
       </footer>

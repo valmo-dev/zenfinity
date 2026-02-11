@@ -56,15 +56,14 @@ function formatCurrency(value) {
 </script>
 
 <template>
-  <div class="glass-card rounded-none overflow-hidden">
+  <div class="terminal-card overflow-hidden">
     <!-- Header -->
-    <div class="px-6 py-4 border-b-3 border-brutal bg-green-500/20">
-      <h3 class="text-lg font-bold flex items-center gap-3 text-base-content">
-        <div class="w-8 h-8 rounded-none bg-green-500/20 flex items-center justify-center">
-          <CircleDollarSign :size="16" class="text-green-400" />
-        </div>
-        Revenus
-      </h3>
+    <div class="px-6 py-4 flex items-center justify-between border-b border-base-content/[0.06]">
+      <div class="flex items-center gap-3">
+        <span class="inline-block w-2 h-2 rounded-full bg-[#A3BE8C]"></span>
+        <span class="text-[11px] font-mono uppercase tracking-[0.15em] text-base-content/50">Revenus</span>
+      </div>
+      <CircleDollarSign :size="14" class="text-base-content/30" />
     </div>
 
     <div class="p-6">
@@ -97,20 +96,20 @@ class="w-2 h-2 rounded-full"
                 {{ formatCurrency(store.revenueByOwner(owner)) }} €
               </td>
               <td v-if="!isSinglePerson" class="text-right py-3">
-                <span class="px-2.5 py-1 rounded-none text-xs font-medium bg-base-content/5 text-base-content/60">
+                <span class="px-2.5 py-1 text-xs font-medium bg-base-content/5 text-base-content/60">
                   {{ store.contributionPercentage(owner) }}%
                 </span>
               </td>
             </tr>
           </tbody>
           <tfoot>
-            <tr class="border-t border-brutal">
+            <tr class="border-t border-base-content/[0.06]">
               <td class="py-3 font-bold text-base-content">Total</td>
               <td class="text-right py-3 tabular-nums font-mono font-bold text-base-content">
                 {{ formatCurrency(store.totalRevenue) }} €
               </td>
               <td v-if="!isSinglePerson" class="text-right py-3">
-                <span class="px-2.5 py-1 rounded-none text-xs font-bold bg-green-500/20 text-green-400">
+                <span class="px-2.5 py-1 text-xs font-bold bg-[#A3BE8C]/15 text-[#A3BE8C]">
                   100%
                 </span>
               </td>
@@ -120,17 +119,17 @@ class="w-2 h-2 rounded-full"
       </div>
 
       <!-- Détail des entrées revenus -->
-      <div v-if="store.revenueItems.length > 0" class="mt-6 pt-4 border-t border-brutal">
+      <div v-if="store.revenueItems.length > 0" class="mt-6 pt-4 border-t border-base-content/[0.06]">
         <div class="flex items-center gap-3 mb-4">
           <div class="h-px flex-1 bg-gradient-to-r from-base-content/10 to-transparent"></div>
-          <span class="text-xs font-medium text-base-content/40 uppercase tracking-wider">Détail</span>
+          <span class="text-[10px] font-mono uppercase tracking-[0.15em] text-base-content/40">Détail</span>
           <div class="h-px flex-1 bg-gradient-to-l from-base-content/10 to-transparent"></div>
         </div>
                 <div class="space-y-2">
           <div
             v-for="item in store.revenueItems"
             :key="item.id"
-            class="flex items-center justify-between text-sm py-2.5 px-4 rounded-none bg-base-content/3 hover:bg-base-content/5 transition-colors group"
+            class="flex items-center justify-between text-sm py-2.5 px-4 bg-base-content/3 hover:bg-base-content/5 transition-colors group"
           >
             <div class="flex items-center gap-3">
               <div 
@@ -141,7 +140,7 @@ class="w-1.5 h-1.5 rounded-full"
               <span class="text-base-content/40 text-xs">({{ item.owner }})</span>
             </div>
             <div class="flex items-center gap-3">
-              <span class="tabular-nums font-mono font-medium text-green-400">
+              <span class="tabular-nums font-mono font-medium text-[#A3BE8C]">
                 +{{ formatCurrency(item.amount) }} €
               </span>
               <div class="opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity flex gap-1">
@@ -157,7 +156,7 @@ class="w-1.5 h-1.5 rounded-full"
                   @click="requestDelete(item)"
                   title="Supprimer ce revenu"
                 >
-                  <Trash2 :size="14" class="text-red-400" />
+                    <Trash2 :size="14" class="text-[#BF616A]" />
                 </button>
               </div>
             </div>
@@ -167,10 +166,10 @@ class="w-1.5 h-1.5 rounded-full"
 
       <!-- État vide -->
       <div v-else class="text-center py-8">
-        <div class="w-12 h-12 rounded-none bg-base-content/5 flex items-center justify-center mx-auto mb-3">
+        <div class="w-12 h-12 rounded-lg bg-base-content/5 flex items-center justify-center mx-auto mb-3">
           <Plus :size="24" class="text-base-content/30" stroke-width="1.5" />
         </div>
-        <p class="text-base-content/40 text-sm">Aucun revenu enregistré</p>
+        <p class="text-[11px] font-mono uppercase tracking-[0.15em] text-base-content/40">Aucun revenu enregistré</p>
       </div>
     </div>
 

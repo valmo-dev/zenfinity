@@ -23,36 +23,32 @@ const valentinPct = computed(() => isSinglePerson.value ? 0 : 100 - marinePct.va
 </script>
 
 <template>
-  <div class="glass-card rounded-none overflow-hidden" v-if="!isSinglePerson">
+  <div class="terminal-card overflow-hidden" v-if="!isSinglePerson">
     <!-- Header -->
-    <div class="px-6 py-4 border-b-3 border-brutal bg-blue-500/20">
-       <h3 
-        class="text-lg font-bold flex items-center gap-3 text-base-content tooltip-wrapper tooltip-bottom"
-        data-tooltip="Définit comment les charges partagées sont réparties entre les deux personnes"
-      >
-        <div class="w-8 h-8 rounded-none bg-blue-500/20 flex items-center justify-center">
-          <Settings :size="16" class="text-blue-400" />
-        </div>
-        Répartition charges communes
-      </h3>
+    <div class="px-6 py-4 flex items-center justify-between border-b border-base-content/[0.06]">
+      <div class="flex items-center gap-3">
+        <span class="inline-block w-2 h-2 rounded-full bg-[#81A1C1]"></span>
+        <span class="text-[11px] font-mono uppercase tracking-[0.15em] text-base-content/50">Répartition charges communes</span>
+      </div>
+      <Settings :size="16" class="text-base-content/30" />
     </div>
 
     <div class="p-6 space-y-5">
       <!-- Labels -->
       <div class="flex justify-between items-center">
         <div class="flex items-center gap-3">
-          <div class="w-3 h-3 rounded-full bg-primary shadow-lg shadow-primary/50"></div>
+          <div class="w-3 h-3 rounded-full bg-primary"></div>
           <span class="font-medium text-base-content">{{ store.owners[0] }}</span>
-          <span class="px-3 py-1 rounded-none text-sm font-bold bg-primary/20 text-primary">
+          <span class="px-3 py-1 text-sm font-semibold bg-primary/20 text-primary">
             {{ marinePct }}%
           </span>
         </div>
         <div class="flex items-center gap-3">
-          <span class="px-3 py-1 rounded-none text-sm font-bold bg-secondary/20 text-secondary">
+          <span class="px-3 py-1 text-sm font-semibold bg-secondary/20 text-secondary">
             {{ valentinPct }}%
           </span>
           <span class="font-medium text-base-content">{{ store.owners[1] }}</span>
-          <div class="w-3 h-3 rounded-full bg-secondary shadow-lg shadow-secondary/50"></div>
+          <div class="w-3 h-3 rounded-full bg-secondary"></div>
         </div>
       </div>
 
@@ -70,7 +66,7 @@ const valentinPct = computed(() => isSinglePerson.value ? 0 : 100 - marinePct.va
 
       <!-- Barre visuelle de la répartition -->
       <div class="relative">
-        <div class="flex rounded-none overflow-hidden h-3 bg-base-content/5">
+        <div class="flex overflow-hidden h-3 bg-base-content/5">
           <div
             class="bg-gradient-to-r from-primary to-primary/70 transition-all duration-500 ease-out"
             :style="{ width: `${marinePct}%` }"
@@ -82,13 +78,13 @@ const valentinPct = computed(() => isSinglePerson.value ? 0 : 100 - marinePct.va
         </div>
         <!-- Indicateur central -->
         <div 
-          class="absolute top-1/2 -translate-y-1/2 w-1 h-5 bg-base-content/30 rounded-none transition-all duration-500"
+          class="absolute top-1/2 -translate-y-1/2 w-1 h-5 bg-base-content/30 transition-all duration-500"
           :style="{ left: `${marinePct}%`, transform: 'translateX(-50%) translateY(-50%)' }"
         ></div>
       </div>
 
       <!-- Échelle -->
-      <div class="flex justify-between text-xs text-base-content/30 px-1">
+      <div class="flex justify-between text-xs text-base-content/50 px-1">
         <span>0%</span>
         <span>25%</span>
         <span>50%</span>

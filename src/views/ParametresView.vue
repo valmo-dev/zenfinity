@@ -58,16 +58,23 @@ function resetLocal() {
   <div class="space-y-8">
     <!-- Titre de page -->
     <div>
-      <h1 class="text-3xl font-black uppercase tracking-tight">Paramètres</h1>
-      <p class="text-base-content/50 font-medium mt-1">
+      <p class="text-[11px] font-mono uppercase tracking-[0.2em] text-primary/60 mb-1 flex items-center gap-2">
+        <span class="inline-block w-1.5 h-1.5 rounded-full bg-primary"></span>
+        Configuration
+      </p>
+      <h1 class="text-3xl font-semibold tracking-tight text-base-content">Paramètres</h1>
+      <p class="text-[11px] font-mono uppercase tracking-[0.15em] text-base-content/40 mt-2">
         Configuration du foyer et objectifs
       </p>
     </div>
 
     <!-- Mode du foyer -->
-    <div class="brutal-card p-0 overflow-hidden">
-      <div class="brutal-card-header bg-blue-500/20">
-        <h2 class="text-lg font-black uppercase">Mode du foyer</h2>
+    <div class="terminal-card p-0 overflow-hidden">
+      <div class="px-6 py-4 flex items-center justify-between border-b border-base-content/[0.06]">
+        <div class="flex items-center gap-3">
+          <span class="inline-block w-2 h-2 rounded-full bg-[#81A1C1]"></span>
+          <span class="text-[11px] font-mono uppercase tracking-[0.15em] text-base-content/50">Mode du foyer</span>
+        </div>
       </div>
       <div class="p-6 space-y-6">
         <!-- Mode selection -->
@@ -76,7 +83,7 @@ function resetLocal() {
             v-for="option in modeOptions"
             :key="option.value"
             @click="selectMode(option.value)"
-            class="brutal-card p-4 text-left transition-all cursor-pointer"
+            class="terminal-card p-4 text-left transition-all cursor-pointer"
             :class="
               localMode === option.value
                 ? 'border-primary bg-primary/10 brutal-shadow-active'
@@ -85,14 +92,14 @@ function resetLocal() {
           >
             <div class="flex items-center gap-3 mb-2">
               <div
-                class="w-10 h-10 rounded-none border-3 border-brutal flex items-center justify-center"
+                class="w-10 h-10 rounded border border-base-content/[0.06] flex items-center justify-center"
                 :class="
                   localMode === option.value ? 'bg-primary text-primary-content' : 'bg-base-content/5'
                 "
               >
                 <component :is="option.icon" :size="20" />
               </div>
-              <span class="font-bold text-sm uppercase">{{
+              <span class="font-semibold text-sm uppercase">{{
                 option.label
               }}</span>
             </div>
@@ -102,7 +109,7 @@ function resetLocal() {
 
         <!-- Owner names -->
         <div class="space-y-3">
-          <label class="text-sm font-bold uppercase text-base-content/60"
+          <label class="text-[11px] font-mono uppercase tracking-[0.15em] text-base-content/50"
             >Noms des personnes</label
           >
           <div
@@ -111,13 +118,13 @@ function resetLocal() {
             class="flex items-center gap-3"
           >
             <div
-              class="w-3 h-3 rounded-full border-2 border-brutal"
+              class="w-3 h-3 rounded-full border border-base-content/[0.06]"
               :class="index === 0 ? 'bg-primary' : 'bg-secondary'"
             ></div>
             <input
               v-model="localOwners[index]"
               type="text"
-              class="input input-bordered w-full max-w-xs brutal-input"
+              class="w-full max-w-xs px-4 py-3 bg-base-content/5 border border-base-content/[0.06] rounded text-base-content focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
               :placeholder="'Personne ' + (index + 1)"
             />
           </div>
@@ -125,10 +132,10 @@ function resetLocal() {
 
         <!-- Info box -->
         <div
-          class="brutal-card p-4 bg-blue-500/10 border-blue-500"
+          class="terminal-card p-4 border-[#81A1C1]/20"
         >
           <div class="flex gap-3">
-            <Info :size="18" class="text-blue-500 shrink-0 mt-0.5" />
+            <Info :size="18" class="text-[#81A1C1] shrink-0 mt-0.5" />
             <p class="text-sm text-base-content/70">
               Le mode détermine comment les revenus et charges sont répartis et
               affichés. Vous pouvez changer de mode à tout moment.
