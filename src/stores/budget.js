@@ -14,6 +14,25 @@ function getCurrentMonth() {
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
 }
 
+/**
+ * Compare deux mois au format "YYYY-MM".
+ * Retourne < 0 si a < b, 0 si a === b, > 0 si a > b.
+ */
+function compareMonths(a, b) {
+  return a.localeCompare(b);
+}
+
+/**
+ * Vérifie si une récurrence est applicable pour un mois donné.
+ */
+function isRecurringApplicable(recurring, month) {
+  if (!recurring.isActive) return false;
+  if (recurring.startMonth && compareMonths(month, recurring.startMonth) < 0) return false;
+  if (recurring.endMonth && compareMonths(month, recurring.endMonth) >= 0) return false;
+  if (recurring.disabledMonths && recurring.disabledMonths.includes(month)) return false;
+  return true;
+}
+
 // Feature 2 : Catégories prédéfinies par défaut
 export const DEFAULT_CATEGORIES = {
   Revenu: ["Salaire", "Freelance", "Allocations", "Remboursement", "Autres revenus"],
@@ -60,9 +79,14 @@ export const useBudgetStore = defineStore("budget", {
           householdMode,
           foyerSavingRate: parsed.foyerSavingRate ?? 30,
           theme: parsed.theme || "zenfinity-dark",
-          // Feature 1 : Récurrences
-          recurringItems: parsed.recurringItems || [],
-          appliedRecurringMonths: parsed.appliedRecurringMonths || [],
+          // Feature 1 : Récurrences (v4 : automatiques)
+          recurringItems: (parsed.recurringItems || []).map((r) => ({
+            ...r,
+            startMonth: r.startMonth || getCurrentMonth(),
+            endMonth: r.endMonth || null,
+            disabledMonths: r.disabledMonths || [],
+          })),
+          duplicatedMonths: parsed.duplicatedMonths || [],
           // Feature 3 : Budget par catégorie
           categoryBudgets: parsed.categoryBudgets || {},
           // Feature 4 : Objectifs d'épargne
@@ -85,9 +109,9 @@ export const useBudgetStore = defineStore("budget", {
       householdMode: "separate",
       foyerSavingRate: 30,
       theme: "zenfinity-dark",
-      // Feature 1 : Récurrences
+      // Feature 1 : Récurrences (v4 : automatiques)
       recurringItems: [],
-      appliedRecurringMonths: [],
+      duplicatedMonths: [],
       // Feature 3 : Budget par catégorie
       categoryBudgets: {},
       // Feature 4 : Objectifs d'épargne
@@ -96,8 +120,37 @@ export const useBudgetStore = defineStore("budget", {
   },
 
   getters: {
-    currentMonthItems(state) {
+    /**
+     * Items réguliers (non-récurrents) du mois sélectionné.
+     */
+    regularMonthItems(state) {
       return state.items.filter((item) => item.month === state.selectedMonth);
+    },
+
+    /**
+     * Récurrences applicables pour le mois sélectionné, transformées en items virtuels.
+     */
+    virtualRecurringItems(state) {
+      return state.recurringItems
+        .filter((r) => isRecurringApplicable(r, state.selectedMonth))
+        .map((r) => ({
+          id: `recurring-${r.id}`,
+          month: state.selectedMonth,
+          type: r.type,
+          owner: r.owner,
+          category: r.category,
+          amount: r.amount,
+          isRecurring: true,
+          recurringId: r.id,
+        }));
+    },
+
+    /**
+     * Tous les items du mois (réguliers + récurrences virtuelles).
+     * Utilisé par tous les getters de calcul.
+     */
+    currentMonthItems() {
+      return [...this.regularMonthItems, ...this.virtualRecurringItems];
     },
 
     availableMonths(state) {
@@ -258,11 +311,17 @@ export const useBudgetStore = defineStore("budget", {
     monthlyEvolution(state) {
       const months = [...this.availableMonths].sort();
       return months.map((month) => {
-        const monthItems = state.items.filter((item) => item.month === month);
-        const revenus = monthItems
+        // Items réguliers du mois
+        const regularItems = state.items.filter((item) => item.month === month);
+        // Récurrences applicables pour ce mois
+        const recurringVirtual = state.recurringItems
+          .filter((r) => isRecurringApplicable(r, month))
+          .map((r) => ({ type: r.type, amount: r.amount }));
+        const allItems = [...regularItems, ...recurringVirtual];
+        const revenus = allItems
           .filter((item) => item.type === "Revenu")
           .reduce((sum, item) => sum + Number(item.amount), 0);
-        const charges = monthItems
+        const charges = allItems
           .filter((item) => item.type === "Charge")
           .reduce((sum, item) => sum + Number(item.amount), 0);
         return {
@@ -317,14 +376,38 @@ export const useBudgetStore = defineStore("budget", {
       return this.currentMonthItems.filter((item) => item.type === "Charge");
     },
 
-    // === Feature 1 : Récurrences ===
+    // === Feature 1 : Récurrences automatiques ===
 
+    /**
+     * Récurrences actuellement actives (globalement, sans filtre de mois).
+     */
     activeRecurringItems(state) {
-      return state.recurringItems.filter((item) => item.isActive);
+      return state.recurringItems.filter((item) => item.isActive && !item.endMonth);
     },
 
-    hasRecurringBeenApplied(state) {
-      return (month) => state.appliedRecurringMonths.includes(month);
+    /**
+     * Vérifie si le mois a déjà été dupliqué depuis le mois précédent.
+     */
+    hasMonthBeenDuplicated(state) {
+      return (month) => state.duplicatedMonths.includes(month);
+    },
+
+    /**
+     * Récurrences applicables pour un mois donné.
+     */
+    recurringItemsForMonth(state) {
+      return (month) =>
+        state.recurringItems.filter((r) => isRecurringApplicable(r, month));
+    },
+
+    /**
+     * Vérifie si une récurrence est désactivée pour un mois donné.
+     */
+    isRecurringDisabledForMonth(state) {
+      return (recurringId, month) => {
+        const item = state.recurringItems.find((r) => r.id === recurringId);
+        return item ? item.disabledMonths.includes(month) : false;
+      };
     },
 
     // === Feature 2 : Catégories utilisées ===
@@ -521,6 +604,14 @@ export const useBudgetStore = defineStore("budget", {
         }
       });
 
+      // Mettre à jour les recurring items
+      this.recurringItems.forEach((item) => {
+        const oldIndex = oldOwners.indexOf(item.owner);
+        if (oldIndex !== -1 && newOwners[oldIndex]) {
+          item.owner = newOwners[oldIndex];
+        }
+      });
+
       // Mettre à jour savingRates
       const newSavingRates = {};
       oldOwners.forEach((oldName, index) => {
@@ -594,6 +685,7 @@ export const useBudgetStore = defineStore("budget", {
     },
 
     duplicateMonth(sourceMonth, targetMonth) {
+      // Ne dupliquer que les items réguliers (pas les récurrences qui sont automatiques)
       const sourceItems = this.items.filter(
         (item) => item.month === sourceMonth,
       );
@@ -604,6 +696,10 @@ export const useBudgetStore = defineStore("budget", {
         month: targetMonth,
       }));
       this.items.push(...newItems);
+      // Tracker que ce mois a été dupliqué
+      if (!this.duplicatedMonths.includes(targetMonth)) {
+        this.duplicatedMonths.push(targetMonth);
+      }
       this.saveState();
       return true;
     },
@@ -614,23 +710,55 @@ export const useBudgetStore = defineStore("budget", {
       return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
     },
 
-    // === Feature 1 : Récurrences ===
+    // === Feature 1 : Récurrences automatiques ===
 
     addRecurringItem(item) {
       this.recurringItems.push({
         ...item,
         id: crypto.randomUUID(),
         isActive: true,
+        startMonth: this.selectedMonth,
+        endMonth: null,
+        disabledMonths: [],
       });
       this.saveState();
     },
 
+    /**
+     * Modifie une récurrence avec préservation de l'historique.
+     * Termine l'ancienne récurrence et en crée une nouvelle à partir du mois en cours.
+     */
     editRecurringItem(id, fields) {
       const index = this.recurringItems.findIndex((item) => item.id === id);
-      if (index !== -1) {
-        this.recurringItems[index] = { ...this.recurringItems[index], ...fields };
-        this.saveState();
+      if (index === -1) return;
+
+      const current = this.recurringItems[index];
+      const hasValueChange = (fields.category && fields.category !== current.category) ||
+        (fields.amount != null && fields.amount !== current.amount) ||
+        (fields.owner && fields.owner !== current.owner) ||
+        (fields.type && fields.type !== current.type);
+
+      // Si les valeurs changent et que la récurrence a un historique passé, on versionne
+      if (hasValueChange && current.startMonth && compareMonths(current.startMonth, this.selectedMonth) < 0) {
+        // Terminer l'ancienne à partir du mois en cours
+        current.endMonth = this.selectedMonth;
+        // Créer une nouvelle récurrence avec les nouvelles valeurs
+        this.recurringItems.push({
+          id: crypto.randomUUID(),
+          type: fields.type || current.type,
+          owner: fields.owner || current.owner,
+          category: fields.category || current.category,
+          amount: fields.amount != null ? fields.amount : current.amount,
+          isActive: current.isActive,
+          startMonth: this.selectedMonth,
+          endMonth: null,
+          disabledMonths: [],
+        });
+      } else {
+        // Pas d'historique à préserver, modification directe
+        this.recurringItems[index] = { ...current, ...fields };
       }
+      this.saveState();
     },
 
     deleteRecurringItem(id) {
@@ -649,23 +777,85 @@ export const useBudgetStore = defineStore("budget", {
       }
     },
 
-    applyRecurringItems(month) {
-      const active = this.recurringItems.filter((item) => item.isActive);
-      if (active.length === 0) return 0;
-      const newItems = active.map((template) => ({
-        id: crypto.randomUUID(),
-        month,
-        type: template.type,
-        owner: template.owner,
-        category: template.category,
-        amount: template.amount,
-      }));
-      this.items.push(...newItems);
-      if (!this.appliedRecurringMonths.includes(month)) {
-        this.appliedRecurringMonths.push(month);
+    /**
+     * Désactive une récurrence pour un mois spécifique.
+     * L'item disparaît de ce mois uniquement, continue pour les autres.
+     */
+    disableRecurringForMonth(recurringId, month) {
+      const item = this.recurringItems.find((r) => r.id === recurringId);
+      if (item && !item.disabledMonths.includes(month)) {
+        item.disabledMonths.push(month);
+        this.saveState();
       }
+    },
+
+    /**
+     * Réactive une récurrence pour un mois spécifique (annule un disable).
+     */
+    enableRecurringForMonth(recurringId, month) {
+      const item = this.recurringItems.find((r) => r.id === recurringId);
+      if (item) {
+        const idx = item.disabledMonths.indexOf(month);
+        if (idx !== -1) {
+          item.disabledMonths.splice(idx, 1);
+          this.saveState();
+        }
+      }
+    },
+
+    /**
+     * Termine une récurrence à partir du mois donné.
+     * L'item disparaît de ce mois et tous les suivants, reste dans l'historique passé.
+     */
+    endRecurringItem(recurringId, month) {
+      const item = this.recurringItems.find((r) => r.id === recurringId);
+      if (item) {
+        item.endMonth = month;
+        this.saveState();
+      }
+    },
+
+    // === Réinitialisation du mois ===
+
+    /**
+     * Supprime tous les items réguliers du mois et réinitialise le tracking.
+     */
+    clearMonth(month) {
+      this.items = this.items.filter((item) => item.month !== month);
+      // Réinitialiser le tracking de duplication pour ce mois
+      const dupIdx = this.duplicatedMonths.indexOf(month);
+      if (dupIdx !== -1) this.duplicatedMonths.splice(dupIdx, 1);
       this.saveState();
-      return newItems.length;
+    },
+
+    /**
+     * Supprime les charges personnelles (owner != "Commun") du mois.
+     */
+    clearPersonalCharges(month) {
+      this.items = this.items.filter(
+        (item) => !(item.month === month && item.type === "Charge" && item.owner.toLowerCase() !== "commun"),
+      );
+      this.saveState();
+    },
+
+    /**
+     * Supprime les charges communes (owner == "Commun") du mois.
+     */
+    clearCommunalCharges(month) {
+      this.items = this.items.filter(
+        (item) => !(item.month === month && item.type === "Charge" && item.owner.toLowerCase() === "commun"),
+      );
+      this.saveState();
+    },
+
+    /**
+     * Supprime toutes les charges du mois (personnelles + communes).
+     */
+    clearAllCharges(month) {
+      this.items = this.items.filter(
+        (item) => !(item.month === month && item.type === "Charge"),
+      );
+      this.saveState();
     },
 
     // === Feature 3 : Budget par catégorie ===
@@ -742,7 +932,7 @@ export const useBudgetStore = defineStore("budget", {
 
     exportJSON() {
       const data = {
-        version: 3,
+        version: 4,
         exportDate: new Date().toISOString(),
         items: this.items,
         savingRates: this.savingRates,
@@ -752,7 +942,7 @@ export const useBudgetStore = defineStore("budget", {
         foyerSavingRate: this.foyerSavingRate,
         selectedMonth: this.selectedMonth,
         recurringItems: this.recurringItems,
-        appliedRecurringMonths: this.appliedRecurringMonths,
+        duplicatedMonths: this.duplicatedMonths,
         categoryBudgets: this.categoryBudgets,
         savingsGoals: this.savingsGoals,
       };
@@ -778,7 +968,7 @@ export const useBudgetStore = defineStore("budget", {
     importJSON(jsonString, mode = "month") {
       try {
         const data = JSON.parse(jsonString);
-        if (data.version === 2 || data.version === 3 || data.items) {
+        if (data.version === 2 || data.version === 3 || data.version === 4 || data.items) {
           const importedItems = (data.items || []).map((item) => ({
             ...item,
             id: crypto.randomUUID(),
@@ -818,12 +1008,18 @@ export const useBudgetStore = defineStore("budget", {
             this.foyerSavingRate = data.foyerSavingRate;
           }
 
-          // v3 fields
+          // v3/v4 fields
           if (data.recurringItems) {
-            this.recurringItems.splice(0, this.recurringItems.length, ...data.recurringItems);
+            const migratedRecurring = data.recurringItems.map((r) => ({
+              ...r,
+              startMonth: r.startMonth || getCurrentMonth(),
+              endMonth: r.endMonth || null,
+              disabledMonths: r.disabledMonths || [],
+            }));
+            this.recurringItems.splice(0, this.recurringItems.length, ...migratedRecurring);
           }
-          if (data.appliedRecurringMonths) {
-            this.appliedRecurringMonths.splice(0, this.appliedRecurringMonths.length, ...data.appliedRecurringMonths);
+          if (data.duplicatedMonths) {
+            this.duplicatedMonths.splice(0, this.duplicatedMonths.length, ...data.duplicatedMonths);
           }
           if (data.categoryBudgets) {
             Object.keys(this.categoryBudgets).forEach((k) => delete this.categoryBudgets[k]);

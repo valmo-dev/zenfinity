@@ -45,6 +45,9 @@ function handleEntryAdded() {
 
 <template>
   <div class="min-h-screen">
+    <!-- Skip to content -->
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-content focus:rounded">Aller au contenu principal</a>
+
     <!-- Sidebar -->
     <AppSidebar
       v-model:open="sidebarOpen"
@@ -64,6 +67,7 @@ function handleEntryAdded() {
         <button
           class="brutal-btn !p-2 cursor-pointer lg:!hidden"
           @click="sidebarOpen = true"
+          aria-label="Ouvrir le menu de navigation"
         >
           <Menu :size="22" />
         </button>
@@ -80,10 +84,10 @@ function handleEntryAdded() {
             <div class="flex items-center gap-1.5">
               <span class="relative flex h-2 w-2">
                 <span
-                  class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#A3BE8C] opacity-75"
+                  class="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75"
                 ></span>
                 <span
-                  class="relative inline-flex rounded-full h-2 w-2 bg-[#A3BE8C]"
+                  class="relative inline-flex rounded-full h-2 w-2 bg-success"
                 ></span>
               </span>
               <span class="text-xs font-semibold font-mono text-base-content/80"
@@ -96,9 +100,7 @@ function handleEntryAdded() {
           <button
             class="brutal-btn w-10 h-10 !p-0 flex items-center justify-center cursor-pointer"
             @click="toggleTheme"
-            :title="
-              isDarkTheme ? 'Passer au theme clair' : 'Passer au theme sombre'
-            "
+            :aria-label="isDarkTheme ? 'Passer au thème clair' : 'Passer au thème sombre'"
           >
             <Sun v-if="isDarkTheme" :size="20" :stroke-width="2" />
             <Moon v-else :size="20" :stroke-width="2" />
@@ -108,7 +110,7 @@ function handleEntryAdded() {
           <button
             class="brutal-btn brutal-btn-primary cursor-pointer"
             @click="showAddModal = true"
-            title="Ajouter un revenu ou une charge"
+            aria-label="Ajouter un revenu ou une charge"
           >
             <Plus :size="18" stroke-width="2" />
             <span class="hidden sm:inline">Ajouter</span>
@@ -117,13 +119,13 @@ function handleEntryAdded() {
       </header>
 
       <!-- Router content -->
-      <main class="p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto">
+      <main id="main-content" class="p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto">
         <router-view />
       </main>
 
       <!-- Footer -->
       <footer class="border-t border-base-content/[0.06] p-6 text-center">
-        <p class="text-xs font-medium tracking-widest text-base-content/50">
+        <p class="text-xs font-medium tracking-widest text-base-content/60">
           ZenFinity &middot; Budget Tracker
         </p>
       </footer>

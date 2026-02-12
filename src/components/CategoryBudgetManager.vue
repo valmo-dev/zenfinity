@@ -1,8 +1,10 @@
 <script setup>
 import { ref, computed, inject } from "vue";
 import { useBudgetStore } from "../stores/budget";
+import { formatCurrency } from "../utils/format";
 import { Wallet, Plus, Trash2, ChevronDown, ChevronUp } from "lucide-vue-next";
 import BudgetProgressBar from "./BudgetProgressBar.vue";
+import ConfirmModal from "./ConfirmModal.vue";
 
 const store = useBudgetStore();
 const showToast = inject("showToast", () => {});
@@ -75,17 +77,30 @@ function updatePersonBudget(category, owner, value) {
   store.setCategoryBudget(category, { perPerson });
 }
 
-function deleteBudget(category) {
-  store.deleteCategoryBudget(category);
-  showToast("success", `Budget "${category}" supprimé`);
+// Suppression avec confirmation
+const showDeleteConfirm = ref(false);
+const categoryToDelete = ref(null);
+
+function requestDelete(category) {
+  categoryToDelete.value = category;
+  showDeleteConfirm.value = true;
 }
 
-function formatCurrency(value) {
-  return Number(value).toLocaleString("fr-FR", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
+function confirmDelete() {
+  if (categoryToDelete.value) {
+    store.deleteCategoryBudget(categoryToDelete.value);
+    showToast("success", `Budget "${categoryToDelete.value}" supprimé`);
+    categoryToDelete.value = null;
+  }
+  showDeleteConfirm.value = false;
 }
+
+function cancelDelete() {
+  categoryToDelete.value = null;
+  showDeleteConfirm.value = false;
+}
+
+
 </script>
 
 <template>
@@ -93,11 +108,11 @@ function formatCurrency(value) {
     <!-- Header -->
     <div class="px-6 py-4 flex items-center justify-between border-b border-base-content/[0.06]">
       <div class="flex items-center gap-3">
-        <span class="inline-block w-2 h-2 rounded-full bg-[#88C0D0]"></span>
-        <span class="text-[11px] font-mono uppercase tracking-[0.15em] text-base-content/50">Budget par catégorie</span>
+        <span class="inline-block w-2 h-2 rounded-full bg-primary"></span>
+        <span class="text-[11px] font-mono uppercase tracking-[0.15em] text-base-content/60">Budget par catégorie</span>
       </div>
       <button
-          class="brutal-btn brutal-btn-sm bg-[#88C0D0]/10 hover:bg-[#88C0D0]/20 text-[#88C0D0]"
+          class="brutal-btn brutal-btn-sm bg-primary/10 hover:bg-primary/20 text-primary"
           @click="showAddForm = !showAddForm"
         >
           <Plus :size="14" />
@@ -111,10 +126,11 @@ function formatCurrency(value) {
         <div v-if="showAddForm" class="p-4 bg-base-content/3 border border-base-content/[0.06] space-y-3">
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div class="space-y-1">
-              <label class="text-[10px] font-mono uppercase tracking-[0.15em] text-base-content/50">Catégorie</label>
+              <label for="budget-category" class="text-[10px] font-mono uppercase tracking-[0.15em] text-base-content/60">Catégorie</label>
               <select
+                id="budget-category"
                 v-model="newCategory"
-                class="w-full px-3 py-2 bg-base-content/5 border border-base-content/[0.06] text-sm text-base-content focus:border-[#88C0D0]/50 focus:outline-none"
+                class="w-full px-3 py-2 bg-base-content/5 border border-base-content/[0.06] text-sm text-base-content focus:border-primary/50 focus:outline-none"
               >
                 <option value="" disabled class="bg-base-100">Choisir...</option>
                 <option
@@ -128,14 +144,15 @@ function formatCurrency(value) {
               </select>
             </div>
             <div class="space-y-1">
-              <label class="text-[10px] font-mono uppercase tracking-[0.15em] text-base-content/50">Plafond mensuel (EUR)</label>
+              <label for="budget-amount" class="text-[10px] font-mono uppercase tracking-[0.15em] text-base-content/60">Plafond mensuel (EUR)</label>
               <input
+                id="budget-amount"
                 v-model.number="newBudgetAmount"
                 type="number"
                 step="1"
                 min="1"
                 placeholder="0"
-                class="w-full px-3 py-2 bg-base-content/5 border border-base-content/[0.06] text-sm text-base-content placeholder-base-content/30 focus:border-[#88C0D0]/50 focus:outline-none"
+                class="w-full px-3 py-2 bg-base-content/5 border border-base-content/[0.06] text-sm text-base-content placeholder-base-content/30 focus:border-primary/50 focus:outline-none"
               />
             </div>
           </div>
@@ -147,7 +164,7 @@ function formatCurrency(value) {
               Annuler
             </button>
             <button
-              class="brutal-btn brutal-btn-sm bg-[#88C0D0] hover:bg-[#88C0D0]/80 text-[#2E3440]"
+              class="brutal-btn brutal-btn-sm bg-primary hover:bg-primary/80 text-primary-content"
               @click="addBudget"
             >
               Définir le budget
@@ -174,7 +191,8 @@ function formatCurrency(value) {
                   @change="updateGlobalBudget(category, $event.target.value)"
                   step="1"
                   min="1"
-                    class="w-20 px-2 py-1 bg-base-content/5 border border-base-content/[0.06] text-xs text-base-content text-right tabular-nums focus:outline-none focus:border-[#88C0D0]/50"
+                  :aria-label="`Plafond mensuel pour ${category}`"
+                    class="w-20 px-2 py-1 bg-base-content/5 border border-base-content/[0.06] text-xs text-base-content text-right tabular-nums focus:outline-none focus:border-primary/50"
                 />
                 <span class="text-xs text-base-content/40">€/mois</span>
               </div>
@@ -184,17 +202,17 @@ function formatCurrency(value) {
                 v-if="isSeparateMode"
                 class="brutal-icon-btn"
                 @click="toggleExpand(category)"
-                title="Budget par personne"
+                aria-label="Budget par personne"
               >
                 <ChevronDown v-if="expandedCategory !== category" :size="14" class="text-base-content/60" />
                 <ChevronUp v-else :size="14" class="text-base-content/60" />
               </button>
               <button
                 class="brutal-icon-btn brutal-icon-btn-danger"
-                @click="deleteBudget(category)"
-                title="Supprimer le budget"
+                @click="requestDelete(category)"
+                aria-label="Supprimer le budget"
               >
-                <Trash2 :size="14" class="text-[#BF616A]" />
+                <Trash2 :size="14" class="text-error" />
               </button>
             </div>
           </div>
@@ -222,7 +240,8 @@ function formatCurrency(value) {
                     placeholder="—"
                     step="1"
                     min="0"
-                    class="w-20 px-2 py-1 bg-base-content/5 border border-base-content/[0.06] text-xs text-base-content text-right tabular-nums placeholder-base-content/30 focus:outline-none focus:border-[#88C0D0]/50"
+                    :aria-label="`Budget ${category} pour ${owner}`"
+                    class="w-20 px-2 py-1 bg-base-content/5 border border-base-content/[0.06] text-xs text-base-content text-right tabular-nums placeholder-base-content/30 focus:outline-none focus:border-primary/50"
                   />
                   <span class="text-xs text-base-content/40">€</span>
                 </div>
@@ -238,9 +257,19 @@ function formatCurrency(value) {
           <Wallet :size="24" class="text-base-content/40" stroke-width="1.5" />
         </div>
         <p class="text-[11px] font-mono uppercase tracking-[0.15em] text-base-content/40">Aucun budget défini</p>
-        <p class="text-base-content/50 text-xs mt-1">Définissez des plafonds mensuels par catégorie de charges</p>
+        <p class="text-base-content/60 text-xs mt-1">Définissez des plafonds mensuels par catégorie de charges</p>
       </div>
     </div>
+
+    <!-- Confirm delete -->
+    <ConfirmModal
+      :isOpen="showDeleteConfirm"
+      title="Supprimer ce budget ?"
+      message="Le plafond budgétaire pour cette catégorie sera définitivement supprimé."
+      :itemName="categoryToDelete"
+      @confirm="confirmDelete"
+      @cancel="cancelDelete"
+    />
   </div>
 </template>
 

@@ -1,7 +1,8 @@
 <script setup>
 import { ref, inject, computed } from "vue";
 import { useBudgetStore } from "../stores/budget";
-import { CircleDollarSign, Pencil, Trash2, Plus } from "lucide-vue-next";
+import { formatCurrency } from "../utils/format";
+import { CircleDollarSign, Pencil, Trash2, Plus, Repeat, EyeOff, CircleStop } from "lucide-vue-next";
 import EditModal from "./EditModal.vue";
 import ConfirmModal from "./ConfirmModal.vue";
 
@@ -15,9 +16,16 @@ const selectedItem = ref(null);
 const showDeleteConfirm = ref(false);
 const itemToDelete = ref(null);
 
+// Confirmation action récurrence
+const showRecurringConfirm = ref(false);
+const recurringAction = ref(null);
+const recurringConfirmTitle = ref("");
+const recurringConfirmMessage = ref("");
+
 const isSinglePerson = computed(() => store.owners.length === 1);
 
 function openEdit(item) {
+  if (item.isRecurring) return;
   selectedItem.value = item;
   showEditModal.value = true;
 }
@@ -31,6 +39,7 @@ function handleEditSaved() {
 }
 
 function requestDelete(item) {
+  if (item.isRecurring) return;
   itemToDelete.value = item;
   showDeleteConfirm.value = true;
 }
@@ -50,11 +59,39 @@ function cancelDelete() {
   showDeleteConfirm.value = false;
 }
 
-function formatCurrency(value) {
-  return Number(value).toLocaleString("fr-FR", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
+// === Actions récurrences ===
+
+function requestDisableRecurring(item) {
+  recurringAction.value = { type: "disable", recurringId: item.recurringId, itemCategory: item.category };
+  recurringConfirmTitle.value = "Désactiver pour ce mois ?";
+  recurringConfirmMessage.value = `"${item.category}" sera masqué pour ce mois uniquement. La récurrence continue pour les autres mois.`;
+  showRecurringConfirm.value = true;
+}
+
+function requestEndRecurring(item) {
+  recurringAction.value = { type: "end", recurringId: item.recurringId, itemCategory: item.category };
+  recurringConfirmTitle.value = "Supprimer la récurrence ?";
+  recurringConfirmMessage.value = `"${item.category}" sera supprimé de ce mois et de tous les mois suivants. L'historique passé est conservé.`;
+  showRecurringConfirm.value = true;
+}
+
+function confirmRecurringAction() {
+  if (!recurringAction.value) return;
+  const { type, recurringId, itemCategory } = recurringAction.value;
+  if (type === "disable") {
+    store.disableRecurringForMonth(recurringId, store.selectedMonth);
+    showToast("success", `"${itemCategory}" désactivé pour ce mois`);
+  } else if (type === "end") {
+    store.endRecurringItem(recurringId, store.selectedMonth);
+    showToast("success", `Récurrence "${itemCategory}" supprimée`);
+  }
+  showRecurringConfirm.value = false;
+  recurringAction.value = null;
+}
+
+function cancelRecurringAction() {
+  showRecurringConfirm.value = false;
+  recurringAction.value = null;
 }
 </script>
 
@@ -63,8 +100,8 @@ function formatCurrency(value) {
     <!-- Header -->
     <div class="px-6 py-4 flex items-center justify-between border-b border-base-content/[0.06]">
       <div class="flex items-center gap-3">
-        <span class="inline-block w-2 h-2 rounded-full bg-[#A3BE8C]"></span>
-        <span class="text-[11px] font-mono uppercase tracking-[0.15em] text-base-content/50">Revenus</span>
+        <span class="inline-block w-2 h-2 rounded-full bg-success"></span>
+        <span class="text-[11px] font-mono uppercase tracking-[0.15em] text-base-content/60">Revenus</span>
       </div>
       <CircleDollarSign :size="14" class="text-base-content/30" />
     </div>
@@ -74,7 +111,7 @@ function formatCurrency(value) {
       <div class="overflow-x-auto">
         <table class="w-full">
           <thead>
-            <tr class="text-base-content/50 text-sm">
+            <tr class="text-base-content/60 text-sm">
               <th class="text-left py-3 font-medium">{{ isSinglePerson ? 'Source' : 'Personne' }}</th>
               <th class="text-right py-3 font-medium">Montant</th>
               <th v-if="!isSinglePerson" class="text-right py-3 font-medium tooltip-wrapper" data-tooltip="Pourcentage du revenu total du ménage">Part</th>
@@ -112,7 +149,7 @@ class="w-2 h-2 rounded-full"
                 {{ formatCurrency(store.totalRevenue) }} €
               </td>
               <td v-if="!isSinglePerson" class="text-right py-3">
-                <span class="px-2.5 py-1 text-xs font-bold bg-[#A3BE8C]/15 text-[#A3BE8C]">
+                <span class="px-2.5 py-1 text-xs font-bold bg-success/15 text-success">
                   100%
                 </span>
               </td>
@@ -140,26 +177,47 @@ class="w-1.5 h-1.5 rounded-full"
                 :class="item.owner === store.owners[0] ? 'bg-primary' : 'bg-secondary'"
               ></div>
               <span class="text-base-content/80">{{ item.category }}</span>
+              <Repeat v-if="item.isRecurring" :size="12" class="text-accent/50" title="Récurrence automatique" />
               <span class="text-base-content/40 text-xs">({{ item.owner }})</span>
             </div>
             <div class="flex items-center gap-3">
-              <span class="tabular-nums font-mono font-medium text-[#A3BE8C]">
+              <span class="tabular-nums font-mono font-medium text-success">
                 +{{ formatCurrency(item.amount) }} €
               </span>
-              <div class="opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity flex gap-1">
+              <!-- Actions pour items réguliers -->
+              <div v-if="!item.isRecurring" class="opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity flex gap-1">
                 <button
                   class="brutal-icon-btn"
                   @click="openEdit(item)"
-                  title="Modifier ce revenu"
+                  aria-label="Modifier ce revenu"
                 >
                   <Pencil :size="14" class="text-base-content/60" />
                 </button>
                 <button
                   class="brutal-icon-btn brutal-icon-btn-danger"
                   @click="requestDelete(item)"
-                  title="Supprimer ce revenu"
+                  aria-label="Supprimer ce revenu"
                 >
-                    <Trash2 :size="14" class="text-[#BF616A]" />
+                    <Trash2 :size="14" class="text-error" />
+                </button>
+              </div>
+              <!-- Actions pour récurrences -->
+              <div v-else class="opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity flex gap-1">
+                <button
+                  class="brutal-icon-btn"
+                  @click="requestDisableRecurring(item)"
+                  aria-label="Désactiver pour ce mois"
+                  title="Désactiver pour ce mois"
+                >
+                  <EyeOff :size="14" class="text-warning/70" />
+                </button>
+                <button
+                  class="brutal-icon-btn brutal-icon-btn-danger"
+                  @click="requestEndRecurring(item)"
+                  aria-label="Supprimer la récurrence"
+                  title="Supprimer la récurrence"
+                >
+                  <CircleStop :size="14" class="text-error" />
                 </button>
               </div>
             </div>
@@ -191,6 +249,15 @@ class="w-1.5 h-1.5 rounded-full"
       :itemName="itemToDelete?.category"
       @confirm="confirmDelete"
       @cancel="cancelDelete"
+    />
+
+    <ConfirmModal
+      :isOpen="showRecurringConfirm"
+      :title="recurringConfirmTitle"
+      :message="recurringConfirmMessage"
+      :itemName="recurringAction?.itemCategory"
+      @confirm="confirmRecurringAction"
+      @cancel="cancelRecurringAction"
     />
   </div>
 </template>

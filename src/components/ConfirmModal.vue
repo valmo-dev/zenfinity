@@ -1,5 +1,7 @@
 <script setup>
-import { TriangleAlert, Trash2 } from "lucide-vue-next";
+import { ref, toRef, computed } from "vue";
+import { TriangleAlert, Trash2, Check } from "lucide-vue-next";
+import { useFocusTrap } from "../composables/useFocusTrap";
 
 const props = defineProps({
   isOpen: Boolean,
@@ -14,10 +16,28 @@ const props = defineProps({
   itemName: {
     type: String,
     default: ""
+  },
+  confirmLabel: {
+    type: String,
+    default: ""
+  },
+  variant: {
+    type: String,
+    default: "danger",
+    validator: (v) => ["danger", "warning"].includes(v)
   }
 });
 
+const effectiveConfirmLabel = computed(() => props.confirmLabel || (props.variant === "danger" ? "Supprimer" : "Confirmer"));
+const showTrashIcon = computed(() => props.variant === "danger" && !props.confirmLabel);
+
 const emit = defineEmits(["confirm", "cancel"]);
+
+const modalRef = ref(null);
+
+useFocusTrap(modalRef, toRef(props, "isOpen"), {
+  onEscape: () => handleCancel(),
+});
 
 function handleConfirm() {
   emit("confirm");
@@ -25,13 +45,6 @@ function handleConfirm() {
 
 function handleCancel() {
   emit("cancel");
-}
-
-// Fermer avec Escape
-function handleKeydown(e) {
-  if (e.key === "Escape") {
-    handleCancel();
-  }
 }
 </script>
 
@@ -41,7 +54,6 @@ function handleKeydown(e) {
       <div 
         v-if="isOpen"
         class="fixed inset-0 z-50 flex items-center justify-center p-4"
-        @keydown="handleKeydown"
       >
         <!-- Backdrop -->
         <div
@@ -50,12 +62,19 @@ function handleKeydown(e) {
         ></div>
 
         <!-- Modal -->
-        <div class="terminal-card relative w-full max-w-sm overflow-hidden" @click.stop>
+        <div
+          ref="modalRef"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="confirm-modal-title"
+          class="terminal-card relative w-full max-w-sm overflow-hidden"
+          @click.stop
+        >
           <!-- Header -->
           <div class="px-6 py-4 border-b border-base-content/[0.06]">
             <div class="flex items-center gap-3">
-              <span class="inline-block w-2 h-2 rounded-full bg-[#BF616A]"></span>
-              <span class="text-[11px] font-mono uppercase tracking-[0.15em] text-base-content/50">{{ title }}</span>
+              <span class="inline-block w-2 h-2 rounded-full bg-error"></span>
+              <span id="confirm-modal-title" class="text-[11px] font-mono uppercase tracking-[0.15em] text-base-content/60">{{ title }}</span>
             </div>
           </div>
 
@@ -63,8 +82,8 @@ function handleKeydown(e) {
           <div class="p-6">
             <!-- Icon -->
             <div class="flex justify-center mb-4">
-              <div class="w-14 h-14 rounded-lg bg-[#BF616A]/10 flex items-center justify-center">
-                <TriangleAlert :size="28" class="text-[#BF616A]" stroke-width="1.5" />
+              <div class="w-14 h-14 rounded-lg bg-error/10 flex items-center justify-center">
+                <TriangleAlert :size="28" class="text-error" stroke-width="1.5" />
               </div>
             </div>
             
@@ -92,8 +111,9 @@ function handleKeydown(e) {
               class="flex-1 brutal-btn brutal-btn-danger"
               @click="handleConfirm"
             >
-              <Trash2 :size="16" />
-              Supprimer
+              <Trash2 v-if="showTrashIcon" :size="16" />
+              <Check v-else :size="16" />
+              {{ effectiveConfirmLabel }}
             </button>
           </div>
         </div>

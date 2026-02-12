@@ -1,8 +1,9 @@
 <script setup>
-import { ref, watch, computed } from "vue";
+import { ref, watch, computed, toRef } from "vue";
 import { useBudgetStore } from "../stores/budget";
 import { X, Plus } from "lucide-vue-next";
 import CategoryAutocomplete from "./CategoryAutocomplete.vue";
+import { useFocusTrap } from "../composables/useFocusTrap";
 
 const store = useBudgetStore();
 
@@ -18,6 +19,11 @@ const category = ref("");
 const amount = ref("");
 const addAsRecurring = ref(false);
 const errors = ref({});
+const modalRef = ref(null);
+
+useFocusTrap(modalRef, toRef(props, "isOpen"), {
+  onEscape: () => emit("close"),
+});
 
 const isSinglePerson = computed(() => store.owners.length === 1);
 const isJointMode = computed(() => store.householdMode === "joint");
@@ -99,6 +105,10 @@ function handleSubmit() {
 
         <!-- Modal -->
         <div
+          ref="modalRef"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="add-entry-title"
           class="terminal-card relative w-full max-w-md overflow-hidden"
           @click.stop
         >
@@ -110,11 +120,12 @@ function handleSubmit() {
                   class="inline-block w-2 h-2 rounded-full bg-primary"
                 ></span>
                 <span
-                  class="text-[11px] font-mono uppercase tracking-[0.15em] text-base-content/50"
+                  id="add-entry-title"
+                  class="text-[11px] font-mono uppercase tracking-[0.15em] text-base-content/60"
                   >Ajouter une entrée</span
                 >
               </div>
-              <button class="brutal-icon-btn" @click="emit('close')">
+              <button class="brutal-icon-btn" @click="emit('close')" aria-label="Fermer la modale">
                 <X :size="16" class="text-base-content/60" />
               </button>
             </div>
@@ -127,10 +138,12 @@ function handleSubmit() {
               <!-- Type -->
               <div class="space-y-2">
                 <label
-                  class="text-[10px] font-mono uppercase tracking-[0.15em] text-base-content/50"
+                  for="add-entry-type"
+                  class="text-[10px] font-mono uppercase tracking-[0.15em] text-base-content/60"
                   >Type</label
                 >
                 <select
+                  id="add-entry-type"
                   v-model="type"
                   class="w-full px-4 py-3 bg-base-content/5 border border-base-content/[0.06] rounded text-base-content focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
                 >
@@ -142,10 +155,12 @@ function handleSubmit() {
               <!-- Owner (seulement si nécessaire) -->
               <div v-if="showOwnerSelector" class="space-y-2">
                 <label
-                  class="text-[10px] font-mono uppercase tracking-[0.15em] text-base-content/50"
+                  for="add-entry-owner"
+                  class="text-[10px] font-mono uppercase tracking-[0.15em] text-base-content/60"
                   >Assigné à</label
                 >
                 <select
+                  id="add-entry-owner"
                   v-model="owner"
                   class="w-full px-4 py-3 bg-base-content/5 border border-base-content/[0.06] rounded text-base-content focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
                 >
@@ -170,7 +185,8 @@ function handleSubmit() {
               <!-- Catégorie -->
               <div class="space-y-2">
                 <label
-                  class="text-[10px] font-mono uppercase tracking-[0.15em] text-base-content/50"
+                  for="add-entry-category"
+                  class="text-[10px] font-mono uppercase tracking-[0.15em] text-base-content/60"
                   >Catégorie</label
                 >
                 <CategoryAutocomplete
@@ -181,7 +197,7 @@ function handleSubmit() {
                 />
                 <p
                   v-if="errors.category"
-                  class="text-xs font-mono text-[#BF616A] mt-1"
+                  class="text-xs font-mono text-error mt-1"
                 >
                   {{ errors.category }}
                 </p>
@@ -190,10 +206,12 @@ function handleSubmit() {
               <!-- Montant -->
               <div class="space-y-2">
                 <label
-                  class="text-[10px] font-mono uppercase tracking-[0.15em] text-base-content/50"
+                  for="add-entry-amount"
+                  class="text-[10px] font-mono uppercase tracking-[0.15em] text-base-content/60"
                   >Montant (EUR)</label
                 >
                 <input
+                  id="add-entry-amount"
                   v-model.number="amount"
                   type="number"
                   step="0.01"
@@ -202,13 +220,13 @@ function handleSubmit() {
                   class="w-full px-4 py-3 bg-base-content/5 border rounded font-mono tabular-nums text-base-content placeholder-base-content/30 focus:outline-none focus:ring-2 transition-all"
                   :class="
                     errors.amount
-                      ? 'border-[#BF616A]/50 focus:border-[#BF616A] focus:ring-[#BF616A]/20'
+                      ? 'border-error/50 focus:border-error focus:ring-error/20'
                       : 'border-base-content/[0.06] focus:border-primary/50 focus:ring-primary/20'
                   "
                 />
                 <p
                   v-if="errors.amount"
-                  class="text-xs font-mono text-[#BF616A] mt-1"
+                  class="text-xs font-mono text-error mt-1"
                 >
                   {{ errors.amount }}
                 </p>

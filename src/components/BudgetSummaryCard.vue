@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from "vue";
 import { useBudgetStore } from "../stores/budget";
+import { formatCurrency } from "../utils/format";
 
 const props = defineProps({
   owner: {
@@ -36,12 +37,7 @@ const savingRate = computed({
   },
 });
 
-function formatCurrency(value) {
-  return Number(value).toLocaleString("fr-FR", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
-}
+
 
 const isSinglePerson = computed(() => store.owners.length === 1);
 
@@ -250,19 +246,19 @@ const cardLabel = computed(() => isJoint.value ? "Budget du foyer" : props.owner
           class="inline-block w-2 h-2 rounded-full"
           :class="
             isJoint
-              ? 'bg-[#81A1C1]'
+              ? 'bg-info'
               : isPrimary
                 ? 'bg-primary'
                 : 'bg-secondary'
           "
         ></span>
-        <span class="text-[11px] font-mono uppercase tracking-[0.15em] text-base-content/50">{{ cardLabel }}</span>
+        <span class="text-[11px] font-mono uppercase tracking-[0.15em] text-base-content/60">{{ cardLabel }}</span>
       </div>
       <span
         class="text-[10px] font-mono uppercase tracking-[0.1em] px-2 py-0.5 rounded"
         :class="
           isJoint
-            ? 'text-[#81A1C1]/60 bg-[#81A1C1]/8'
+            ? 'text-info/60 bg-info/8'
             : isPrimary
               ? 'text-primary/60 bg-primary/8'
               : 'text-secondary/60 bg-secondary/8'
@@ -290,20 +286,20 @@ const cardLabel = computed(() => isJoint.value ? "Budget du foyer" : props.owner
             <span
               class="flex items-center gap-2 flex-shrink min-w-0 truncate"
               :class="{
-                'text-[#BF616A]/80': step.type === 'subtract',
+                'text-error/80': step.type === 'subtract',
                 'font-medium text-base-content/70 text-xs uppercase tracking-wider font-mono': step.type === 'subtotal',
                 'font-semibold text-base-content uppercase tracking-wider text-xs font-mono': step.type === 'total',
-                'text-base-content/50 text-xs uppercase tracking-wider font-mono': step.type === 'neutral',
+                'text-base-content/60 text-xs uppercase tracking-wider font-mono': step.type === 'neutral',
                 'text-base-content/40 text-[11px] font-mono': step.type === 'detail',
               }"
             >
-              <span v-if="step.type === 'subtract'" class="text-[#BF616A]/60 text-[10px] font-mono">&#x2212;</span>
+              <span v-if="step.type === 'subtract'" class="text-error/60 text-[10px] font-mono">&#x2212;</span>
               <span v-else-if="step.type === 'subtotal'" class="text-base-content/30 text-[10px] font-mono">=</span>
               <span v-else-if="step.type === 'detail'" class="text-base-content/20 text-[10px] font-mono">&#x21B3;</span>
               <span
                 v-else-if="step.type === 'total'"
                 class="text-[10px]"
-                :class="isJoint ? 'text-[#81A1C1]/60' : isPrimary ? 'text-primary/60' : 'text-secondary/60'"
+                :class="isJoint ? 'text-info/60' : isPrimary ? 'text-primary/60' : 'text-secondary/60'"
               >&#x25C6;</span>
               <span v-if="step.type === 'neutral' && step.ownerIndex != null">
                 <span
@@ -316,12 +312,12 @@ const cardLabel = computed(() => isJoint.value ? "Budget du foyer" : props.owner
             <span
               class="tabular-nums font-mono flex-shrink-0 sm:ml-4 self-end sm:self-auto"
               :class="{
-                'text-[#BF616A]/70 text-sm': step.type === 'subtract',
+                'text-error/70 text-sm': step.type === 'subtract',
                 'font-medium text-base-content/80 text-sm': step.type === 'subtotal',
                 'font-semibold text-xl tracking-tight': step.type === 'total',
                 'text-primary': step.type === 'total' && isPrimary && !isJoint,
                 'text-secondary': step.type === 'total' && !isPrimary && !isJoint,
-                'text-[#81A1C1]': step.type === 'total' && isJoint,
+                'text-info': step.type === 'total' && isJoint,
                 'text-base-content/60 text-sm': step.type === 'neutral',
                 'text-base-content/30 text-[11px]': step.type === 'detail',
               }"
@@ -347,13 +343,14 @@ const cardLabel = computed(() => isJoint.value ? "Budget du foyer" : props.owner
       <div class="mt-6 pt-6 border-t border-base-content/[0.06] space-y-4">
         <div class="flex justify-between items-center">
           <label
-            class="text-[11px] font-mono uppercase tracking-[0.15em] text-base-content/50 tooltip-wrapper tooltip-bottom"
+            for="saving-rate"
+            class="text-[11px] font-mono uppercase tracking-[0.15em] text-base-content/60 tooltip-wrapper tooltip-bottom"
             :data-tooltip="isJoint ? 'Pourcentage du restant épargné par le foyer (réparti 50/50)' : 'Pourcentage du restant à mettre de côté chaque mois'"
             >Taux d'épargne{{ isJoint ? ' du foyer' : '' }}</label
           >
           <span
             class="px-2.5 py-0.5 text-sm font-mono font-semibold rounded"
-            :class="isJoint ? 'bg-[#81A1C1]/10 text-[#81A1C1]' : 'bg-primary/10 text-primary'"
+            :class="isJoint ? 'bg-info/10 text-info' : 'bg-primary/10 text-primary'"
           >
             {{ savingRate }}%
           </span>
@@ -362,6 +359,7 @@ const cardLabel = computed(() => isJoint.value ? "Budget du foyer" : props.owner
         <!-- Slider -->
         <div class="py-2">
           <input
+            id="saving-rate"
             type="range"
             min="0"
             max="100"
@@ -377,14 +375,14 @@ const cardLabel = computed(() => isJoint.value ? "Budget du foyer" : props.owner
             <div class="flex overflow-hidden h-2 rounded-full bg-base-content/[0.04]">
             <div
               class="transition-all duration-300 ease-out rounded-full"
-              :class="isJoint ? 'bg-gradient-to-r from-[#81A1C1] to-[#81A1C1]/50' : isPrimary ? 'bg-gradient-to-r from-primary to-primary/50' : 'bg-gradient-to-r from-secondary to-secondary/50'"
+              :class="isJoint ? 'bg-gradient-to-r from-info to-info/50' : isPrimary ? 'bg-gradient-to-r from-primary to-primary/50' : 'bg-gradient-to-r from-secondary to-secondary/50'"
               :style="{ width: `${savingRate}%` }"
             ></div>
           </div>
         </div>
 
         <!-- Échelle -->
-        <div class="flex justify-between text-[10px] font-mono text-base-content/50 px-1">
+        <div class="flex justify-between text-[10px] font-mono text-base-content/60 px-1">
           <span>0%</span>
           <span>25%</span>
           <span>50%</span>
