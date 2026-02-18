@@ -1,7 +1,8 @@
 <script setup>
 import { ref, inject, computed } from "vue";
 import { useBudgetStore } from "../stores/budget";
-import { Users, Pencil, Trash2, Plus } from "lucide-vue-next";
+import { formatCurrency } from "../utils/format";
+import { Users, Pencil, Trash2, Plus, Repeat, EyeOff, CircleStop } from "lucide-vue-next";
 import EditModal from "./EditModal.vue";
 import ConfirmModal from "./ConfirmModal.vue";
 import BudgetProgressBar from "./BudgetProgressBar.vue";
@@ -15,6 +16,12 @@ const selectedItem = ref(null);
 // Confirmation de suppression
 const showDeleteConfirm = ref(false);
 const itemToDelete = ref(null);
+
+// Confirmation action récurrence
+const showRecurringConfirm = ref(false);
+const recurringAction = ref(null); // { type: 'disable' | 'end', recurringId, itemCategory }
+const recurringConfirmTitle = ref("");
+const recurringConfirmMessage = ref("");
 
 const isSinglePerson = computed(() => store.owners.length === 1);
 const isJointMode = computed(() => store.householdMode === "joint");
@@ -38,6 +45,8 @@ function allChargesTotal(owner) {
 }
 
 function openEdit(item) {
+  // Ne pas permettre l'édition inline des récurrences virtuelles
+  if (item.isRecurring) return;
   selectedItem.value = item;
   showEditModal.value = true;
 }
@@ -51,6 +60,7 @@ function handleEditSaved() {
 }
 
 function requestDelete(item) {
+  if (item.isRecurring) return;
   itemToDelete.value = item;
   showDeleteConfirm.value = true;
 }
@@ -70,20 +80,46 @@ function cancelDelete() {
   showDeleteConfirm.value = false;
 }
 
-function formatCurrency(value) {
-  return Number(value).toLocaleString("fr-FR", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
+// === Actions récurrences ===
+
+function requestDisableRecurring(item) {
+  recurringAction.value = { type: "disable", recurringId: item.recurringId, itemCategory: item.category };
+  recurringConfirmTitle.value = "Désactiver pour ce mois ?";
+  recurringConfirmMessage.value = `"${item.category}" sera masqué pour ce mois uniquement. La récurrence continue pour les autres mois.`;
+  showRecurringConfirm.value = true;
 }
 
-// Feature 3 : Catégories avec budget - tracking des catégories déjà affichées
-// pour montrer la barre une seule fois par catégorie
+function requestEndRecurring(item) {
+  recurringAction.value = { type: "end", recurringId: item.recurringId, itemCategory: item.category };
+  recurringConfirmTitle.value = "Supprimer la récurrence ?";
+  recurringConfirmMessage.value = `"${item.category}" sera supprimé de ce mois et de tous les mois suivants. L'historique passé est conservé.`;
+  showRecurringConfirm.value = true;
+}
+
+function confirmRecurringAction() {
+  if (!recurringAction.value) return;
+  const { type, recurringId, itemCategory } = recurringAction.value;
+  if (type === "disable") {
+    store.disableRecurringForMonth(recurringId, store.selectedMonth);
+    showToast("success", `"${itemCategory}" désactivé pour ce mois`);
+  } else if (type === "end") {
+    store.endRecurringItem(recurringId, store.selectedMonth);
+    showToast("success", `Récurrence "${itemCategory}" supprimée`);
+  }
+  showRecurringConfirm.value = false;
+  recurringAction.value = null;
+}
+
+function cancelRecurringAction() {
+  showRecurringConfirm.value = false;
+  recurringAction.value = null;
+}
+
+// Feature 3 : Catégories avec budget
 function getCategoryBudgetStatus(category, owner) {
   return store.categoryBudgetStatus(category, owner);
 }
 
-// Extraire les catégories uniques d'une liste d'items pour afficher les barres budget
 function uniqueCategories(items) {
   const seen = new Set();
   return items
@@ -103,8 +139,8 @@ function uniqueCategories(items) {
       <!-- Header -->
       <div class="px-6 py-4 flex items-center justify-between border-b border-base-content/[0.06]">
         <div class="flex items-center gap-3">
-          <span class="inline-block w-2 h-2 rounded-full bg-[#81A1C1]"></span>
-          <span class="text-[11px] font-mono uppercase tracking-[0.15em] text-base-content/50">Charges du foyer</span>
+          <span class="inline-block w-2 h-2 rounded-full bg-info"></span>
+          <span class="text-[11px] font-mono uppercase tracking-[0.15em] text-base-content/60">Charges du foyer</span>
         </div>
         <span class="text-sm font-mono tabular-nums text-base-content/70" title="Total des charges du foyer">
           {{ formatCurrency(store.totalCharges) }} €
@@ -118,34 +154,57 @@ function uniqueCategories(items) {
             :key="item.id"
             class="flex items-center justify-between py-3 px-4 bg-base-content/3 hover:bg-base-content/5 transition-all duration-200 group"
           >
-            <span class="font-medium text-base-content/90">{{ item.category }}</span>
+            <div class="flex items-center gap-2">
+              <span class="font-medium text-base-content/90">{{ item.category }}</span>
+              <Repeat v-if="item.isRecurring" :size="12" class="text-accent/50" title="Récurrence automatique" />
+            </div>
             <div class="flex items-center gap-3">
-              <span class="tabular-nums font-mono text-[#BF616A]/90">
+              <span class="tabular-nums font-mono text-error/90">
                 −{{ formatCurrency(item.amount) }} €
               </span>
-                <div class="opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity flex gap-1">
-                  <button
-                    class="brutal-icon-btn"
-                    @click="openEdit(item)"
-                    title="Modifier cette entrée"
-                  >
-                    <Pencil :size="14" class="text-base-content/60" />
-                  </button>
-                  <button
-                    class="brutal-icon-btn brutal-icon-btn-danger"
-                    @click="requestDelete(item)"
-                    title="Supprimer cette entrée"
-                  >
-                    <Trash2 :size="14" class="text-[#BF616A]" />
-                  </button>
-                </div>
+              <!-- Actions pour items réguliers -->
+              <div v-if="!item.isRecurring" class="opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity flex gap-1">
+                <button
+                  class="brutal-icon-btn"
+                  @click="openEdit(item)"
+                  aria-label="Modifier cette entrée"
+                >
+                  <Pencil :size="14" class="text-base-content/60" />
+                </button>
+                <button
+                  class="brutal-icon-btn brutal-icon-btn-danger"
+                  @click="requestDelete(item)"
+                  aria-label="Supprimer cette entrée"
+                >
+                  <Trash2 :size="14" class="text-error" />
+                </button>
+              </div>
+              <!-- Actions pour récurrences -->
+              <div v-else class="opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity flex gap-1">
+                <button
+                  class="brutal-icon-btn"
+                  @click="requestDisableRecurring(item)"
+                  aria-label="Désactiver pour ce mois"
+                  title="Désactiver pour ce mois"
+                >
+                  <EyeOff :size="14" class="text-warning/70" />
+                </button>
+                <button
+                  class="brutal-icon-btn brutal-icon-btn-danger"
+                  @click="requestEndRecurring(item)"
+                  aria-label="Supprimer la récurrence"
+                  title="Supprimer la récurrence"
+                >
+                  <CircleStop :size="14" class="text-error" />
+                </button>
+              </div>
             </div>
           </div>
 
           <!-- Budget bars par catégorie (mode joint) -->
           <div v-if="uniqueCategories(store.allChargeItems).length > 0" class="mt-4 pt-3 border-t border-base-content/[0.06] space-y-3">
             <div v-for="cat in uniqueCategories(store.allChargeItems)" :key="cat" class="px-4">
-              <p class="text-xs text-base-content/50 mb-1">{{ cat }}</p>
+              <p class="text-xs text-base-content/60 mb-1">{{ cat }}</p>
               <BudgetProgressBar
                 :spent="store.categorySpending(cat)"
                 :budget="store.categoryBudgets[cat].global"
@@ -160,7 +219,7 @@ function uniqueCategories(items) {
             <Users :size="24" class="text-base-content/40" stroke-width="1.5" />
           </div>
           <p class="text-[11px] font-mono uppercase tracking-[0.15em] text-base-content/40">Aucune charge</p>
-          <p class="text-base-content/50 text-xs mt-1">Ajoutez une charge via le bouton "Ajouter"</p>
+          <p class="text-base-content/60 text-xs mt-1">Ajoutez une charge via le bouton "Ajouter"</p>
         </div>
       </div>
     </div>
@@ -170,8 +229,8 @@ function uniqueCategories(items) {
       <!-- Header -->
       <div class="px-6 py-4 flex items-center justify-between border-b border-base-content/[0.06]">
         <div class="flex items-center gap-3">
-          <span class="inline-block w-2 h-2 rounded-full bg-[#EBCB8B]"></span>
-          <span class="text-[11px] font-mono uppercase tracking-[0.15em] text-base-content/50">Charges communes</span>
+          <span class="inline-block w-2 h-2 rounded-full bg-warning"></span>
+          <span class="text-[11px] font-mono uppercase tracking-[0.15em] text-base-content/60">Charges communes</span>
         </div>
         <span class="text-sm font-mono tabular-nums text-base-content/70" title="Total des charges communes">
           {{ formatCurrency(store.totalCommunalCharges) }} €
@@ -187,25 +246,48 @@ function uniqueCategories(items) {
               :key="item.id"
               class="flex items-center justify-between py-3 px-4 bg-base-content/3 hover:bg-base-content/5 transition-all duration-200 group"
             >
-              <span class="font-medium text-base-content/90">{{ item.category }}</span>
+              <div class="flex items-center gap-2">
+                <span class="font-medium text-base-content/90">{{ item.category }}</span>
+                <Repeat v-if="item.isRecurring" :size="12" class="text-accent/50" title="Récurrence automatique" />
+              </div>
               <div class="flex items-center gap-3">
-                <span class="tabular-nums font-mono text-[#EBCB8B]">
+                <span class="tabular-nums font-mono text-warning">
                   −{{ formatCurrency(item.amount) }} €
                 </span>
-                <div class="opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity flex gap-1">
+                <!-- Actions pour items réguliers -->
+                <div v-if="!item.isRecurring" class="opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity flex gap-1">
                   <button
                     class="brutal-icon-btn"
                     @click="openEdit(item)"
-                    title="Modifier cette entrée"
+                    aria-label="Modifier cette entrée"
                   >
                     <Pencil :size="14" class="text-base-content/60" />
                   </button>
                   <button
                     class="brutal-icon-btn brutal-icon-btn-danger"
                     @click="requestDelete(item)"
-                    title="Supprimer cette entrée"
+                    aria-label="Supprimer cette entrée"
                   >
-                    <Trash2 :size="14" class="text-[#BF616A]" />
+                    <Trash2 :size="14" class="text-error" />
+                  </button>
+                </div>
+                <!-- Actions pour récurrences -->
+                <div v-else class="opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity flex gap-1">
+                  <button
+                    class="brutal-icon-btn"
+                    @click="requestDisableRecurring(item)"
+                    aria-label="Désactiver pour ce mois"
+                    title="Désactiver pour ce mois"
+                  >
+                    <EyeOff :size="14" class="text-warning/70" />
+                  </button>
+                  <button
+                    class="brutal-icon-btn brutal-icon-btn-danger"
+                    @click="requestEndRecurring(item)"
+                    aria-label="Supprimer la récurrence"
+                    title="Supprimer la récurrence"
+                  >
+                    <CircleStop :size="14" class="text-error" />
                   </button>
                 </div>
               </div>
@@ -215,7 +297,7 @@ function uniqueCategories(items) {
           <!-- Budget bars par catégorie (charges communes) -->
           <div v-if="uniqueCategories(store.communalChargeItems).length > 0" class="mt-4 pt-3 border-t border-base-content/[0.06] space-y-3">
             <div v-for="cat in uniqueCategories(store.communalChargeItems)" :key="cat" class="px-4">
-              <p class="text-xs text-base-content/50 mb-1">{{ cat }}</p>
+              <p class="text-xs text-base-content/60 mb-1">{{ cat }}</p>
               <BudgetProgressBar
                 :spent="store.categorySpending(cat)"
                 :budget="store.categoryBudgets[cat].global"
@@ -243,7 +325,7 @@ class="w-2 h-2 rounded-full"
                     :class="index === 0 ? 'bg-primary' : 'bg-secondary'"
                   ></div>
                   <span class="text-base-content/80">{{ owner }}</span>
-                  <span class="text-base-content/50 text-xs">({{ store.communalChargesDistribution[owner] }}%)</span>
+                  <span class="text-base-content/60 text-xs">({{ store.communalChargesDistribution[owner] }}%)</span>
                 </div>
                 <span class="tabular-nums font-mono font-medium text-base-content">
                   {{ formatCurrency(store.communalChargesShare(owner)) }} €
@@ -259,7 +341,7 @@ class="w-2 h-2 rounded-full"
             <Users :size="24" class="text-base-content/40" stroke-width="1.5" />
           </div>
           <p class="text-[11px] font-mono uppercase tracking-[0.15em] text-base-content/40">Aucune charge commune</p>
-          <p class="text-base-content/50 text-xs mt-1">Ajoutez une charge commune via le bouton "Ajouter"</p>
+          <p class="text-base-content/60 text-xs mt-1">Ajoutez une charge commune via le bouton "Ajouter"</p>
         </div>
       </div>
     </div>
@@ -282,7 +364,7 @@ class="w-2 h-2 rounded-full"
               class="inline-block w-2 h-2 rounded-full"
               :class="index === 0 ? 'bg-primary' : 'bg-secondary'"
             ></span>
-            <span class="text-[11px] font-mono uppercase tracking-[0.15em] text-base-content/50">Charges {{ owner }}</span>
+            <span class="text-[11px] font-mono uppercase tracking-[0.15em] text-base-content/60">Charges {{ owner }}</span>
           </div>
           <span 
             class="text-sm font-mono tabular-nums text-base-content/70"
@@ -299,25 +381,48 @@ class="w-2 h-2 rounded-full"
               :key="item.id"
               class="flex items-center justify-between py-3 px-4 bg-base-content/3 hover:bg-base-content/5 transition-all duration-200 group"
             >
-              <span class="text-base-content/90">{{ item.category }}</span>
+              <div class="flex items-center gap-2">
+                <span class="text-base-content/90">{{ item.category }}</span>
+                <Repeat v-if="item.isRecurring" :size="12" class="text-accent/50" title="Récurrence automatique" />
+              </div>
               <div class="flex items-center gap-3">
-                <span class="tabular-nums font-mono text-[#BF616A]/90">
+                <span class="tabular-nums font-mono text-error/90">
                   −{{ formatCurrency(item.amount) }} €
                 </span>
-                <div class="opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity flex gap-1">
+                <!-- Actions pour items réguliers -->
+                <div v-if="!item.isRecurring" class="opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity flex gap-1">
                   <button
                     class="brutal-icon-btn"
                     @click="openEdit(item)"
-                    title="Modifier cette entrée"
+                    aria-label="Modifier cette entrée"
                   >
                     <Pencil :size="14" class="text-base-content/60" />
                   </button>
                   <button
                     class="brutal-icon-btn brutal-icon-btn-danger"
                     @click="requestDelete(item)"
-                    title="Supprimer cette entrée"
+                    aria-label="Supprimer cette entrée"
                   >
-                    <Trash2 :size="14" class="text-[#BF616A]" />
+                    <Trash2 :size="14" class="text-error" />
+                  </button>
+                </div>
+                <!-- Actions pour récurrences -->
+                <div v-else class="opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity flex gap-1">
+                  <button
+                    class="brutal-icon-btn"
+                    @click="requestDisableRecurring(item)"
+                    aria-label="Désactiver pour ce mois"
+                    title="Désactiver pour ce mois"
+                  >
+                    <EyeOff :size="14" class="text-warning/70" />
+                  </button>
+                  <button
+                    class="brutal-icon-btn brutal-icon-btn-danger"
+                    @click="requestEndRecurring(item)"
+                    aria-label="Supprimer la récurrence"
+                    title="Supprimer la récurrence"
+                  >
+                    <CircleStop :size="14" class="text-error" />
                   </button>
                 </div>
               </div>
@@ -326,7 +431,7 @@ class="w-2 h-2 rounded-full"
             <!-- Budget bars par catégorie (charges personnelles) -->
             <div v-if="uniqueCategories(allChargeItems(owner)).length > 0" class="mt-4 pt-3 border-t border-base-content/[0.06] space-y-3">
               <div v-for="cat in uniqueCategories(allChargeItems(owner))" :key="cat" class="px-4">
-                <p class="text-xs text-base-content/50 mb-1">{{ cat }}</p>
+                <p class="text-xs text-base-content/60 mb-1">{{ cat }}</p>
                 <BudgetProgressBar
                   :spent="store.categorySpending(cat, owner)"
                   :budget="(store.categoryBudgets[cat]?.perPerson?.[owner] ?? store.categoryBudgets[cat]?.global) || 0"
@@ -341,7 +446,7 @@ class="w-2 h-2 rounded-full"
               <Plus :size="24" class="text-base-content/40" stroke-width="1.5" />
             </div>
             <p class="text-[11px] font-mono uppercase tracking-[0.15em] text-base-content/40">Aucune charge personnelle</p>
-          <p class="text-base-content/50 text-xs mt-1">Ajoutez une charge via le bouton "Ajouter"</p>
+          <p class="text-base-content/60 text-xs mt-1">Ajoutez une charge via le bouton "Ajouter"</p>
           </div>
         </div>
       </div>
@@ -362,6 +467,15 @@ class="w-2 h-2 rounded-full"
       :itemName="itemToDelete?.category"
       @confirm="confirmDelete"
       @cancel="cancelDelete"
+    />
+
+    <ConfirmModal
+      :isOpen="showRecurringConfirm"
+      :title="recurringConfirmTitle"
+      :message="recurringConfirmMessage"
+      :itemName="recurringAction?.itemCategory"
+      @confirm="confirmRecurringAction"
+      @cancel="cancelRecurringAction"
     />
   </div>
 </template>

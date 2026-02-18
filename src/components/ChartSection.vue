@@ -194,7 +194,7 @@ const barOptions = computed(() => ({
       <div class="px-6 py-4 flex items-center justify-between border-b border-base-content/[0.06]">
         <div class="flex items-center gap-3">
           <span class="inline-block w-2 h-2 rounded-full bg-primary"></span>
-          <span class="text-[11px] font-mono uppercase tracking-[0.15em] text-base-content/50">Répartition des charges</span>
+          <span class="text-[11px] font-mono uppercase tracking-[0.15em] text-base-content/60">Répartition des charges</span>
         </div>
         <PieChart :size="14" class="text-base-content/30" />
       </div>
@@ -210,8 +210,8 @@ const barOptions = computed(() => ({
       <!-- Header -->
       <div class="px-6 py-4 flex items-center justify-between border-b border-base-content/[0.06]">
         <div class="flex items-center gap-3">
-          <span class="inline-block w-2 h-2 rounded-full bg-[#81A1C1]"></span>
-          <span class="text-[11px] font-mono uppercase tracking-[0.15em] text-base-content/50">Évolution mensuelle</span>
+          <span class="inline-block w-2 h-2 rounded-full bg-info"></span>
+          <span class="text-[11px] font-mono uppercase tracking-[0.15em] text-base-content/60">Évolution mensuelle</span>
         </div>
         <BarChart3 :size="14" class="text-base-content/30" />
       </div>

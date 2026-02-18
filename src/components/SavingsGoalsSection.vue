@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed, inject } from "vue";
 import { useBudgetStore } from "../stores/budget";
+import { formatCurrency } from "../utils/format";
 import { Target, Plus, Pencil, Trash2, ChevronDown, ChevronUp, X, Check, Users } from "lucide-vue-next";
 import ConfirmModal from "./ConfirmModal.vue";
 
@@ -12,12 +13,21 @@ const showAddForm = ref(false);
 const newName = ref("");
 const newTarget = ref("");
 const newOwner = ref(null); // null = commun
+const addFormError = ref("");
 
 // Afficher le sélecteur de propriétaire (2+ personnes)
 const showOwnerSelector = computed(() => store.owners.length > 1);
 
 function addGoal() {
-  if (!newName.value.trim() || !newTarget.value || Number(newTarget.value) <= 0) return;
+  if (!newName.value.trim()) {
+    addFormError.value = "Le nom de l'objectif est requis";
+    return;
+  }
+  if (!newTarget.value || Number(newTarget.value) <= 0) {
+    addFormError.value = "Le montant cible doit être supérieur à 0";
+    return;
+  }
+  addFormError.value = "";
   store.addGoal({
     name: newName.value.trim(),
     targetAmount: Number(newTarget.value),
@@ -27,6 +37,7 @@ function addGoal() {
   newName.value = "";
   newTarget.value = "";
   newOwner.value = null;
+  addFormError.value = "";
   showAddForm.value = false;
 }
 
@@ -35,16 +46,26 @@ const editingId = ref(null);
 const editName = ref("");
 const editTarget = ref(0);
 const editOwner = ref(null);
+const editFormError = ref("");
 
 function startEdit(goal) {
   editingId.value = goal.id;
   editName.value = goal.name;
   editTarget.value = goal.targetAmount;
   editOwner.value = goal.owner ?? null;
+  editFormError.value = "";
 }
 
 function saveEdit(id) {
-  if (!editName.value.trim() || Number(editTarget.value) <= 0) return;
+  if (!editName.value.trim()) {
+    editFormError.value = "Le nom de l'objectif est requis";
+    return;
+  }
+  if (Number(editTarget.value) <= 0) {
+    editFormError.value = "Le montant cible doit être supérieur à 0";
+    return;
+  }
+  editFormError.value = "";
   store.editGoal(id, {
     name: editName.value.trim(),
     targetAmount: Number(editTarget.value),
@@ -56,6 +77,7 @@ function saveEdit(id) {
 
 function cancelEdit() {
   editingId.value = null;
+  editFormError.value = "";
 }
 
 // Suppression
@@ -163,12 +185,7 @@ function goalContextRemaining(goal) {
   return Math.max(0, Number((goalSavingPotential(goal) - goalContextAllocated(goal)).toFixed(2)));
 }
 
-function formatCurrency(value) {
-  return Number(value).toLocaleString("fr-FR", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
-}
+
 
 const MONTH_NAMES = [
   "Janv.", "Févr.", "Mars", "Avr.", "Mai", "Juin",
@@ -185,7 +202,7 @@ function ownerLabel(goal) {
 }
 
 function ownerColorClass(goal) {
-  if (!goal.owner) return "bg-[#81A1C1]/15 text-[#81A1C1]";
+  if (!goal.owner) return "bg-info/15 text-info";
   const idx = store.owners.indexOf(goal.owner);
   return idx === 0 ? "bg-primary/20 text-primary" : "bg-secondary/20 text-secondary";
 }
@@ -196,17 +213,17 @@ function ownerColorClass(goal) {
     <!-- Header -->
     <div class="px-6 py-4 flex items-center justify-between border-b border-base-content/[0.06]">
       <div class="flex items-center gap-3">
-        <span class="inline-block w-2 h-2 rounded-full bg-[#EBCB8B]"></span>
-        <span class="text-[11px] font-mono uppercase tracking-[0.15em] text-base-content/50">Objectifs d'épargne</span>
+        <span class="inline-block w-2 h-2 rounded-full bg-warning"></span>
+        <span class="text-[11px] font-mono uppercase tracking-[0.15em] text-base-content/60">Objectifs d'épargne</span>
         <span
           v-if="store.savingsGoals.length > 0"
-          class="text-[10px] font-mono px-2 py-0.5 rounded bg-[#EBCB8B]/8 text-[#EBCB8B]/60"
+          class="text-[10px] font-mono px-2 py-0.5 rounded bg-warning/8 text-warning/60"
         >
           {{ store.savingsGoals.length }}
         </span>
       </div>
       <button
-        class="brutal-btn brutal-btn-sm bg-[#EBCB8B]/10 hover:bg-[#EBCB8B]/15 text-[#EBCB8B]"
+        class="brutal-btn brutal-btn-sm bg-warning/10 hover:bg-warning/15 text-warning"
         @click="showAddForm = !showAddForm"
       >
         <Plus :size="14" />
@@ -221,45 +238,49 @@ function ownerColorClass(goal) {
         <div v-if="showAddForm" class="p-4 bg-base-content/5 border border-base-content/[0.06] rounded space-y-3">
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" :class="{ 'sm:grid-cols-3': showOwnerSelector }">
             <div class="space-y-1">
-              <label class="text-[10px] font-mono uppercase tracking-[0.15em] text-base-content/50">Nom de l'objectif</label>
+              <label for="goal-name" class="text-[10px] font-mono uppercase tracking-[0.15em] text-base-content/60">Nom de l'objectif</label>
               <input
+                id="goal-name"
                 v-model="newName"
                 type="text"
                 placeholder="Ex: Vacances, Fonds d'urgence..."
-                class="w-full px-3 py-2 bg-base-content/5 border border-base-content/[0.06] text-sm text-base-content placeholder-base-content/30 focus:border-[#EBCB8B]/50 focus:outline-none"
+                class="w-full px-3 py-2 bg-base-content/5 border border-base-content/[0.06] text-sm text-base-content placeholder-base-content/30 focus:border-warning/50 focus:outline-none"
               />
             </div>
             <div class="space-y-1">
-              <label class="text-[10px] font-mono uppercase tracking-[0.15em] text-base-content/50">Montant cible (EUR)</label>
+              <label for="goal-target" class="text-[10px] font-mono uppercase tracking-[0.15em] text-base-content/60">Montant cible (EUR)</label>
               <input
+                id="goal-target"
                 v-model.number="newTarget"
                 type="number"
                 step="1"
                 min="1"
                 placeholder="0"
-                class="w-full px-3 py-2 bg-base-content/5 border border-base-content/[0.06] text-sm text-base-content placeholder-base-content/30 focus:border-[#EBCB8B]/50 focus:outline-none"
+                class="w-full px-3 py-2 bg-base-content/5 border border-base-content/[0.06] text-sm text-base-content placeholder-base-content/30 focus:border-warning/50 focus:outline-none"
               />
             </div>
             <div v-if="showOwnerSelector" class="space-y-1">
-              <label class="text-[10px] font-mono uppercase tracking-[0.15em] text-base-content/50">Propriétaire</label>
+              <label for="goal-owner" class="text-[10px] font-mono uppercase tracking-[0.15em] text-base-content/60">Propriétaire</label>
               <select
+                id="goal-owner"
                 v-model="newOwner"
-                class="w-full px-3 py-2 bg-base-content/5 border border-base-content/[0.06] text-sm text-base-content focus:border-[#EBCB8B]/50 focus:outline-none"
+                class="w-full px-3 py-2 bg-base-content/5 border border-base-content/[0.06] text-sm text-base-content focus:border-warning/50 focus:outline-none"
               >
                 <option :value="null">Commun</option>
                 <option v-for="owner in store.owners" :key="owner" :value="owner">{{ owner }}</option>
               </select>
             </div>
           </div>
+          <p v-if="addFormError" class="text-xs font-mono text-error" role="alert">{{ addFormError }}</p>
           <div class="flex justify-end gap-2">
             <button
               class="brutal-btn brutal-btn-sm brutal-btn-ghost"
-              @click="showAddForm = false"
+              @click="showAddForm = false; addFormError = ''"
             >
               Annuler
             </button>
             <button
-              class="brutal-btn brutal-btn-sm bg-[#EBCB8B] hover:bg-[#EBCB8B]/80 text-[#2E3440]"
+              class="brutal-btn brutal-btn-sm bg-warning hover:bg-warning/80 text-warning-content"
               @click="addGoal"
             >
               Créer l'objectif
@@ -281,32 +302,36 @@ function ownerColorClass(goal) {
               <div class="flex items-center gap-2 flex-1 flex-wrap">
                 <input
                   v-model="editName"
-                  class="px-2 py-1 bg-base-content/5 border border-base-content/[0.06] text-sm text-base-content w-36 focus:outline-none focus:border-[#EBCB8B]/50"
+                  aria-label="Modifier le nom de l'objectif"
+                  class="px-2 py-1 bg-base-content/5 border border-base-content/[0.06] text-sm text-base-content w-36 focus:outline-none focus:border-warning/50"
                 />
                 <input
                   v-model.number="editTarget"
                   type="number"
                   step="1"
-                  class="px-2 py-1 bg-base-content/5 border border-base-content/[0.06] text-sm text-base-content w-24 focus:outline-none focus:border-[#EBCB8B]/50"
+                  aria-label="Modifier le montant cible"
+                  class="px-2 py-1 bg-base-content/5 border border-base-content/[0.06] text-sm text-base-content w-24 focus:outline-none focus:border-warning/50"
                 />
                 <span class="text-xs text-base-content/40">€</span>
                 <select
                   v-if="showOwnerSelector"
                   v-model="editOwner"
-                  class="px-2 py-1 bg-base-content/5 border border-base-content/[0.06] text-sm text-base-content w-28 focus:outline-none focus:border-[#EBCB8B]/50"
+                  aria-label="Modifier le propriétaire"
+                  class="px-2 py-1 bg-base-content/5 border border-base-content/[0.06] text-sm text-base-content w-28 focus:outline-none focus:border-warning/50"
                 >
                   <option :value="null">Commun</option>
                   <option v-for="o in store.owners" :key="o" :value="o">{{ o }}</option>
                 </select>
               </div>
               <div class="flex gap-1">
-                <button class="brutal-icon-btn bg-[#A3BE8C]/15 hover:bg-[#A3BE8C]/25" @click="saveEdit(goal.id)">
-                  <Check :size="14" class="text-[#A3BE8C]" />
+                <button class="brutal-icon-btn bg-success/15 hover:bg-success/25" @click="saveEdit(goal.id)" aria-label="Enregistrer les modifications">
+                  <Check :size="14" class="text-success" />
                 </button>
-                <button class="brutal-icon-btn" @click="cancelEdit">
+                <button class="brutal-icon-btn" @click="cancelEdit" aria-label="Annuler les modifications">
                   <X :size="14" class="text-base-content/60" />
                 </button>
               </div>
+              <p v-if="editFormError" class="w-full text-xs font-mono text-error mt-1" role="alert">{{ editFormError }}</p>
             </template>
             <template v-else>
               <div>
@@ -321,7 +346,7 @@ function ownerColorClass(goal) {
                     {{ ownerLabel(goal) }}
                   </span>
                 </div>
-                <p class="text-xs text-base-content/50">
+                <p class="text-xs text-base-content/60">
                   {{ formatCurrency(store.goalProgress(goal.id).totalSaved) }} € / {{ formatCurrency(goal.targetAmount) }} €
                 </p>
               </div>
@@ -329,7 +354,7 @@ function ownerColorClass(goal) {
                 <button
                   class="brutal-icon-btn"
                   @click="toggleDetail(goal.id)"
-                  title="Historique"
+                  aria-label="Historique des versements"
                 >
                   <ChevronDown v-if="expandedGoalId !== goal.id" :size="14" class="text-base-content/60" />
                   <ChevronUp v-else :size="14" class="text-base-content/60" />
@@ -337,16 +362,16 @@ function ownerColorClass(goal) {
                 <button
                   class="brutal-icon-btn"
                   @click="startEdit(goal)"
-                  title="Modifier"
+                  aria-label="Modifier l'objectif"
                 >
                   <Pencil :size="14" class="text-base-content/60" />
                 </button>
                 <button
                   class="brutal-icon-btn brutal-icon-btn-danger"
                   @click="requestDelete(goal)"
-                  title="Supprimer"
+                  aria-label="Supprimer l'objectif"
                 >
-                  <Trash2 :size="14" class="text-[#BF616A]" />
+                  <Trash2 :size="14" class="text-error" />
                 </button>
               </div>
             </template>
@@ -356,12 +381,12 @@ function ownerColorClass(goal) {
           <div class="space-y-1">
             <div class="relative h-2 bg-base-content/5 rounded-full overflow-hidden">
               <div
-                class="absolute inset-y-0 left-0 transition-all duration-500 ease-out bg-gradient-to-r from-[#EBCB8B] to-[#EBCB8B]/70"
+                class="absolute inset-y-0 left-0 transition-all duration-500 ease-out bg-gradient-to-r from-warning to-warning/70"
                 :style="{ width: `${store.goalProgress(goal.id).percentage}%` }"
               ></div>
             </div>
             <div class="flex justify-between text-xs">
-              <span class="text-[#EBCB8B]/70 font-medium">{{ store.goalProgress(goal.id).percentage }}%</span>
+              <span class="text-warning/70 font-medium">{{ store.goalProgress(goal.id).percentage }}%</span>
               <span class="text-base-content/40">
                 Reste {{ formatCurrency(store.goalProgress(goal.id).remaining) }} €
               </span>
@@ -374,18 +399,18 @@ function ownerColorClass(goal) {
             class="flex flex-wrap items-center gap-4 p-2.5 bg-base-content/3 text-xs"
           >
             <div class="flex items-center gap-1.5">
-              <div class="w-1.5 h-1.5 rounded-full bg-[#A3BE8C]"></div>
-              <span class="text-base-content/50">Épargne{{ goal.owner ? ` ${goal.owner}` : store.isJointMode ? ' foyer' : '' }} :</span>
+              <div class="w-1.5 h-1.5 rounded-full bg-success"></div>
+               <span class="text-base-content/60">Épargne{{ goal.owner ? ` ${goal.owner}` : store.isJointMode ? ' foyer' : '' }} :</span>
               <span class="font-mono font-medium text-base-content/70">{{ formatCurrency(goalSavingPotential(goal)) }} €</span>
             </div>
             <div class="flex items-center gap-1.5">
-              <div class="w-1.5 h-1.5 rounded-full bg-[#EBCB8B]"></div>
-              <span class="text-base-content/50">Alloué :</span>
-              <span class="font-mono font-medium text-[#EBCB8B]/80">{{ formatCurrency(goalContextAllocated(goal)) }} €</span>
+              <div class="w-1.5 h-1.5 rounded-full bg-warning"></div>
+               <span class="text-base-content/60">Alloué :</span>
+              <span class="font-mono font-medium text-warning/80">{{ formatCurrency(goalContextAllocated(goal)) }} €</span>
             </div>
             <div class="flex items-center gap-1.5">
               <div class="w-1.5 h-1.5 rounded-full bg-base-content/20"></div>
-              <span class="text-base-content/50">Disponible :</span>
+               <span class="text-base-content/60">Disponible :</span>
               <span class="font-mono font-medium text-base-content/70">{{ formatCurrency(goalContextRemaining(goal)) }} €</span>
             </div>
           </div>
@@ -414,15 +439,16 @@ class="inline-block w-2 h-2 rounded-full"
                   step="1"
                   min="0"
                   placeholder="0"
-                  class="w-24 px-2 py-1 bg-base-content/5 border border-base-content/[0.06] text-sm text-base-content text-right tabular-nums placeholder-base-content/30 focus:outline-none focus:border-[#EBCB8B]/50"
+                  :aria-label="`Allocation de ${o} pour ${goal.name}`"
+                  class="w-24 px-2 py-1 bg-base-content/5 border border-base-content/[0.06] text-sm text-base-content text-right tabular-nums placeholder-base-content/30 focus:outline-none focus:border-warning/50"
                 />
                 <span class="text-xs text-base-content/40">€</span>
               </div>
             </div>
             <!-- Total commun -->
-            <div class="flex items-center justify-between px-3 py-1.5 text-xs text-base-content/50">
+            <div class="flex items-center justify-between px-3 py-1.5 text-xs text-base-content/60">
               <span>Total ce mois</span>
-              <span class="font-mono font-medium text-[#EBCB8B]/80">{{ formatCurrency(getAllocation(goal.id)) }} €</span>
+              <span class="font-mono font-medium text-warning/80">{{ formatCurrency(getAllocation(goal.id)) }} €</span>
             </div>
           </div>
           <!-- Objectif personnel ou mode single : un seul input -->
@@ -436,7 +462,8 @@ class="inline-block w-2 h-2 rounded-full"
                 step="1"
                 min="0"
                 placeholder="0"
-                class="w-24 px-2 py-1 bg-base-content/5 border border-base-content/[0.06] text-sm text-base-content text-right tabular-nums placeholder-base-content/30 focus:outline-none focus:border-[#EBCB8B]/50"
+                :aria-label="`Allocation ce mois pour ${goal.name}`"
+                class="w-24 px-2 py-1 bg-base-content/5 border border-base-content/[0.06] text-sm text-base-content text-right tabular-nums placeholder-base-content/30 focus:outline-none focus:border-warning/50"
               />
               <span class="text-xs text-base-content/40">€</span>
             </div>
@@ -467,7 +494,7 @@ class="inline-block w-2 h-2 rounded-full"
                   </span>
                 </div>
               </div>
-              <p v-else class="text-xs text-base-content/50 text-center py-2">Aucun versement encore</p>
+              <p v-else class="text-xs text-base-content/60 text-center py-2">Aucun versement encore</p>
             </div>
           </Transition>
         </div>
@@ -479,7 +506,7 @@ class="inline-block w-2 h-2 rounded-full"
           <Target :size="24" class="text-base-content/40" stroke-width="1.5" />
         </div>
         <p class="text-[11px] font-mono uppercase tracking-[0.15em] text-base-content/40">Aucun objectif d'épargne</p>
-        <p class="text-base-content/50 text-xs mt-1">Définissez des objectifs pour suivre votre progression d'épargne</p>
+        <p class="text-base-content/60 text-xs mt-1">Définissez des objectifs pour suivre votre progression d'épargne</p>
       </div>
     </div>
 

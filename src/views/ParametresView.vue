@@ -72,8 +72,8 @@ function resetLocal() {
     <div class="terminal-card p-0 overflow-hidden">
       <div class="px-6 py-4 flex items-center justify-between border-b border-base-content/[0.06]">
         <div class="flex items-center gap-3">
-          <span class="inline-block w-2 h-2 rounded-full bg-[#81A1C1]"></span>
-          <span class="text-[11px] font-mono uppercase tracking-[0.15em] text-base-content/50">Mode du foyer</span>
+          <span class="inline-block w-2 h-2 rounded-full bg-info"></span>
+          <span class="text-[11px] font-mono uppercase tracking-[0.15em] text-base-content/60">Mode du foyer</span>
         </div>
       </div>
       <div class="p-6 space-y-6">
@@ -103,13 +103,13 @@ function resetLocal() {
                 option.label
               }}</span>
             </div>
-            <p class="text-xs text-base-content/50">{{ option.description }}</p>
+            <p class="text-xs text-base-content/60">{{ option.description }}</p>
           </button>
         </div>
 
         <!-- Owner names -->
         <div class="space-y-3">
-          <label class="text-[11px] font-mono uppercase tracking-[0.15em] text-base-content/50"
+          <label class="text-[11px] font-mono uppercase tracking-[0.15em] text-base-content/60"
             >Noms des personnes</label
           >
           <div
@@ -124,6 +124,7 @@ function resetLocal() {
             <input
               v-model="localOwners[index]"
               type="text"
+              :aria-label="`Nom de la personne ${index + 1}`"
               class="w-full max-w-xs px-4 py-3 bg-base-content/5 border border-base-content/[0.06] rounded text-base-content focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
               :placeholder="'Personne ' + (index + 1)"
             />
@@ -132,10 +133,10 @@ function resetLocal() {
 
         <!-- Info box -->
         <div
-          class="terminal-card p-4 border-[#81A1C1]/20"
+          class="terminal-card p-4 border-info/20"
         >
           <div class="flex gap-3">
-            <Info :size="18" class="text-[#81A1C1] shrink-0 mt-0.5" />
+            <Info :size="18" class="text-info shrink-0 mt-0.5" />
             <p class="text-sm text-base-content/70">
               Le mode détermine comment les revenus et charges sont répartis et
               affichés. Vous pouvez changer de mode à tout moment.

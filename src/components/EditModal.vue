@@ -1,8 +1,9 @@
 <script setup>
-import { ref, watch } from "vue";
+import { ref, watch, toRef } from "vue";
 import { useBudgetStore } from "../stores/budget";
 import { X, Pencil } from "lucide-vue-next";
 import CategoryAutocomplete from "./CategoryAutocomplete.vue";
+import { useFocusTrap } from "../composables/useFocusTrap";
 
 const store = useBudgetStore();
 
@@ -18,6 +19,11 @@ const editOwner = ref("");
 const editCategory = ref("");
 const editAmount = ref(0);
 const errors = ref({});
+const modalRef = ref(null);
+
+useFocusTrap(modalRef, toRef(props, "isOpen"), {
+  onEscape: () => emit("close"),
+});
 
 watch(
   () => props.item,
@@ -72,6 +78,10 @@ function handleSubmit() {
 
         <!-- Modal -->
         <div
+          ref="modalRef"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="edit-entry-title"
           class="terminal-card relative w-full max-w-md overflow-hidden"
           @click.stop
         >
@@ -80,11 +90,12 @@ function handleSubmit() {
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-3">
                 <span class="inline-block w-2 h-2 rounded-full bg-secondary"></span>
-                <span class="text-[11px] font-mono uppercase tracking-[0.15em] text-base-content/50">Modifier l'entrée</span>
+                <span id="edit-entry-title" class="text-[11px] font-mono uppercase tracking-[0.15em] text-base-content/60">Modifier l'entrée</span>
               </div>
               <button
                 class="brutal-icon-btn"
                 @click="emit('close')"
+                aria-label="Fermer la modale"
               >
                 <X :size="16" class="text-base-content/60" />
               </button>
@@ -98,8 +109,9 @@ function handleSubmit() {
                 <!-- Type et Owner -->
                 <div class="grid grid-cols-2 gap-4">
                   <div class="space-y-2">
-                    <label class="text-[10px] font-mono uppercase tracking-[0.15em] text-base-content/50">Type</label>
+                    <label for="edit-entry-type" class="text-[10px] font-mono uppercase tracking-[0.15em] text-base-content/60">Type</label>
                     <select 
+                      id="edit-entry-type"
                       v-model="editType" 
                       class="w-full px-4 py-3 bg-base-content/5 border border-base-content/[0.06] rounded text-base-content focus:border-secondary/50 focus:outline-none focus:ring-2 focus:ring-secondary/20 transition-all"
                     >
@@ -108,8 +120,9 @@ function handleSubmit() {
                     </select>
                   </div>
                   <div class="space-y-2">
-                    <label class="text-[10px] font-mono uppercase tracking-[0.15em] text-base-content/50">Assigné à</label>
+                    <label for="edit-entry-owner" class="text-[10px] font-mono uppercase tracking-[0.15em] text-base-content/60">Assigné à</label>
                     <select 
+                      id="edit-entry-owner"
                       v-model="editOwner" 
                       class="w-full px-4 py-3 bg-base-content/5 border border-base-content/[0.06] rounded text-base-content focus:border-secondary/50 focus:outline-none focus:ring-2 focus:ring-secondary/20 transition-all"
                     >
@@ -121,28 +134,29 @@ function handleSubmit() {
 
                 <!-- Catégorie -->
                 <div class="space-y-2">
-                  <label class="text-[10px] font-mono uppercase tracking-[0.15em] text-base-content/50">Catégorie</label>
+                  <label for="edit-entry-category" class="text-[10px] font-mono uppercase tracking-[0.15em] text-base-content/60">Catégorie</label>
                   <CategoryAutocomplete
                     v-model="editCategory"
                     :type="editType"
                     :has-error="!!errors.category"
                     focus-color="secondary"
                   />
-                  <p v-if="errors.category" class="text-xs font-mono text-[#BF616A] mt-1">{{ errors.category }}</p>
+                  <p v-if="errors.category" class="text-xs font-mono text-error mt-1">{{ errors.category }}</p>
                 </div>
 
                 <!-- Montant -->
                 <div class="space-y-2">
-                  <label class="text-[10px] font-mono uppercase tracking-[0.15em] text-base-content/50">Montant (EUR)</label>
+                  <label for="edit-entry-amount" class="text-[10px] font-mono uppercase tracking-[0.15em] text-base-content/60">Montant (EUR)</label>
                   <input
+                    id="edit-entry-amount"
                     v-model.number="editAmount"
                     type="number"
                     step="0.01"
                     min="0.01"
                     class="w-full px-4 py-3 bg-base-content/5 border rounded font-mono tabular-nums text-base-content placeholder-base-content/30 focus:outline-none focus:ring-2 transition-all"
-                    :class="errors.amount ? 'border-[#BF616A]/50 focus:border-[#BF616A] focus:ring-[#BF616A]/20' : 'border-base-content/[0.06] focus:border-secondary/50 focus:ring-secondary/20'"
+                    :class="errors.amount ? 'border-error/50 focus:border-error focus:ring-error/20' : 'border-base-content/[0.06] focus:border-secondary/50 focus:ring-secondary/20'"
                   />
-                  <p v-if="errors.amount" class="text-xs font-mono text-[#BF616A] mt-1">{{ errors.amount }}</p>
+                  <p v-if="errors.amount" class="text-xs font-mono text-error mt-1">{{ errors.amount }}</p>
                 </div>
               </div>
             </div>

@@ -24,6 +24,10 @@ const props = defineProps({
     type: String,
     default: "primary",
   },
+  inputId: {
+    type: String,
+    default: null,
+  },
 });
 
 const emit = defineEmits(["update:modelValue"]);
@@ -137,12 +141,15 @@ const showDropdown = computed(
       ref="inputRef"
       v-model="inputValue"
       type="text"
+      :id="inputId"
       :placeholder="placeholder"
       class="w-full px-4 py-3 bg-base-content/5 border text-base-content placeholder-base-content/30 focus:outline-none focus:ring-2 transition-all"
       :class="hasError
-        ? 'border-[#BF616A]/50 focus:border-[#BF616A] focus:ring-[#BF616A]/20'
+        ? 'border-error/50 focus:border-error focus:ring-error/20'
         : focusColor === 'secondary'
         ? 'border-base-content/[0.06] focus:border-secondary/50 focus:ring-secondary/20'
+        : focusColor === 'accent'
+          ? 'border-base-content/[0.06] focus:border-accent/50 focus:ring-accent/20'
           : 'border-base-content/[0.06] focus:border-primary/50 focus:ring-primary/20'"
       autocomplete="off"
       @focus="onFocus"

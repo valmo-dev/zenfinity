@@ -46,7 +46,7 @@ defineExpose({ addToast, removeToast });
 
 <template>
   <Teleport to="body">
-    <div class="toast-container">
+    <div class="toast-container" role="status" aria-live="polite">
       <div
         v-for="toast in toasts"
         :key="toast.id"
@@ -61,21 +61,21 @@ defineExpose({ addToast, removeToast });
         <div 
           class="w-8 h-8 flex items-center justify-center flex-shrink-0"
           :class="{
-            'bg-[#A3BE8C]/15': toast.type === 'success',
-            'bg-[#BF616A]/15': toast.type === 'error',
-            'bg-[#81A1C1]/15': toast.type === 'info',
+            'bg-success/15': toast.type === 'success',
+            'bg-error/15': toast.type === 'error',
+            'bg-info/15': toast.type === 'info',
           }"
         >
-          <Check v-if="toast.type === 'success'" :size="16" class="text-[#A3BE8C]" />
-          <X v-else-if="toast.type === 'error'" :size="16" class="text-[#BF616A]" />
-          <Info v-else :size="16" class="text-[#81A1C1]" />
+          <Check v-if="toast.type === 'success'" :size="16" class="text-success" />
+          <X v-else-if="toast.type === 'error'" :size="16" class="text-error" />
+          <Info v-else :size="16" class="text-info" />
         </div>
         
         <!-- Message -->
         <p class="text-sm text-base-content/90 font-medium">{{ toast.message }}</p>
         
         <!-- Close button -->
-        <button class="ml-auto w-6 h-6 hover:bg-base-content/10 flex items-center justify-center transition-colors">
+        <button class="ml-auto w-6 h-6 hover:bg-base-content/10 flex items-center justify-center transition-colors" @click.stop="removeToast(toast.id)" aria-label="Fermer la notification">
           <X :size="14" class="text-base-content/50" />
         </button>
       </div>

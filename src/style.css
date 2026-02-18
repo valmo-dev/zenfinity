@@ -46,8 +46,8 @@
   --color-secondary: #81A1C1;
   --color-secondary-content: #2E3440;
   
-  /* Frost - Accent */
-  --color-accent: #8FBCBB;
+  /* Aurora - Accent (Purple) */
+  --color-accent: #B48EAD;
   --color-accent-content: #2E3440;
   
   /* Polar Night - Neutral */
@@ -96,8 +96,8 @@
   --color-secondary: #81A1C1;
   --color-secondary-content: #ECEFF4;
   
-  /* Frost - Accent */
-  --color-accent: #8FBCBB;
+  /* Aurora - Accent (Purple) */
+  --color-accent: #B48EAD;
   --color-accent-content: #2E3440;
   
   /* Polar Night - Neutral */
@@ -175,7 +175,17 @@
    BASE STYLES
    ========================================== */
 
-* {
+a,
+button,
+input,
+select,
+textarea,
+.terminal-card,
+.btn,
+.brutal-btn,
+.brutal-icon-btn,
+[class*="hover:bg-"],
+[class*="hover:text-"] {
   @apply transition-colors duration-150;
 }
 
@@ -273,17 +283,17 @@ code, pre, .font-mono, .tabular-nums {
 }
 
 .terminal-total-primary {
-  background: rgba(136, 192, 208, 0.06);
+  background: color-mix(in srgb, var(--color-primary) 6%, transparent);
   border-left: 2px solid var(--color-primary);
 }
 
 .terminal-total-secondary {
-  background: rgba(129, 161, 193, 0.06);
+  background: color-mix(in srgb, var(--color-secondary) 6%, transparent);
   border-left: 2px solid var(--color-secondary);
 }
 
 .terminal-total-joint {
-  background: rgba(129, 161, 193, 0.06);
+  background: color-mix(in srgb, var(--color-secondary) 6%, transparent);
   border-left: 2px solid var(--color-secondary);
 }
 
@@ -315,11 +325,11 @@ code, pre, .font-mono, .tabular-nums {
 }
 
 .btn-primary {
-  box-shadow: 0 1px 3px rgba(136, 192, 208, 0.3);
+  box-shadow: 0 1px 3px color-mix(in srgb, var(--color-primary) 30%, transparent);
 }
 
 .btn-primary:hover {
-  box-shadow: 0 3px 10px rgba(136, 192, 208, 0.3);
+  box-shadow: 0 3px 10px color-mix(in srgb, var(--color-primary) 30%, transparent);
   transform: translateY(-1px);
 }
 
@@ -415,7 +425,7 @@ code, pre, .font-mono, .tabular-nums {
 }
 
 .brutal-icon-btn-danger:hover {
-  background: rgba(191, 97, 106, 0.15);
+  background: color-mix(in srgb, var(--color-error) 15%, transparent);
   border-color: var(--color-error);
 }
 
@@ -433,7 +443,7 @@ code, pre, .font-mono, .tabular-nums {
 .input:focus, .select:focus, .textarea:focus {
   background: var(--nord-bg-card);
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(136, 192, 208, 0.15);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 15%, transparent);
   outline: none;
 }
 
@@ -466,22 +476,6 @@ code, pre, .font-mono, .tabular-nums {
 }
 
 /* ==========================================
-   BADGES
-   ========================================== */
-
-.badge {
-  border: 1px solid var(--nord-border);
-  border-radius: 0.375rem;
-  font-weight: 500;
-  font-size: 0.7rem;
-  letter-spacing: 0.02em;
-}
-
-.badge-primary {
-  box-shadow: none;
-}
-
-/* ==========================================
    RANGE SLIDER
    ========================================== */
 
@@ -497,28 +491,8 @@ code, pre, .font-mono, .tabular-nums {
 }
 
 /* ==========================================
-   DIVIDERS
-   ========================================== */
-
-.divider {
-  @apply opacity-30;
-  border-color: var(--nord-border);
-}
-
-/* ==========================================
    ANIMATIONS
    ========================================== */
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
 
 @keyframes slideInRight {
   from {
@@ -542,33 +516,10 @@ code, pre, .font-mono, .tabular-nums {
   }
 }
 
-@keyframes scaleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.97);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
 @keyframes shake {
   0%, 100% { transform: translateX(0); }
   10%, 30%, 50%, 70%, 90% { transform: translateX(-3px); }
   20%, 40%, 60%, 80% { transform: translateX(3px); }
-}
-
-@keyframes success-pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(163, 190, 140, 0.4);
-  }
-  70% {
-    box-shadow: 0 0 0 8px rgba(163, 190, 140, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(163, 190, 140, 0);
-  }
 }
 
 /* ==========================================
@@ -606,15 +557,15 @@ code, pre, .font-mono, .tabular-nums {
 }
 
 .toast-notification.toast-success {
-  border-color: #A3BE8C;
+  border-color: var(--color-success);
 }
 
 .toast-notification.toast-error {
-  border-color: #BF616A;
+  border-color: var(--color-error);
 }
 
 .toast-notification.toast-info {
-  border-color: #81A1C1;
+  border-color: var(--color-info);
 }
 
 .toast-notification.toast-exiting {
@@ -624,14 +575,6 @@ code, pre, .font-mono, .tabular-nums {
 /* ==========================================
    TOOLTIPS
    ========================================== */
-
-[data-tip]::before {
-  @apply bg-neutral text-neutral-content text-xs px-3 py-2;
-  border-radius: 0.375rem;
-  border: 1px solid var(--nord-border);
-  box-shadow: 0 2px 8px var(--nord-shadow);
-  font-weight: 500;
-}
 
 .tooltip-wrapper {
   position: relative;
@@ -708,6 +651,27 @@ code, pre, .font-mono, .tabular-nums {
 
 :focus-visible {
   @apply outline-none ring-2 ring-primary/40 ring-offset-2 ring-offset-base-200;
+}
+
+/* ==========================================
+   REDUCED MOTION
+   ========================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  body::before,
+  body::after {
+    display: none;
+  }
+
+  .terminal-card:hover {
+    box-shadow: 0 1px 3px var(--nord-shadow);
+  }
+
+  .btn:hover,
+  .brutal-btn:hover,
+  .brutal-icon-btn:hover {
+    transform: none;
+  }
 }
 
 

@@ -104,9 +104,7 @@ watch(
         class="flex items-center gap-3 shrink-0"
         @click="handleNavClick"
       >
-        <div
-          class="w-10 h-10 border border-base-content/[0.06] bg-base-100 p-1 flex items-center justify-center rounded-lg"
-        >
+        <div class="size-14 flex items-center justify-center rounded-lg">
           <img
             :src="zenfinityLogo"
             alt="ZenFinity"
@@ -118,7 +116,7 @@ watch(
             ZenFinity
           </h1>
           <p
-            class="text-[10px] font-medium text-base-content/50 tracking-widest whitespace-nowrap"
+            class="text-[10px] font-medium text-base-content/60 tracking-widest whitespace-nowrap"
           >
             Budget Tracker
           </p>
@@ -127,12 +125,13 @@ watch(
     </div>
 
     <!-- Navigation -->
-    <nav class="flex-1 p-3 space-y-1">
+    <nav aria-label="Navigation principale" class="flex-1 p-3 space-y-1">
       <router-link
         v-for="item in navItems"
         :key="item.to"
         :to="item.to"
         @click="handleNavClick"
+        :aria-current="isActive(item.to) ? 'page' : undefined"
         class="flex items-center gap-3 font-medium text-sm tracking-wide transition-all duration-150 border rounded-md"
         :class="[
           collapsed ? 'px-3 py-3 justify-center' : 'px-4 py-3',
@@ -160,7 +159,7 @@ watch(
         @click="toggleCollapse"
         class="w-full flex items-center gap-3 px-3 py-2 border border-transparent hover:border-base-content/10 hover:bg-base-content/5 text-base-content/50 hover:text-base-content transition-all font-medium text-xs rounded-md cursor-pointer"
         :class="collapsed ? 'justify-center' : ''"
-        :title="collapsed ? 'Agrandir' : 'Réduire'"
+        :aria-label="collapsed ? 'Agrandir le menu' : 'Réduire le menu'"
       >
         <ChevronsLeft v-if="!collapsed" :size="18" :stroke-width="2" />
         <ChevronsRight v-else :size="18" :stroke-width="2" />

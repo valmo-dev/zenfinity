@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from "vue";
+import { formatCurrency } from "../utils/format";
 
 const props = defineProps({
   spent: {
@@ -25,12 +26,7 @@ const status = computed(() => {
 
 const barWidth = computed(() => Math.min(percentage.value, 100));
 
-function formatCurrency(value) {
-  return Number(value).toLocaleString("fr-FR", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
-}
+
 </script>
 
 <template>
@@ -40,9 +36,9 @@ function formatCurrency(value) {
       <div
         class="absolute inset-y-0 left-0 transition-all duration-500 ease-out"
         :class="{
-          'bg-gradient-to-r from-[#A3BE8C] to-[#A3BE8C]/70': status === 'ok',
-          'bg-gradient-to-r from-[#EBCB8B] to-[#EBCB8B]/70': status === 'warning',
-          'bg-gradient-to-r from-[#BF616A] to-[#BF616A]/70': status === 'over',
+          'bg-gradient-to-r from-success to-success/70': status === 'ok',
+          'bg-gradient-to-r from-warning to-warning/70': status === 'warning',
+          'bg-gradient-to-r from-error to-error/70': status === 'over',
         }"
         :style="{ width: `${barWidth}%` }"
       ></div>
@@ -52,9 +48,9 @@ function formatCurrency(value) {
       <span
         class="tabular-nums font-mono"
         :class="{
-          'text-[#A3BE8C]/80': status === 'ok',
-          'text-[#EBCB8B]/80': status === 'warning',
-          'text-[#BF616A]/80': status === 'over',
+          'text-success/80': status === 'ok',
+          'text-warning/80': status === 'warning',
+          'text-error/80': status === 'over',
         }"
       >
         {{ formatCurrency(spent) }} € / {{ formatCurrency(budget) }} €
@@ -62,9 +58,9 @@ function formatCurrency(value) {
       <span
         class="font-medium"
         :class="{
-          'text-[#A3BE8C]/60': status === 'ok',
-          'text-[#EBCB8B]/60': status === 'warning',
-          'text-[#BF616A]/60': status === 'over',
+          'text-success/60': status === 'ok',
+          'text-warning/60': status === 'warning',
+          'text-error/60': status === 'over',
         }"
       >
         {{ percentage }}%

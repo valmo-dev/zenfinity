@@ -65,8 +65,8 @@ function handleImport(event) {
     <!-- Header -->
     <div class="px-6 py-4 flex items-center justify-between border-b border-base-content/[0.06]">
       <div class="flex items-center gap-3">
-        <span class="inline-block w-2 h-2 rounded-full bg-[#B48EAD]"></span>
-        <span class="text-[11px] font-mono uppercase tracking-[0.15em] text-base-content/50">Import / Export</span>
+        <span class="inline-block w-2 h-2 rounded-full bg-accent"></span>
+        <span class="text-[11px] font-mono uppercase tracking-[0.15em] text-base-content/60">Import / Export</span>
       </div>
       <Upload :size="16" class="text-base-content/30" />
     </div>
@@ -94,10 +94,10 @@ function handleImport(event) {
 
         <!-- Import JSON -->
         <button 
-          class="brutal-btn bg-base-content/5 hover:bg-[#B48EAD]/20"
+          class="brutal-btn bg-base-content/5 hover:bg-accent/20"
           @click="triggerImport"
         >
-          <Upload :size="16" class="text-[#B48EAD]" />
+          <Upload :size="16" class="text-accent" />
           <span class="text-sm font-medium">Import JSON</span>
         </button>
 
@@ -124,25 +124,25 @@ function handleImport(event) {
         v-if="importMessage"
         class="mt-4 px-4 py-3 flex items-center gap-3 transition-all duration-300"
         :class="{
-          'bg-[#A3BE8C]/15 border border-[#A3BE8C]/30 rounded': importMessage.type === 'success',
-          'bg-[#BF616A]/15 border border-[#BF616A]/30 rounded': importMessage.type === 'error',
+          'bg-success/15 border border-success/30 rounded': importMessage.type === 'success',
+          'bg-error/15 border border-error/30 rounded': importMessage.type === 'error',
         }"
       >
         <div 
           class="w-6 h-6 flex items-center justify-center"
           :class="{
-            'bg-[#A3BE8C]/30': importMessage.type === 'success',
-            'bg-[#BF616A]/30': importMessage.type === 'error',
+            'bg-success/30': importMessage.type === 'success',
+            'bg-error/30': importMessage.type === 'error',
           }"
         >
-          <Check v-if="importMessage.type === 'success'" :size="16" class="text-[#A3BE8C]" />
-          <X v-else :size="16" class="text-[#BF616A]" />
+          <Check v-if="importMessage.type === 'success'" :size="16" class="text-success" />
+          <X v-else :size="16" class="text-error" />
         </div>
         <span 
           class="text-sm font-medium"
           :class="{
-            'text-[#A3BE8C]': importMessage.type === 'success',
-            'text-[#BF616A]': importMessage.type === 'error',
+            'text-success': importMessage.type === 'success',
+            'text-error': importMessage.type === 'error',
           }"
         >
           {{ importMessage.text }}

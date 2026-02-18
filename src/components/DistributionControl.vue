@@ -27,8 +27,8 @@ const secondOwnerPct = computed(() => isSinglePerson.value ? 0 : 100 - firstOwne
     <!-- Header -->
     <div class="px-6 py-4 flex items-center justify-between border-b border-base-content/[0.06]">
       <div class="flex items-center gap-3">
-        <span class="inline-block w-2 h-2 rounded-full bg-[#81A1C1]"></span>
-        <span class="text-[11px] font-mono uppercase tracking-[0.15em] text-base-content/50">Répartition charges communes</span>
+        <span class="inline-block w-2 h-2 rounded-full bg-info"></span>
+        <span class="text-[11px] font-mono uppercase tracking-[0.15em] text-base-content/60">Répartition charges communes</span>
       </div>
       <Settings :size="16" class="text-base-content/30" />
     </div>
@@ -84,7 +84,7 @@ const secondOwnerPct = computed(() => isSinglePerson.value ? 0 : 100 - firstOwne
       </div>
 
       <!-- Échelle -->
-      <div class="flex justify-between text-xs text-base-content/50 px-1">
+      <div class="flex justify-between text-xs text-base-content/60 px-1">
         <span>0%</span>
         <span>25%</span>
         <span>50%</span>
